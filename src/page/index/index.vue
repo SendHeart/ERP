@@ -1151,6 +1151,8 @@
 			}
 			.goods-hot-title{
 				font-size: 12px;
+				height: 40px;
+				line-height: 20px;
 				padding: 2px;
 				color:#666;
 				overflow: hidden;
