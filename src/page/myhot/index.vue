@@ -2108,9 +2108,10 @@ import {
 		  	access_token:this.access_token,
 		  	shop_type:this.shop_type,
 		  	lang:this.lang,
+			type:0, //多级类目
 		  }
 		  this.productCateOptions = this.goods_category ;
-		  console.log('get_product_category para:',para);
+		  //console.log('get_goods_category para:',para);
 		  getGoodsCategory(para).then(res => {
 			/*
 		  	this.$message({
@@ -2119,10 +2120,10 @@ import {
 		       duration: 1000
 		     });
 			*/
-		     console.log('get_product_category return:',res);
+		     console.log('get_goods_category return:',res);
 		  })
 		  .catch(err=>{
-		  	console.log('get_product_category err:',err)
+		  	console.log('get_goods_category err:',err)
 		  });
 		/*
         fetchListWithChildren().then(response => {

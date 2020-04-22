@@ -12,7 +12,7 @@
 				<div style="display: flex;flex-direction: column;justify-content: center;">
 					<el-row :gutter="1" class="row_list">
 					<el-col :span="16" v-for="(item_category,index) in goods_category" :key="index" style="text-align: left; margin-bottom: 1px;font-size: 18px;">
-						<div :style="item_category.style_class" @click="category_select(index)">{{ $t(`commons.${item_category.name}`) }}</div>
+						<div :style="item_category.style_class" @click="category_select(index)">{{ item_category.title }}</div>
 					</el-col>
 					</el-row>
 				</div>
@@ -20,9 +20,9 @@
 			<div style="width: 85%;margin-left: 20px;">
 			<el-row :gutter="15" class="row_list">
 				<el-col :span="5" v-for="(item_hot,index) in bigdata_hot_list" :key="index">
-					<div class="goods-hot rflex"  @click="goods_detail(index)">
+					<div class="goods-hot rflex"  >
 						<div class="cflex wflex">
-							<div style="display: flex;flex-direction: row;justify-content: center;">
+							<div style="display: flex;flex-direction: row;justify-content: center;" @click="goods_detail(index)">
 								<img :src="item_hot.img" class='goods-hot-img' >
 							</div>
 							
@@ -39,10 +39,10 @@
 							</div>
 							<el-row :gutter="1" type="flex" class="row-bg el-row-two" justify="space-around" style="height:30px;line-height: 30px; background-color: #D9D9D9;box-shadow:0 0 1px #000 inset;;">
 								<el-col :span="10" style="text-align: center;">
-									<span style="font-size: 12px;">{{ $t('commons.addhotgoods') }}</span>
+									<span style="font-size: 12px;"  @click="add_mywarehouse(index)">{{ $t('commons.addhotgoods') }}</span>
 								</el-col>
 								<el-col :span="10" style="text-align: center;">
-									<span style="font-size: 12px;">{{ $t('commons.linkorg') }}</span>
+									<span style="font-size: 12px;" @click="gotoMaterialUrl(index)">{{ $t('commons.linkorg') }}</span>
 								</el-col>
 							</el-row>
 						</div>
@@ -73,6 +73,9 @@
 <script>
     import { 
 		getBizPara,
+		getGoodsList,
+		getGoodsCategory,
+		addMyWarehouse,
 	} from "@/api/user";
 	import {
 		setToken,
@@ -84,8 +87,9 @@
     export default {
         data(){
             return {
-				shop_type:shop_type?shop_type:2,
+				shop_type:shop_type?shop_type:10,
 				lang:getToken('lang')||'zh',
+				access_token:getToken('Token')||'zh',
 				username:getToken('Username')||'',
 				emall_selected:0,
 				category_selected:0,
@@ -95,87 +99,102 @@
 						name:'emall_provider_1688',
 						title:'1688',
 						style_class:'font-size:16px;background-color:#BBBBBB;color:#FFFFFF;',
-						icon:''
+						icon:'',
+						emall_id:'1',
 					},
 					{
 						name:'emall_provider_taobaounion',
 						title:'淘宝联盟',
 						style_class:'background-color:#FFFFFF;color:#666;',
-						icon:''
+						icon:'',
+						emall_id:'2',
 					},
 					{
 						name:'emall_provider_pingduoduo',
 						title:'多多进宝',
 						style_class:'background-color:#FFFFFF;color:#666;',
-						icon:''
+						icon:'',
+						emall_id:'3',
 					},
 					{
 						name:'emall_provider_jingdong',
 						title:'京东联盟',
 						style_class:'background-color:#FFFFFF;color:#666;',
-						icon:''
+						icon:'',
+						emall_id:'4',
 					}
                 ],
-				goods_category:[
+				goods_category:[],
+				goods_category_init:[
 					{
 						name:'goods_category_womanclothes',
 						title:'女装',
 						style_class:'font-size:16px;background-color:#FFFFFF;color:#666;',
-						icon:''
+						icon:'',
+						category:'nvzhuang',
 					},
 					{
 						name:'goods_category_manclothes',
 						title:'男装',
 						style_class:'background-color:#FFFFFF;color:#666;',
-						icon:''
+						icon:'',
+						category:'nanzhuang',
 					},
 					{
 						name:'goods_category_underclothes',
 						title:'内衣',
 						style_class:'background-color:#FFFFFF;color:#666;',
-						icon:''
+						icon:'',
+						category:'neiyi',
 					},
 					{
 						name:'goods_category_sportsclothes',
 						title:'运动服饰',
 						style_class:'background-color:#FFFFFF;color:#666;',
-						icon:''
+						icon:'',
+						category:'sport',
 					},
 					{
 						name:'goods_category_3Cdigit',
 						title:'3C数码',
 						style_class:'background-color:#FFFFFF;color:#666;',
-						icon:''
+						icon:'',
+						category:'3C',
 					},
 					{
 						name:'goods_category_necessities',
 						title:'日用百货',
 						style_class:'background-color:#FFFFFF;color:#666;',
-						icon:''
+						icon:'',
+						category:'home',
 					},
 					{
 						name:'goods_category_householdappliances',
 						title:'家电',
 						style_class:'background-color:#FFFFFF;color:#666;',
-						icon:''
+						icon:'',
+						category:'jiadian',
 					},
 					{
 						name:'goods_category_luggagebag',
 						title:'箱包',
 						style_class:'background-color:#FFFFFF;color:#666;',
-						icon:''
+						icon:'',
+						category:'xiangbao',
 					},
 					{
 						name:'goods_category_cornament',
 						title:'配饰',
 						style_class:'background-color:#FFFFFF;color:#666;',
-						icon:''
+						icon:'',
+						category:'peijian',
 					},
 					{
 						name:'goods_category_shoeboots',
 						title:'鞋靴',
 						style_class:'background-color:#FFFFFF;color:#666;',
-						icon:''
+						icon:'',
+						category:'xie',
 					}
 				],
 				bigdata_hot_list:[],
@@ -1352,10 +1371,10 @@
         },
         created(){
 			this.emall_list = this.emall_provider ;
-			this.bigdata_hot_list = this.latest_hot_list ;
+			//this.bigdata_hot_list = this.latest_hot_list ;
         },
         mounted(){
-            this.getUserList();
+			this.get_goods_category();
         },
         methods: {
 			goods_detail(goods_index=0){
@@ -1369,6 +1388,102 @@
 				  });
 				console.log('goods_detail goods_para:',goods_para)
 				window.open(routeUrl.href, '_self'); //_self _blank
+			},
+			get_goods_list(){
+			    let para = {
+					username:this.username,
+					access_token:this.access_token,
+			        pagesize:this.paginations.pageSize,
+			        page:this.paginations.pageIndex,
+					shop_type:this.shop_type,
+					lang:this.lang,
+					type:1, //1爆款商品查询
+					category:this.goods_category[this.category_selected]['category'],
+					category_title:this.goods_category[this.category_selected]['title'],
+					emall_id:this.emall_provider[this.emall_selected]['emall_id'],
+			    }
+				
+			    getGoodsList(para).then(res => {
+			        this.loading = false;
+					this.bigdata_hot_list = []
+					for(var i=0;i<res.result.length;i++){
+						this.bigdata_hot_list.push(res.result[i])
+					} 
+					console.log('getGoodsList return:',res);
+			        this.paginations.total = parseInt(res.total);
+			    })
+				.catch(err=>{
+					console.log('getGoodsList err:',err)
+				});
+			},
+			get_goods_category() {
+				let para = {
+					username:this.username,
+					access_token:this.access_token,
+					shop_type:this.shop_type,
+					lang:this.lang,
+					type:1, //爆款类目
+				}
+			
+				getGoodsCategory(para).then(res => {
+						/*
+					  	this.$message({
+					       message: 'Completed!',
+					       type: 'success',
+					       duration: 1000
+					     });
+						*/
+					let goods_category = res
+					this.goods_category = [] ;
+					for(var i=0;i<goods_category.length;i++){
+						this.goods_category.push(goods_category[i])
+					} 
+					this.get_goods_list()
+					console.log('get_goods_category return:',res);
+				})
+				.catch(err=>{
+					console.log('get_goods_category err:',err)
+				});
+				/*
+				fetchListWithChildren().then(response => {
+					let list = response.data;
+					this.productCateOptions = [];
+					for (let i = 0; i < list.length; i++) {
+					let children = [];
+					if (list[i].children != null && list[i].children.length > 0) {
+						for (let j = 0; j < list[i].children.length; j++) {
+							children.push({label: list[i].children[j].name, value: list[i].children[j].id});
+						}
+					}
+					this.productCateOptions.push({label: list[i].name, value: list[i].id, children: children});
+					}
+				});
+				*/
+			},
+			gotoMaterialUrl(goods_index=0){
+				let url = this.bigdata_hot_list[goods_index].materialUrl
+				window.open(url, '_blank');
+			},
+			add_mywarehouse(goods_index=0){
+				let para = {
+					username:this.username,
+					access_token:this.access_token,
+				    goods_id:this.bigdata_hot_list[goods_index]['id'],
+					shop_type:this.shop_type,
+					lang:this.lang,
+				}
+				console.log('addMyWarehouse para:',para);
+				addMyWarehouse(para).then(res => {
+					this.$message({
+				     message: 'Completed!',
+				     type: 'success',
+				     duration: 1000
+				   });
+				   console.log('addMyWarehouse return:',res);
+				})
+				.catch(err=>{
+					console.log('addMyWarehouse err:',err)
+				});
 			},
             getUserList(){
                 let para = {
@@ -1392,12 +1507,12 @@
             // 每页多少条切换
             handleSizeChange(pageSize) {
                this.paginations.pageSize = pageSize;
-               this.getUserList();
+               this.get_goods_list();
             },
             // 上下分页
             handleCurrentChange(page) {
                this.paginations.pageIndex = page;
-               this.getUserList();
+               this.get_goods_list();
             },
 			emall_select(selected=0) {
 				var k = parseInt(selected) ;
@@ -1408,12 +1523,17 @@
 					this.emall_provider[this.emall_selected]['style_class'] = 'background-color:#FFFFFF;color:#666';
 				}
 				this.emall_selected = selected ;
+				/*
 				if(k%2>0){
 					this.bigdata_hot_list = this.hot_goods_list
 				}else{
 					this.bigdata_hot_list = this.latest_hot_list
 				}
+				*/
 				this.goods_category[category_selected]['style_class'] = 'background-color:#FFFFFF;color:#666';
+				this.paginations.pageIndex = 1 ;
+				this.get_goods_category()
+				this.category_selected = 0 ;
 			},
 			category_select(selected=0) {
 				var k = parseInt(selected) ;
@@ -1424,6 +1544,7 @@
 				}
 				
 				this.category_selected = selected ;
+				/*
 				if(k%3==1){
 					this.bigdata_hot_list = this.womanclothes_hot_list
 				}else if(k%3==2){
@@ -1431,6 +1552,9 @@
 				}else{
 					this.bigdata_hot_list = this.underclothes_hot_list
 				}
+				*/
+			   this.paginations.pageIndex = 1 ;
+			   this.get_goods_list()
 			}
         },
     }
