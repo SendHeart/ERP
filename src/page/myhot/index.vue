@@ -6,14 +6,14 @@
         <span>筛选搜索</span>
         <el-button
           style="float: right"
-          @click="handleSearchList()"
+          @click="search()"
           type="primary"
           size="small">
           查询结果
         </el-button>
         <el-button
           style="float: right;margin-right: 15px"
-          @click="handleResetSearch()"
+          @click="search()"
           size="small">
           重置
         </el-button>
@@ -23,14 +23,14 @@
 			<el-form-item label="货源：">
 				<el-cascader
 				  clearable
-				  v-model="selectGoodsSupplyValue"
+				  v-model="listQuery.goodsSupplyId"
 				  :options="goodsSupplyOptions">
 				</el-cascader>
 			</el-form-item>
 			<el-form-item label="所属类目：">
 			  <el-cascader
 			    clearable
-			    v-model="selectProductCateValue"
+			    v-model="listQuery.goodsCategoryId"
 			    :options="productCateOptions"
 				filterable>
 			  </el-cascader>
@@ -198,6 +198,7 @@
 		-->
         <el-table-column label="操作" width="160" align="center">
           <template slot-scope="scope">
+			  <!--
             <p>
               <el-button
                 size="mini"
@@ -208,15 +209,18 @@
                 @click="handleUpdateProduct(scope.$index, scope.row)">编辑
               </el-button>
             </p>
+			-->
             <p>
+			<!--
               <el-button
                 size="mini"
                 @click="handleShowLog(scope.$index, scope.row)">日志
               </el-button>
+			  -->
               <el-button
                 size="mini"
                 type="danger"
-                @click="handleDelete(scope.$index, scope.row)">删除
+                @click="delete_mywarehouse(scope.$index, scope.row)">删除
               </el-button>
             </p>
           </template>
@@ -334,7 +338,11 @@
   //import {fetchList as fetchProductAttrList} from '@/api/productAttr'
   //import {fetchList as fetchBrandList} from '@/api/brand'
   //import {fetchListWithChildren} from '@/api/productCate'
-
+import {
+		getMyWarehouse,
+		deleteGoodsWarehouse,
+		getGoodsCategory,
+} from "@/api/user";
 import {
 		shop_type,
 } from "@/utils/env" ;
@@ -359,14 +367,17 @@ import {
     name: "productList",
     data() {
       return {
-		shop_type:shop_type?shop_type:2,
+		shop_type:shop_type?shop_type:10,
 		lang:getToken('lang')||'zh',
+		access_token:getToken('Token')||'zh',
+		username:getToken('Username')||'',
+		goods_id:0,
 		scrollTop:0,
         editSkuInfo:{
           dialogVisible:false,
           productId:null,
           productSn:'',
-          productAttributeCategoryId:null,
+          goodsCategoryId:null,
           stockList:[],
           productAttr:[],
           keyword:null
@@ -2000,10 +2011,9 @@ import {
       }
     },
     created() {
-     this.getList();
-	 this.list = this.hot_goods_list;
-      //this.getBrandList();
-      //this.getProductCateList();
+     this.get_goods_list();
+     this.get_mywarehouse();
+     this.get_goods_category();
     },
     watch: {
       selectProductCateValue: function (newValue) {
@@ -2012,7 +2022,6 @@ import {
         } else {
           this.listQuery.productCategoryId = null;
         }
-
       }
     },
     filters: {
@@ -2038,28 +2047,52 @@ import {
 			  window.open(routeUrl.href, '_self'); //_self _blank
 		},
 		
-      getProductSkuSp(row, index) {
-        let spData = JSON.parse(row.spData);
-        if(spData!=null&&index<spData.length){
-          return spData[index].value;
-        }else{
-          return null;
-        }
-      },
-      getList() {
-        this.listLoading = true;
-		/*
-        fetchList(this.listQuery).then(response => {
-          this.listLoading = false;
-          this.list = response.data.list;
-          this.total = response.data.total;
-        });
-		*/
-	    this.listLoading = false;
-		
-		this.paginations.total = 500 ;
-		this.productCateOptions = this.goods_category ;
-      },
+     
+		get_goods_list(is_search=0) {
+			this.listLoading = true;
+			let para = {
+				username:this.username,
+				access_token:this.access_token,
+				pagesize:this.paginations.pageSize,
+				page:this.paginations.pageIndex,
+				goods_id:this.goods_id,
+				shop_type:this.shop_type,
+				lang:this.lang,
+			}
+			if(is_search == 1){
+				para['page'] = this.listQuery.pageNum
+				para['query_info'] = this.listQuery
+			}
+		//console.log('get_goods_list para:',para);
+			getMyWarehouse(para).then(res => {
+			/*
+			this.$message({
+		     message: 'Completed!',
+		     type: 'success',
+		     duration: 1000
+		   });
+		   */
+				this.list = []
+				for(var i=0;i<res.result.length;i++){
+					this.list.push(res.result[i])
+				} 
+				this.paginations.total = parseInt(res.total);
+				console.log('get_goods_list return:',res);
+			})
+			.catch(err=>{
+				console.log('get_goods_list err:',err)
+			});
+			this.listLoading = false;
+		},
+	  
+	  getProductSkuSp(row, index) {
+	    let spData = JSON.parse(row.spData);
+	    if(spData!=null&&index<spData.length){
+	      return spData[index].value;
+	    }else{
+	      return null;
+	    }
+	  },
       getBrandList() {
         fetchBrandList({pageNum: 1, pageSize: 100}).then(response => {
           this.brandOptions = [];
@@ -2069,7 +2102,29 @@ import {
           }
         });
       },
-      getProductCateList() {
+      get_goods_category() {
+		  let para = {
+		  	username:this.username,
+		  	access_token:this.access_token,
+		  	shop_type:this.shop_type,
+		  	lang:this.lang,
+		  }
+		  this.productCateOptions = this.goods_category ;
+		  console.log('get_product_category para:',para);
+		  getGoodsCategory(para).then(res => {
+			/*
+		  	this.$message({
+		       message: 'Completed!',
+		       type: 'success',
+		       duration: 1000
+		     });
+			*/
+		     console.log('get_product_category return:',res);
+		  })
+		  .catch(err=>{
+		  	console.log('get_product_category err:',err)
+		  });
+		/*
         fetchListWithChildren().then(response => {
           let list = response.data;
           this.productCateOptions = [];
@@ -2083,6 +2138,7 @@ import {
             this.productCateOptions.push({label: list[i].name, value: list[i].id, children: children});
           }
         });
+		*/
       },
       handleShowSkuEditDialog(index,row){
         this.editSkuInfo.dialogVisible=true;
@@ -2128,9 +2184,9 @@ import {
           });
         });
       },
-      handleSearchList() {
+      search() {
         this.listQuery.pageNum = 1;
-        this.getList();
+        this.get_goods_list(1);
       },
       handleAddProduct() {
         this.$router.push({path:'/pms/addProduct'});
@@ -2188,17 +2244,17 @@ import {
             default:
               break;
           }
-          this.getList();
+          this.get_goods_list();
         });
       },
       handleSizeChange(val) {
         this.listQuery.pageNum = 1;
         this.listQuery.pageSize = val;
-        this.getList();
+        this.get_goods_list();
       },
       handleCurrentChange(val) {
         this.listQuery.pageNum = val;
-        this.getList();
+        this.get_goods_list();
       },
       handleSelectionChange(val) {
         this.multipleSelection = val;
@@ -2283,18 +2339,55 @@ import {
         });
       },
       updateDeleteStatus(deleteStatus, ids) {
-        let params = new URLSearchParams();
-        params.append('ids', ids);
-        params.append('deleteStatus', deleteStatus);
-        updateDeleteStatus(params).then(response => {
-          this.$message({
-            message: '删除成功',
-            type: 'success',
-            duration: 1000
-          });
-        });
-        this.getList();
+		let params = new URLSearchParams();
+		params.append('ids', ids);
+		params.append('deleteStatus', deleteStatus);
       },
+	  delete_mywarehouse(index, row){
+		let para = {
+		  	username:this.username,
+		  	access_token:this.access_token,
+		  	shop_type:this.shop_type,
+		  	lang:this.lang,
+			goods_id:row.id,
+		}
+		deleteGoodsWarehouse(para).then(res => {
+			this.$message({
+		  		message: 'Success!',
+		  		type: 'success',
+		  		duration: 1000
+		  	});
+			this.list = [] ;
+			this.get_goods_list();
+			console.log('deleteGoodsWarehouse return:',res);
+		})
+		.catch(err=>{
+			console.log('deleteGoodsWarehouse err:',err)
+		});
+	  },
+	  get_mywarehouse(){
+	  	let para = {
+	  		username:this.username,
+	  		access_token:this.access_token,
+	  		shop_type:this.shop_type,
+	  		lang:this.lang,
+	  	}
+	  	console.log('get_mywarehouse para:',para);
+		getMyWarehouse(para).then(res => {
+	  		/*
+			this.$message({
+	  	     message: 'Completed!',
+	  	     type: 'success',
+	  	     duration: 1000
+	  	   });
+		   */
+	  	   console.log('getMyWarehouse return:',res);
+	  	})
+	  	.catch(err=>{
+	  		console.log('getMyWarehouse err:',err)
+	  	});
+	  },
+	  
 	  //设置表格行的样式
 	   tableRowStyle({row,rowIndex}){
 	      return 'background-color:#FFF;font-size:14px;borderColor: #F2F2F2';

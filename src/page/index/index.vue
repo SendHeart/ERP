@@ -102,9 +102,9 @@
 			<div style="">
 				<el-row :gutter="15" class="row_list">
 					<el-col :span="4" v-for="(item_hot,index) in goods_list" :key="index">
-						<div class="goods-hot rflex" @click="goods_detail(index)">
+						<div class="goods-hot rflex">
 							<div class="cflex wflex">
-								<div style="display: flex;flex-direction: row;justify-content: center;">
+								<div style="display: flex;flex-direction: row;justify-content: center;" @click="goods_detail(index)">
 									<img :src="item_hot.img" class='goods-hot-img' alt="" >
 								</div>
 								
@@ -120,11 +120,11 @@
 									<p class="goods-hot-title">{{ item_hot.info_from }}</p>
 								</div>
 								<el-row :gutter="1" type="flex" class="row-bg el-row-two" justify="space-around" style="height:30px;line-height: 30px; background-color: #D9D9D9;box-shadow:0 0 1px #000 inset;;">
-									<el-col :span="10" style="text-align: center;">
-										<span style="font-size: 12px;">{{ $t('commons.addhotgoods') }}</span>
+									<el-col :span="10" style="text-align: center;"  >
+										<span style="font-size: 12px;" @click="add_mywarehouse(index)">{{ $t('commons.addhotgoods') }}</span>
 									</el-col>
 									<el-col :span="10" style="text-align: center;">
-										<span style="font-size: 12px;">{{ $t('commons.linkorg') }}</span>
+										<span style="font-size: 12px;" @click="gotoMaterialUrl(index)">{{ $t('commons.linkorg') }}</span>
 									</el-col>
 								</el-row>
 							</div>
@@ -166,6 +166,7 @@
     import {
 		getGoodsList,
 		getNewsList,
+		addMyWarehouse,
     } from "@/api/user";
 	import newsList from "./components/newsList";  // 新闻列表
 	import { 
@@ -189,7 +190,7 @@
     export default {
 		data(){
 		return {
-			shop_type:shop_type?shop_type:2,
+			shop_type:shop_type?shop_type:10,
 			lang:getToken('lang')||'zh',
 			access_token:getToken('Token')||'zh',
 			username:getToken('Username')||'',
@@ -943,6 +944,11 @@
 			gotoEmallPlatform(){
 				this.$router.push('/emallplatform/emallplatform');
 			},
+			gotoMaterialUrl(goods_index=0){
+				let url = this.goods_list[goods_index].materialUrl
+				window.open(url, '_blank');
+			},
+			
 			hot_goods_select(selected='') {
 				if(selected =='1'){
 					this.latest_goods_selected = 'background-color:#BBBBBB;color:#FFFFFF;';
@@ -978,6 +984,28 @@
 				  });
 				  console.log('goods_detail goods_para:',goods_para)
 				   window.open(routeUrl.href, '_self'); //_self _blank
+			},
+			
+			add_mywarehouse(goods_index=0){
+				let para = {
+					username:this.username,
+					access_token:this.access_token,
+				    goods_id:this.goods_list[goods_index]['id'],
+					shop_type:this.shop_type,
+					lang:this.lang,
+				}
+				console.log('addMyWarehouse para:',para);
+				addMyWarehouse(para).then(res => {
+					this.$message({
+				     message: 'Completed!',
+				     type: 'success',
+				     duration: 1000
+				   });
+				   console.log('addMyWarehouse return:',res);
+				})
+				.catch(err=>{
+					console.log('addMyWarehouse err:',err)
+				});
 			},
 			get_goods_list(){
 			    let para = {
@@ -1145,7 +1173,7 @@
 			}
 			.goods-hot-img{
 				width: 100%;
-				height: 220px;
+				height: 225px;
 				border-top-left-radius: 10px;
 				border-top-right-radius: 10px;
 			}

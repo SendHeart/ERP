@@ -62,6 +62,14 @@ export const constantRouterMap = [
 			}
 		]
 	},
+	/*
+	{
+		path: '/goodsedit',
+		name: 'goodsedit',
+		component:Layout,
+		//component: () => import('@/page/goodsedit/goodsedit'),
+	},
+	*/
 ]
 
 	//注册路由

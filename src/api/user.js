@@ -145,9 +145,42 @@ export function getNewsList(reqData) {
       data: reqData
     })
 }
+
 export function getGoodsList(reqData) {
     return request({
       url:'/api/web_client/query_goods_list',
+      method: 'post',
+      data: reqData
+    })
+}
+
+export function addMyWarehouse(reqData) {
+    return request({
+      url:'/api/web_client/add_goods_warehouse',
+      method: 'post',
+      data: reqData
+    })
+}
+
+export function getMyWarehouse(reqData) {
+    return request({
+      url:'/api/web_client/query_goods_warehouse',
+      method: 'post',
+      data: reqData
+    })
+}
+
+export function deleteGoodsWarehouse(reqData) {
+    return request({
+      url:'/api/web_client/delete_goods_warehouse',
+      method: 'post',
+      data: reqData
+    })
+}
+
+export function getGoodsCategory(reqData) {
+    return request({
+      url:'/api/web_client/query_goods_category',
       method: 'post',
       data: reqData
     })

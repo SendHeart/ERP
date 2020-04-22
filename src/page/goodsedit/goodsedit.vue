@@ -20,7 +20,7 @@
 							<p class="emall-detail-sub-title" style="width: 80%;">{{goods_info.attr}}</p>
 						</div>
 						<div style="display: flex;flex-direction: row;justify-content: flex-start;margin-top:15px;">
-							<el-button icon="el-icon-circle-plus" type="primary" @click="goods_linkorg(goods_info.linkorg)">{{ $t('commons.linkorg') }}</el-button>
+							<el-button icon="el-icon-circle-plus" type="primary" @click="goods_linkorg(goods_info.materialUrl)">{{ $t('commons.linkorg') }}</el-button>
 						</div>
 					</div>
 				</el-col>
@@ -241,9 +241,8 @@
 <script>
     import { 
 		getEmallInfo,
-		getGoodsInfo,
+		getGoodsList,
 	} from "@/api/user";
-	import backTop from 'cps/backTop';
 	
 	import Ueditor from "@/components/editor/editor.vue"; //富文本编辑器
 	import YanShare from "@/components/yanShare.vue"; //
@@ -287,11 +286,14 @@
     export default {
         data(){
             return {
-				username:'',
-				labelPosition: 'left',
-				shop_type:shop_type?shop_type:2,
+				username:getToken('Username')||'',
+				shop_type:shop_type?shop_type:10,
 				lang:getToken('lang')||'zh',
+				access_token:getToken('Token')||'zh',
+				
+				labelPosition: 'left',
 				scrollTop:0,
+				goods_id:0,
 				goodsQuery: Object.assign({}, defaultGoodsQuery),
 				selectProductCateValue: null,
 				productCateOptions: [],
@@ -1204,7 +1206,6 @@
 			'AddShareDialog':AddShareDialog,
 			'Ueditor':Ueditor,
 			'v-upload':upload,
-			'backTop':backTop,
 		},
         created(){
 			//传参初始化
@@ -1229,10 +1230,13 @@
 					goods_init_info['sales'] = goods_para['sales']
 					goods_init_info['market_price'] = goods_para['market_price']
 					goods_init_info['sell_price'] = goods_para['sell_price']
+					goods_init_info['materialUrl'] = goods_para['materialUrl']
+					goods_init_info['id'] = goods_para['id']
 					goods_init_info['img'].push(img_info)
 					console.log('goods edit created desc:',goods_init_info['desc'])
 					this.goods_desc = goods_init_info['desc']?goods_init_info['desc']:this.goods_desc
 					this.goodsQuery['goodsTitle'] = goods_para['name']
+					this.goods_id = goods_para['id']
 				}
 				this.goods_sku_list = this.goods_sku_query
 			}
@@ -1567,19 +1571,19 @@
 			    let para = {
 			        pagesize:this.paginations.pageSize,
 			        page:this.paginations.pageIndex,
-					goods_id:'',
+					goods_id:this.goods_id,
 					shop_type:this.shop_type,
 					lang:this.lang,
 			    }
 				
 				//let.seller=Object.assign({},this.seller,new.data)
-			    getGoodsInfo(para).then(res => {
+			    getGoodsList(para).then(res => {
 			        this.$message({
 			          message: '保存成功',
 			          type: 'success',
 			          duration: 1000
 			        });
-					console.log('getGoodsInfo return:',res);
+					console.log('getGoodsList return:',res);
 			    })
 				.catch(err=>{
 					console.log('getBizPara err:',err)
