@@ -188,7 +188,7 @@
 				<el-col :span="24">
 					<div style="display: flex;flex-direction: column;justify-content: flex-start;">
 						<el-row :gutter="20" class="el-row" type="flex">
-							<el-button style="margin-top: 15px;margin-left: 10px;" size="medium" type="primary" @click="query_goods_info()">{{ $t('commons.save') }}</el-button>
+							<el-button style="margin-top: 15px;margin-left: 10px;" size="medium" type="primary" @click="save_goods_info()">{{ $t('commons.save') }}</el-button>
 							<el-button style="margin-top: 15px;margin-left: 30px;" size="medium" type="info" @click="go_back()">{{ $t('commons.goback') }}</el-button>
 						</el-row>					 
 					</div>
@@ -246,6 +246,7 @@
     import { 
 		getEmallInfo,
 		getGoodsList,
+		saveGoodsInfo,
 	} from "@/api/user";
 	import ueditor from "@/components/editor/editor.vue"; //富文本编辑器
 	import YanShare from "@/components/yanShare.vue"; //
@@ -1547,7 +1548,31 @@
 					console.log('getGoodsList err:',err)
 				});
 			},
-			
+			save_goods_info(){
+				let para = {
+					username:this.username,
+					access_token:this.access_token,
+					shop_type:this.shop_type,
+					lang:this.lang,
+					goods_id:this.goods_id,
+					goods_info:this.goods_info,
+					goods_sku_list:this.goods_sku_list,
+					goods_desc:this.goods_desc,
+					goods_attr_list:this.goods_attr_list,
+				}
+				saveGoodsInfo(para).then(res => {
+				    this.$message({
+				      message: 'Success',
+				      type: 'success',
+				      duration: 1000
+				    });
+					
+					console.log('save_goods_info return:',res);
+				})
+				.catch(err=>{
+					console.log('save_goods_info err:',err)
+				});
+			},
 			sku_delete(index, row){
 			  this.$confirm('是否要进行删除操作?', '提示', {
 			    confirmButtonText: '确定',
