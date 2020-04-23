@@ -41,15 +41,6 @@
 							</div>
 						</div>
 						<div class="row_left row_news" style="width: 40%; margin-left:10px;margin-top:-8px;float:right; padding:10px; flex;flex-direction: column;justify-content: flex-start;">
-							<!--
-							<div class="moreItem" style="width: 100%; margin-top:5px; z-index:30; display: flex;flex-direction: row;justify-content: flex-end;">
-								
-								<a>
-									<svg-icon icon-class="more_color" />
-								</a>
-								
-							</div>
-							-->
 							<div style="display: flex;flex-direction: column;justify-content: flex-start;padding-top: 8px;">
 								<el-col :span="8">
 									<div class="news-title" style="margin-top: -20px;">{{ $t('commons.globalnews') }}</div>
@@ -67,22 +58,6 @@
 									</el-col>
 								</el-row>
 								<news-list :winheight="'220'"></news-list>
-								<!--
-								<el-row type="flex" justify="center" class="row-bg" :gutter="10" v-for="(item_news,index) in news_list" :key="index">
-									<el-col :span="1">
-										<div v-if="item_news.hot_no" class="news-content-hotno" style="text-align: center;">
-											{{item_news.hot_no}}
-										</div>
-									</el-col>
-									<el-col :span="20">
-										<div class="news-content" style="text-align: start;">{{item_news.content}}</div>
-									</el-col>
-									<el-col :span="5">
-										<div class="news-content" style="text-align: start;">{{item_news.time}}</div>
-									</el-col>
-								</el-row>
-								-->
-								
 							</div>
 						</div>
 					</div>
@@ -187,6 +162,13 @@
 	import shopeelogoImg from "@/assets/img/shopee-logo.png";
 	import ebaylogoImg from "@/assets/img/ebay-logo.png";
 	import tianmaologoImg from "@/assets/img/tianmao-logo.jpg";
+	const  paginations = {
+			      total: 0,        // 总数
+			      pageIndex: 1,  // 当前位于哪页
+			      pageSize: 20,   // 1页显示多少条
+			      pageSizes: [5, 10, 15, 20],  //每页显示多少条
+			      layout: "total, sizes, prev, pager, next, jumper"   // 翻页属性
+	}
     export default {
 		data(){
 		return {
@@ -209,13 +191,7 @@
 			news_pagesize:10,
 			loading:true,
 			//需要给分页组件传的信息
-			 paginations: {
-			      total: 0,        // 总数
-			      pageIndex: 1,  // 当前位于哪页
-			      pageSize: 20,   // 1页显示多少条
-			      pageSizes: [5, 10, 15, 20],  //每页显示多少条
-			      layout: "total, sizes, prev, pager, next, jumper"   // 翻页属性
-			},
+			paginations:getToken('Paginations')||paginations,
 			goods_list:[],
 			main_index:[
 				{
@@ -905,10 +881,11 @@
 		},	
 		created(){
 			//this.goods_list = this.latest_goods_list;
-			this.get_goods_list() ;
+			
 		},
 		mounted(){
 			//this.changeLocale('zh');
+			this.get_goods_list() ;
 		},
 		methods: {
 			gotoComment(){
@@ -950,15 +927,21 @@
 			},
 			
 			hot_goods_select(selected='') {
+				if(selected!=''){
+					this.paginations.pageIndex = 1
+				}
+				
 				if(selected =='1'){
 					this.latest_goods_selected = 'background-color:#BBBBBB;color:#FFFFFF;';
 					this.hot_goods_selected = ''
-					this.goods_list = this.latest_goods_list;
+					//this.goods_list = this.latest_goods_list;
+					this.get_goods_list(1)
 				}else if(selected =='2'){
 					this.hot_goods_selected = 'background-color:#BBBBBB;color:#FFFFFF;';
 					this.latest_goods_selected = '' ;
-					this.goods_list = this.hot_goods_list;
-				} 	
+					//this.goods_list = this.hot_goods_list;
+					this.get_goods_list(2)
+				}
 			},
 			emall_detail(emall_name='',emall_id='1',type=''){
 				//this.$router.push({path:'/emallplatform/emallplatform_detail',query:{emall_name:emall_name,emall_id:emall_id}});
@@ -982,8 +965,8 @@
 						goods_para:goods_para,
 					}
 				  });
-				  console.log('goods_detail goods_para:',goods_para)
-				   window.open(routeUrl.href, '_self'); //_self _blank
+				console.log('goods_detail goods_para:',goods_para)
+				window.open(routeUrl.href, '_self'); //_self _blank
 			},
 			
 			add_mywarehouse(goods_index=0){
@@ -1007,7 +990,7 @@
 					console.log('addMyWarehouse err:',err)
 				});
 			},
-			get_goods_list(){
+			get_goods_list(type=0){
 			    let para = {
 					username:this.username,
 					access_token:this.access_token,
@@ -1015,6 +998,7 @@
 			        page:this.paginations.pageIndex,
 					shop_type:this.shop_type,
 					lang:this.lang,
+					type:type, //1:最新爆款 2:热门爆款
 			    }
 				
 			    getGoodsList(para).then(res => {
@@ -1025,6 +1009,7 @@
 					} 
 					console.log('getGoodsList return:',res);
 			        this.paginations.total = parseInt(res.total);
+					setToken("Paginations",user_info.token)
 			    })
 				.catch(err=>{
 					console.log('getGoodsList err:',err)

@@ -1397,7 +1397,7 @@
 			        page:this.paginations.pageIndex,
 					shop_type:this.shop_type,
 					lang:this.lang,
-					type:1, //1爆款商品查询
+					type:3, //3大数据爆款商品查询
 					category:this.goods_category[this.category_selected]['category'],
 					category_title:this.goods_category[this.category_selected]['title'],
 					emall_id:this.emall_provider[this.emall_selected]['emall_id'],
@@ -1411,6 +1411,7 @@
 					} 
 					console.log('getGoodsList return:',res);
 			        this.paginations.total = parseInt(res.total);
+					this.goods_category[this.category_selected]['style_class'] = 'background-color:#BBBBBB;color:#FFFFFF;';
 			    })
 				.catch(err=>{
 					console.log('getGoodsList err:',err)
