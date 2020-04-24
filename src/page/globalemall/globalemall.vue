@@ -1,8 +1,8 @@
 <template>
 	<div class="container">
 		<div style="margin-bottom: 50px;padding: 5px;display: flex;flex-direction: row;justify-content: flex-start;">
-			 <div style="height:100%;width:75%;">
-				 <el-carousel  indicator-position="inside" :height="bannerHeight+'px'" trigger="click">
+			 <div  style="height:100%;width:75%;">
+				 <el-carousel v-if="banner_url" indicator-position="inside" :height="bannerHeight+'px'" trigger="click">
 				 	<el-carousel-item v-for="(item_banner,index) in banner_url" :key="index">
 						<div style="display:flex;flex-direction: row; justify-content:center;">
 							<img ref="banner_image" class="bannerImg" :src="item_banner.url" alt="轮播图" @load="imgSet" />
@@ -11,7 +11,7 @@
 				 </el-carousel>
 			</div>
 		
-			<div style="height:100%;width:25%;margin-left:10px;">
+			<div v-if="sub_banner_url" style="height:100%;width:25%;margin-left:10px;">
 				<el-row :gutter="10" type="flex" class="row-bg" justify="center">
 					<el-col :span="12">
 						<img ref="subbanner_image" class="subbannerImg" :src="sub_banner_url[0].url" />
@@ -33,23 +33,23 @@
 		</div>
 		<div style="display: flex;flex-direction: row;justify-content: flex-start;">
 			<div style="width: 15%;">
-				<div style="display: flex;flex-direction: column;justify-content: center;">
+				<div style="display: flex;flex-direction: column;justify-content: center;" v-if="emall_region" >
 					<el-row :gutter="1" class="row_list">
 					<el-col :span="18" v-for="(item_region,index) in emall_region" :key="index" style="text-align: center; margin-bottom: 1px;font-size: 18px;">
-						<div :style="item_region.style_class" @click="region_select(index)">{{ $t(`commons.${item_region.name}`) }}</div>
+						<div :style="item_region.style_class" @click="region_select(index)">{{ item_region.title }}</div>
 					</el-col>
 					</el-row>
 				</div>
 			</div>
-			<div style="width: 85%;margin-left: 20px;">
+			<div style="width: 85%;margin-left: 20px;"  >
 				<div class="row_left row_base" style="width: 100%;margin-top:-28px;">
-					<el-row :gutter="5" class="row_list">
+					<el-row :gutter="5" class="row_list" v-if="emall_index">
 						<el-col :span="3" v-for="(item_emall,index) in emall_index" :key="index">
 							<div :style="item_emall.style_class" @click="emall_index_select(index)">{{ $t(`index.${item_emall.name}`) }}</div>
 						</el-col>
 					</el-row>
 				</div>
-			<el-row :gutter="15" class="row_list">
+				<el-row :gutter="15" class="row_list"  v-if="emall_list">
 				<el-col :span="7" v-for="(item_hot,index) in emall_list" :key="index">
 					<div class="goods-hot rflex">
 						<div class="cflex wflex">
@@ -77,9 +77,10 @@
 						</div>
 					</div>
 				</el-col>	
-			</el-row>
+				</el-row>
 			</div>
 		</div>
+		 <!--
 		<el-row>
 		     <el-col :span="24">
 		         <div class="pagination">
@@ -96,6 +97,7 @@
 		         </div>
 		     </el-col>
 		 </el-row>
+		 -->
 	</div>
 </template>
 
@@ -124,11 +126,14 @@
     export default {
         data(){
             return {
-				shop_type:shop_type?shop_type:2,
+				shop_type:shop_type?shop_type:10,
 				lang:getToken('lang')||'zh',
+				access_token:getToken('Token')||'zh',
+				username:getToken('Username')||'',
 				index_selected:0,
 				region_selected:0,
-				banner_url:[
+				banner_url:null,
+				banner_url_init:[
 					{
 						url:'https://img.alicdn.com/tfs/TB12c.KAkT2gK0jSZFkXXcIQFXa-768-420.jpg',
 						title:'家电返场',
@@ -151,7 +156,8 @@
 					},
 					
 				],
-				sub_banner_url:[
+				sub_banner_url:null,
+				sub_banner_url_init:[
 					{
 						url:'https://img1.utuku.china.com/640x0/news/20200401/052c10e5-abb7-47e3-888f-5c61984b12e5.jpg',
 						title:'义乌国际商贸城4819',
@@ -169,8 +175,8 @@
 						title:'',
 					},
 				],
-				
-                emall_index:[
+				emall_index:[],
+                emall_index_init:[
 					{
 						name:'emall_index_general',
 						title:'综合',
@@ -202,7 +208,8 @@
 						icon:''
 					}
                 ],
-				emall_region:[
+				emall_region:[],
+				emall_region_init:[
 					{
 						name:'emall_region_joined',
 						title:'我已入驻',
@@ -254,7 +261,7 @@
 					
 				],
 				emall_list:[],
-				emall_china_list:[
+				emall_china_list_init:[
 					{
 						id:'2',
 						name:'emallplatform_2',
@@ -309,7 +316,7 @@
 					},
 					
 				],
-				emall_asia_list:[
+				emall_asia_list_init:[
 					{
 						id:'4',
 						name:'emallplatform_4',
@@ -363,7 +370,7 @@
 						desc:'',
 					},
 				],
-				emall_joined_list:[
+				emall_joined_list_init:[
 					{
 						id:'1',
 						name:'emallplatform_1',
@@ -435,7 +442,7 @@
 					},
 					
 				],
-				emall_all_list:[
+				emall_all_list_init:[
 					{
 						id:'1',
 						name:'emallplatform_1',
@@ -590,11 +597,11 @@
             }
         },
         created(){
-			this.emall_list = this.emall_all_list ;
+			//this.emall_list = this.emall_all_list ;
 			//this.bigdata_hot_list = this.latest_hot_list ;
+			this.get_erp_para();
         },
         mounted(){
-            this.getUserList();
 			window.addEventListener("resize", () => {
 				if(this.$refs.banner_image.length>0){
 					console.log(this.$refs.banner_image)
@@ -625,19 +632,66 @@
 			     });
 			     window.open(routeUrl.href, '_self'); //_blank _self
 			},
-            getUserList(){
+            get_erp_para(){
                 let para = {
-                    pagesize:this.paginations.pageSize,
-                    page:this.paginations.pageIndex,
+					username:this.username,
+					access_token:this.access_token,
+					pagesize:this.paginations.pageSize,
+					page:this.paginations.pageIndex,
 					shop_type:this.shop_type,
 					lang:this.lang,
+					type:'1', //ERP平台业务参数
                 }
 				
 				//let.seller=Object.assign({},this.seller,new.data)
                 getBizPara(para).then(res => {
                     this.loading = false;
+					this.emall_list = []
+					this.emall_all_list=[]
+					for(var i=0;i<res.emall_all_list.length;i++){
+						this.emall_list.push(res.emall_all_list[i])
+						this.emall_all_list.push(res.emall_all_list[i])
+					} 
+					//this.emall_list = res.emall_all_list
+					//this.emall_all_list = res.emall_all_list
+					this.emall_region = res.emall_region
+					this.emall_region=[]
+					for(var i=0;i<res.emall_region.length;i++){
+						this.emall_region.push(res.emall_region[i])
+					} 
+					 
+					this.emall_china_list=[]
+					for(var i=0;i<res.emall_china_list.length;i++){
+						this.emall_china_list.push(res.emall_china_list[i])
+					} 
+					
+					this.emall_asia_list=[]
+					for(var i=0;i<res.emall_asia_list.length;i++){
+						this.emall_asia_list.push(res.emall_china_list[i])
+					} 
+					
+					this.emall_joined_list=[]
+					for(var i=0;i<res.emall_joined_list.length;i++){
+						this.emall_joined_list.push(res.emall_joined_list[i])
+					} 
+					
+					this.emall_index=[]
+					for(var i=0;i<res.emall_index.length;i++){
+						this.emall_index.push(res.emall_index[i])
+					} 
+					
+					this.banner_url=[]
+					for(var i=0;i<res.emall_index.length;i++){
+						this.banner_url.push(res.banner_url[i])
+					}
+					
+					this.sub_banner_url=[]
+					for(var i=0;i<res.sub_banner_url.length;i++){
+						this.sub_banner_url.push(res.sub_banner_url[i])
+					}
+					
 					console.log('getBizPara return:',res);
-                    this.paginations.total = parseInt(res.total);
+                    //this.paginations.total = parseInt(res.total);
                     //this.tableData = res.userList;
                 })
 				.catch(err=>{
@@ -647,12 +701,12 @@
             // 每页多少条切换
             handleSizeChange(pageSize) {
                this.paginations.pageSize = pageSize;
-               this.getUserList();
+               this.get_erp_para();
             },
             // 上下分页
             handleCurrentChange(page) {
                this.paginations.pageIndex = page;
-               this.getUserList();
+               this.get_erp_para();
             },
 			emall_index_select(selected=0) {
 				var k = parseInt(selected) ;
@@ -663,15 +717,39 @@
 					this.emall_index[this.index_selected]['style_class'] = 'background-color:#FFFFFF;color:#666';
 				}
 				this.index_selected = selected ;
+				var emall_rank = []
+				if(selected == 0){ //综合排名
+					emall_rank = this.sortByKey(this.emall_all_list,'rank_general')
+				}else if(selected == 1){
+					emall_rank = this.sortByKey(this.emall_all_list,'rank_pv')
+				}else if(selected == 2){
+					emall_rank = this.sortByKey(this.emall_all_list,'rank_speed')
+				}else if(selected == 3){
+					emall_rank = this.sortByKey(this.emall_all_list,'rank_cost')
+				}else if(selected == 4){
+					emall_rank = this.sortByKey(this.emall_all_list,'rank_profit')
+				}
+				this.emall_list = emall_rank
+				
+				/*
 				if(k%2>0){
 					this.emall_list = this.emall_joined_list
 				}else{
 					this.emall_list = this.emall_china_list
 				}
+				*/
 				this.emall_region[this.region_selected]['style_class'] = 'background-color:#FFFFFF;color:#666';
 			},
+			sortByKey(array,key){
+			    return array.sort(function(a,b){
+			        var x = a[key];
+			        var y = b[key];
+			        return((x<y)?-1:((x>y)?1:0));
+			    })
+			},
+			
 			region_select(selected=0) {
-				var k = parseInt(selected) ;
+				//var k = parseInt(selected) ;
 				var region_selected = this.region_selected
 				this.emall_region[selected]['style_class'] = selected==0?'background-color:#BBBBBB;color:#FFFFFF;margin-bottom:10px;':'background-color:#BBBBBB;color:#FFFFFF;';
 				if(selected!=this.region_selected){
@@ -679,6 +757,21 @@
 				}
 				
 				this.region_selected = selected ;
+				var emall_list = []
+				for(var i=0;i<this.emall_all_list.length;i++){
+					if(this.emall_region[selected]['key_name'] == 'Joined'){
+						if(this.emall_all_list[i]['status']=='1'){
+							emall_list.push(this.emall_all_list[i])
+						}
+					}else{
+						if(this.emall_all_list[i]['region']==this.emall_region[selected]['key_name']){
+							emall_list.push(this.emall_all_list[i])
+						}
+					}
+				}
+				
+				this.emall_list = emall_list
+				/*
 				if(k%3==1){
 					this.emall_list = this.emall_joined_list
 				}else if(k%3==2){
@@ -686,6 +779,7 @@
 				}else{
 					this.emall_list = this.emall_china_list
 				}
+				*/
 			}
         },
     }
@@ -782,6 +876,3 @@
 	}
 	
 </style>
-
-
-

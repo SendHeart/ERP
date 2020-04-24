@@ -154,6 +154,14 @@ export function getGoodsList(reqData) {
     })
 }
 
+export function saveGoodsInfo(reqData) {
+    return request({
+      url:'/api/web_client/save_goods_info',
+      method: 'post',
+      data: reqData
+    })
+}
+
 export function addMyWarehouse(reqData) {
     return request({
       url:'/api/web_client/add_goods_warehouse',
@@ -173,6 +181,14 @@ export function getMyWarehouse(reqData) {
 export function deleteGoodsWarehouse(reqData) {
     return request({
       url:'/api/web_client/delete_goods_warehouse',
+      method: 'post',
+      data: reqData
+    })
+}
+
+export function getGoodsSupply(reqData) {
+    return request({
+      url:'/api/web_client/query_goods_supply',
       method: 'post',
       data: reqData
     })

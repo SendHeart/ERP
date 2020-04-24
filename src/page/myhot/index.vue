@@ -24,33 +24,25 @@
 				<el-cascader
 				  clearable
 				  v-model="listQuery.goodsSupplyId"
-				  :options="goodsSupplyOptions">
+				  :options="goods_supply">
 				</el-cascader>
 			</el-form-item>
 			<el-form-item label="所属类目：">
 			  <el-cascader
 			    clearable
 			    v-model="listQuery.goodsCategoryId"
-			    :options="productCateOptions"
+			    :options="goods_category"
 				filterable>
 			  </el-cascader>
 			</el-form-item>
-			<el-form-item label="入库时间(从)：">
-			  <el-date-picker
-			    class="input-width"
-			    v-model="listQuery.storage_in"
-			    value-format="yyyy-MM-dd"
-			    type="date"
-			    placeholder="请选择入库时间">
-			  </el-date-picker>
-			  至
-			  <el-date-picker
-			    class="input-width"
-			    v-model="listQuery.storage_out"
-			    value-format="yyyy-MM-dd"
-			    type="date"
-			    placeholder="请选择入库时间">
-			  </el-date-picker>
+			<el-form-item label="入库时间">
+				<el-date-picker
+				      v-model="listQuery.storage_in"
+				      type="daterange"
+				      start-placeholder="开始日期"
+				      end-placeholder="结束日期"
+				      :default-time="['00:00:00', '23:59:59']">
+				</el-date-picker>
 			</el-form-item>
 			 
 			<!--
@@ -342,6 +334,7 @@ import {
 		getMyWarehouse,
 		deleteGoodsWarehouse,
 		getGoodsCategory,
+		getGoodsSupply,
 } from "@/api/user";
 import {
 		shop_type,
@@ -435,7 +428,8 @@ import {
 				value:'10002'
 			}
 		],
-		goodsSupplyOptions: [
+		goods_supply:[],
+		goods_supply_init: [
 			{
 				label:'1688',
 				value:'1',
@@ -1066,7 +1060,8 @@ import {
 		    pageSizes: [5, 10, 15, 20],  //每页显示多少条
 		    layout: "total, sizes, prev, pager, next, jumper"   // 翻页属性
 		},
-		goods_category:[
+		goods_category:[],
+		goods_category_init:[
 			{
 				label:'女装',
 				value:'1',
@@ -2014,6 +2009,7 @@ import {
      this.get_goods_list();
      this.get_mywarehouse();
      this.get_goods_category();
+	 this.get_goods_supply();
     },
     watch: {
       selectProductCateValue: function (newValue) {
@@ -2110,7 +2106,7 @@ import {
 		  	lang:this.lang,
 			type:0, //多级类目
 		  }
-		  this.productCateOptions = this.goods_category ;
+		  //this.productCateOptions = this.goods_category ;
 		  //console.log('get_goods_category para:',para);
 		  getGoodsCategory(para).then(res => {
 			/*
@@ -2120,6 +2116,10 @@ import {
 		       duration: 1000
 		     });
 			*/
+		    let goods_category = res
+		    for(var i=0;i<goods_category.length;i++){
+		    	this.goods_category.push(goods_category[i])
+		    } 
 		     console.log('get_goods_category return:',res);
 		  })
 		  .catch(err=>{
@@ -2141,6 +2141,35 @@ import {
         });
 		*/
       },
+	  get_goods_supply() {
+		let para = {
+			username:this.username,
+			access_token:this.access_token,
+			shop_type:this.shop_type,
+			lang:this.lang,
+			type:0, //
+		}
+		this.productCateOptions = this.goods_category ;
+		//console.log('get_goods_category para:',para);
+		getGoodsSupply(para).then(res => {
+	  			/*
+	  		  	this.$message({
+	  		       message: 'Completed!',
+	  		       type: 'success',
+	  		       duration: 1000
+	  		     });
+	  			*/
+			let goods_supply = res
+			for(var i=0;i<goods_supply.length;i++){
+				this.goods_supply.push(goods_supply[i])
+			} 
+			console.log('get_goods_supply return:',res);
+		})
+		.catch(err=>{
+			console.log('get_goods_supply err:',err)
+		});
+	  },
+	  
       handleShowSkuEditDialog(index,row){
         this.editSkuInfo.dialogVisible=true;
         this.editSkuInfo.productId=row.id;
@@ -2344,37 +2373,39 @@ import {
 		params.append('ids', ids);
 		params.append('deleteStatus', deleteStatus);
       },
-	  delete_mywarehouse(index, row){
-		let para = {
-		  	username:this.username,
-		  	access_token:this.access_token,
-		  	shop_type:this.shop_type,
-		  	lang:this.lang,
-			goods_id:row.id,
-		}
-		deleteGoodsWarehouse(para).then(res => {
-			this.$message({
-		  		message: 'Success!',
-		  		type: 'success',
-		  		duration: 1000
-		  	});
-			this.list = [] ;
-			this.get_goods_list();
-			console.log('deleteGoodsWarehouse return:',res);
-		})
-		.catch(err=>{
-			console.log('deleteGoodsWarehouse err:',err)
-		});
-	  },
-	  get_mywarehouse(){
-	  	let para = {
-	  		username:this.username,
-	  		access_token:this.access_token,
-	  		shop_type:this.shop_type,
-	  		lang:this.lang,
-	  	}
-	  	console.log('get_mywarehouse para:',para);
-		getMyWarehouse(para).then(res => {
+	  
+		delete_mywarehouse(index, row){
+			let para = {
+				username:this.username,
+				access_token:this.access_token,
+				shop_type:this.shop_type,
+				lang:this.lang,
+				goods_id:row.id,
+			}
+			deleteGoodsWarehouse(para).then(res => {
+				this.$message({
+					message: 'Success!',
+					type: 'success',
+					duration: 1000
+				});
+				this.list = [] ;
+				this.get_goods_list();
+				console.log('deleteGoodsWarehouse return:',res);
+			})
+			.catch(err=>{
+				console.log('deleteGoodsWarehouse err:',err)
+			});
+		},
+	  
+		get_mywarehouse(){
+			let para = {
+				username:this.username,
+				access_token:this.access_token,
+				shop_type:this.shop_type,
+				lang:this.lang,
+			}
+			console.log('get_mywarehouse para:',para);
+			getMyWarehouse(para).then(res => {
 	  		/*
 			this.$message({
 	  	     message: 'Completed!',
@@ -2382,21 +2413,21 @@ import {
 	  	     duration: 1000
 	  	   });
 		   */
-	  	   console.log('getMyWarehouse return:',res);
-	  	})
-	  	.catch(err=>{
-	  		console.log('getMyWarehouse err:',err)
-	  	});
-	  },
+			console.log('getMyWarehouse return:',res);
+			})
+			.catch(err=>{
+				console.log('getMyWarehouse err:',err)
+			});
+		},
 	  
-	  //设置表格行的样式
-	   tableRowStyle({row,rowIndex}){
-	      return 'background-color:#FFF;font-size:14px;borderColor: #F2F2F2';
-	   },
-	  //设置表头行的样式
-	  tableHeaderColor({row,column,rowIndex,columnIndex}){
-		return 'background:#BBBBBB;color:#333;borderColor: #FFFFFF;font-size:16px;' ;
-	   },
+		//设置表格行的样式
+		tableRowStyle({row,rowIndex}){
+			return 'background-color:#FFF;font-size:14px;borderColor: #F2F2F2';
+		},
+		//设置表头行的样式
+		tableHeaderColor({row,column,rowIndex,columnIndex}){
+			return 'background:#BBBBBB;color:#333;borderColor: #FFFFFF;font-size:16px;' ;
+		},
     }
   }
 </script>

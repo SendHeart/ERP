@@ -4,7 +4,7 @@
 		<div class="go-back">
 			<el-button style="margin-top: 15px;margin-right: 30px;" size="medium" type="info" @click="go_back()">{{ $t('commons.goback') }}</el-button>
 		</div>
-		<div style="display: flex;flex-direction: row;justify-content: center;">
+		<div v-if="emall_list" style="display: flex;flex-direction: row;justify-content: center;">
 			<div class="emall-detail" style="margin-bottom: 50px;padding: 15px;display: flex;flex-direction: row;justify-content: flex-start;">
 				<div style="display: flex;flex-direction: row;justify-content: center;">
 					<img :src="emall_list[emall_query_index].img" class='emall-detail-img' alt="">
@@ -26,7 +26,7 @@
 			</div>
 		</div>
 		
-		<div style="display: flex;flex-direction: row;justify-content: flex-start;">
+		<div v-if="emall_list" style="display: flex;flex-direction: row;justify-content: flex-start;">
 			<div style="width: 13%;">
 				<div style="display: flex;flex-direction: column;justify-content: center;padding-left: 10px;">
 					<el-row :gutter="1" class="row_list">
@@ -333,8 +333,10 @@
     export default {
         data(){
             return {
-				shop_type:shop_type?shop_type:2,
+				shop_type:shop_type?shop_type:10,
 				lang:getToken('lang')||'zh',
+				access_token:getToken('Token')||'zh',
+				username:getToken('Username')||'',
 				comment_index_selected:0,
 				region_selected:0,
 				activeName: 'comment',
@@ -357,7 +359,7 @@
 				my_strategy_title:'',
 				my_strategy_reply:'',
 				content: "请输入评论内容",
-				username:'',
+				
 				banner_url:[
 					{
 						url:'https://img.alicdn.com/tfs/TB12c.KAkT2gK0jSZFkXXcIQFXa-768-420.jpg',
@@ -478,7 +480,7 @@
 					},
 					
 				],
-				emall_list:[],
+				emall_list:null,
 				
 				emall_all_list:[
 					{
@@ -1295,10 +1297,13 @@
 			Ueditor,
 		},
         created(){
-			this.emall_list = this.emall_all_list ;
+			//this.emall_list = this.emall_all_list ;
 			if(this.$route.query){
 				this.emall_query= this.$route.query;
 				this.activeName=this.emall_query['type']?this.emall_query['type']:this.activeName ;
+				this.emall_query_id= this.emall_query['emall_id']
+				this.emall_query_name= this.emall_query['emall_name']
+				/*
 				for(var i=0;i<this.emall_list.length;i++){
 					if(this.emall_list[i]['name'] == this.emall_query['emall_name']){
 						this.emall_query_index = i ;
@@ -1306,15 +1311,17 @@
 						break;
 					}
 				}
+				*/
 			}
 			this.emall_detail_commentlist = this.emall_commentlist[this.emall_query_id]?this.emall_commentlist[this.emall_query_id]:this.emall_commentlist['1'] ;
 			this.emall_detail_strategylist = this.emall_strategylist[this.emall_query_id]?this.emall_strategylist[this.emall_query_id]:this.emall_strategylist['1'] ;
-			
+			this.get_emall_info();
         },
         mounted(){
-            this.getUserList();
+            
         },
         methods: {
+			
 			//发布评论
 			publishComment(){
 				this.is_comment_submit = !this.is_comment_submit ;
@@ -1679,25 +1686,27 @@
 					}
 			    })
 			},
-            getUserList(){
+            get_emall_info(){
                 let para = {
-                    pagesize:this.paginations.pageSize,
-                    page:this.paginations.pageIndex,
-					emall_id:'',
+                    username:this.username,
+                    access_token:this.access_token,
+					emall_id:this.emall_query_id,
+					emall_name:this.emall_query_name,
 					shop_type:this.shop_type,
 					lang:this.lang,
                 }
 				
-				//let.seller=Object.assign({},this.seller,new.data)
                 getEmallInfo(para).then(res => {
-                    this.loading = false;
-					console.log('getBizPara return:',res);
-                    this.paginations.total = parseInt(res.total);
+                    this.loading = false ;
+					this.emall_query_index = 0 ;
+					this.emall_list = []
+					let emall_list = res
+					this.emall_list.push(emall_list) 
 					
-                    //this.tableData = res.userList;
+					console.log('get_emall_info return:',res);
                 })
 				.catch(err=>{
-					console.log('getBizPara err:',err)
+					console.log('get_emall_info err:',err)
 				});
             },
             // 每页多少条切换
