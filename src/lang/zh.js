@@ -1,8 +1,8 @@
 const zh = {
     // layout
     commons: {
-      xiaoai: '追默科技_',
-	  company:'追默科技',
+      xiaoai: 'DreamX_',
+	  company:'DreamX',
       admin: '超级管理员',
       editor: '普通管理员',
       quit: '退出',
@@ -161,7 +161,7 @@ const zh = {
 		emall_taobao:'淘宝',
 		emall_tianmao:'天猫',
 		emall_pingduoduo:'拼多多',
-		emall_ebay:'易贝EBay',
+		emall_ebay:'EBay',
 		emall_wish:'WISH',
 		emall_shopee:'虾皮',
 		emall_index_general:'综合',
