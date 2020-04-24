@@ -26,6 +26,7 @@
 		ref="myQuillEditor"
 		:options="editorOption"
 		@blur="_blur"
+		@focus="onEditorFocus($event)"
 		@change="onEditorChange($event)">
 		</quill-editor>
 		<p class="tips" v-if="tips.length>0">{{tips}}</p>
@@ -118,13 +119,6 @@ export default {
 				this.err = false;
 			}
 		},
-		/*
-		initContent: function (val,oval) {
-		     //this.initContent = val
-			 this.detailContent = oval;
-			 console.log('editor watch initContent:',val,oval)
-		  },
-		  */
 	},
 	created(){
 		//this.detailContent = this.initContent;
@@ -185,6 +179,7 @@ export default {
     	this.isInit = false
     	this.valiDate()
     },
+	
     /*设置编辑器的内容*/
     resetForm () {
     	this.detailContent = ''
@@ -205,9 +200,11 @@ export default {
     		return true
     	}
     },
-    _blur(){
+    _blur(){  // 失去焦点事件
     	this.valiDate()
-    }
+    },
+	onEditorFocus(){}, // 获得焦点事件
+	
   }
 }
 </script>

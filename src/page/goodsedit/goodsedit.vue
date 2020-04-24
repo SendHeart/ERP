@@ -168,12 +168,17 @@
 				<el-col :span="24">
 					<div style="display: flex;flex-direction: column;justify-content: flex-start;">
 						<div style="text-align: left;">
-							<p class="emall-detail-title" style="font-size: 18px;font-weight: bolder;">{{$t('commons.goods_desc')}}</p>
+							<p class="emall-detail-title" style="font-size: 18px;font-weight: bolder;">{{$t('commons.goods_desc')}}
+							<el-button style="margin-left: 5px;" :icon="is_goods_desc?'el-icon-caret-top':'el-icon-caret-bottom'" type="primary" @click="edit_goods_desc()"></el-button>
+							</p>
 						</div>				 
 					</div>
-					<el-col :md="15" style="margin-top: 10px;">
-						<ueditor @on-change="get_goods_desc" :initContent="goods_desc"></ueditor>
-					</el-col>
+					<div v-if="is_goods_desc" >
+						<el-col v-if="goods_desc" :md="15" style="margin-top: 10px;">
+							<ueditor @on-change="get_goods_desc" :initContent="goods_desc"></ueditor>
+						</el-col>
+					</div>
+					
 				</el-col>
 			</el-row>
 		</div>
@@ -183,7 +188,7 @@
 				<el-col :span="24">
 					<div style="display: flex;flex-direction: column;justify-content: flex-start;">
 						<el-row :gutter="20" class="el-row" type="flex">
-							<el-button style="margin-top: 15px;margin-left: 10px;" size="medium" type="primary" @click="query_goods_info()">{{ $t('commons.save') }}</el-button>
+							<el-button style="margin-top: 15px;margin-left: 10px;" size="medium" type="primary" @click="save_goods_info()">{{ $t('commons.save') }}</el-button>
 							<el-button style="margin-top: 15px;margin-left: 30px;" size="medium" type="info" @click="go_back()">{{ $t('commons.goback') }}</el-button>
 						</el-row>					 
 					</div>
@@ -234,7 +239,6 @@
 		    <el-button type="primary" @click="edit_sku_spec(1,goods_sku_speclist)" size="small">确 定</el-button>
 		  </span>
 		</el-dialog>
-		<backTop :ele="$refs.menu_right"></backTop>
 	</div>
 </template>
 
@@ -242,13 +246,13 @@
     import { 
 		getEmallInfo,
 		getGoodsList,
+		saveGoodsInfo,
 	} from "@/api/user";
-	
-	import Ueditor from "@/components/editor/editor.vue"; //富文本编辑器
+	import ueditor from "@/components/editor/editor.vue"; //富文本编辑器
 	import YanShare from "@/components/yanShare.vue"; //
 	import InfoShare from "@/components/infoShare.vue"; //
 	import AddShareDialog from "@/components/addShareDialog.vue"; //
-	import { 
+	import {
 		setToken,
 		getToken,
 	} from '@/utils/auth';
@@ -281,6 +285,7 @@
 		storage_in:null,
 		storage_out:null,
 	};
+	
 	let moment = require("moment");
 
     export default {
@@ -290,7 +295,7 @@
 				shop_type:shop_type?shop_type:10,
 				lang:getToken('lang')||'zh',
 				access_token:getToken('Token')||'zh',
-				
+				is_goods_desc:false,
 				labelPosition: 'left',
 				scrollTop:0,
 				goods_id:0,
@@ -954,87 +959,14 @@
 						market_price:'',
 						sell_price:'￥249.50 - ￥379.00',
 				},
-				goods_desc:'<span style="font-size:18px">服饰_男装_青年服饰_体恤</p>',
+				goods_desc:'',
 				goods_query_info:
 					{
 						id:'1',
 						name:'惠田牌饮水机下置式水桶装立式家用冰温热全自动茶吧机制冷管线机',
 						title:'',
 						sub_title:'',
-						img:[
-							{
-								url:'https://cbu01.alicdn.com/img/ibank/2020/028/100/13698001820_1952544606.360x360.jpg',
-								type:'',
-							},
-							{
-								url:'https://cbu01.alicdn.com/img/ibank/2020/028/100/13698001820_1952544606.360x360.jpg',
-								type:'',
-							},
-							{
-								url:'https://cbu01.alicdn.com/img/ibank/2020/028/100/13698001820_1952544606.360x360.jpg',
-								type:'',
-							},
-							{
-								url:'https://cbu01.alicdn.com/img/ibank/2020/028/100/13698001820_1952544606.360x360.jpg',
-								type:'',
-							},
-							{
-								url:'https://cbu01.alicdn.com/img/ibank/2020/028/100/13698001820_1952544606.360x360.jpg',
-								type:'',
-							},
-							{
-								url:'https://cbu01.alicdn.com/img/ibank/2020/028/100/13698001820_1952544606.360x360.jpg',
-								type:'',
-							},
-							{
-								url:'https://cbu01.alicdn.com/img/ibank/2020/028/100/13698001820_1952544606.360x360.jpg',
-								type:'',
-							},
-							{
-								url:'https://cbu01.alicdn.com/img/ibank/2020/028/100/13698001820_1952544606.360x360.jpg',
-								type:'',
-							},
-							{
-								url:'https://cbu01.alicdn.com/img/ibank/2020/028/100/13698001820_1952544606.360x360.jpg',
-								type:'',
-							},
-							{
-								url:'https://cbu01.alicdn.com/img/ibank/2020/028/100/13698001820_1952544606.360x360.jpg',
-								type:'',
-							},
-							{
-								url:'https://cbu01.alicdn.com/img/ibank/2020/028/100/13698001820_1952544606.360x360.jpg',
-								type:'',
-							},
-							{
-								url:'https://cbu01.alicdn.com/img/ibank/2020/028/100/13698001820_1952544606.360x360.jpg',
-								type:'',
-							},
-							{
-								url:'https://cbu01.alicdn.com/img/ibank/2020/028/100/13698001820_1952544606.360x360.jpg',
-								type:'',
-							},
-							{
-								url:'https://cbu01.alicdn.com/img/ibank/2020/028/100/13698001820_1952544606.360x360.jpg',
-								type:'',
-							},
-							{
-								url:'https://cbu01.alicdn.com/img/ibank/2020/028/100/13698001820_1952544606.360x360.jpg',
-								type:'',
-							},
-							{
-								url:'https://cbu01.alicdn.com/img/ibank/2020/028/100/13698001820_1952544606.360x360.jpg',
-								type:'',
-							},
-							{
-								url:'https://cbu01.alicdn.com/img/ibank/2020/028/100/13698001820_1952544606.360x360.jpg',
-								type:'',
-							},
-							{
-								url:'https://cbu01.alicdn.com/img/ibank/2020/028/100/13698001820_1952544606.360x360.jpg',
-								type:'',
-							},
-						],
+						img:[],
 						attr:'',
 						deliverytype:'一件代发',
 						linkorg:'https://www.1688.com/',
@@ -1054,7 +986,8 @@
 			
 				loading:true,
 				goods_sku_list:[],
-				goods_sku_speclist:[
+				goods_sku_speclist:[],
+				goods_sku_speclist_init:[
 					{
 						name:"型号",
 						type:1,
@@ -1068,8 +1001,8 @@
 						type:1,
 					},
 				],
-				  	
-				goods_skulist_title: [
+				goods_skulist_title:[],
+				goods_skulist_title_init: [
 					{ title: "SKU序号", attr: "title", key: "sku_no",width:150 },
 					{ title: "淘宝货号", attr: "title", key: "tb_skuno",width:150 },
 					{ title: "库存", attr: "title", key: "store_nums",width:80 },
@@ -1158,7 +1091,8 @@
 					{ title: "属性名称", attr: "title", key: "name",width:150 },
 					{ title: "属性描述", attr: "title", key: "value",width:150 },
 				],
-				goods_attr_list:[
+				goods_attr_list:[],
+				goods_attr_list_init:[
 					{
 						name:'材质',
 						value:[
@@ -1204,7 +1138,7 @@
 			'YanShare':YanShare,
 			'InfoShare':InfoShare,
 			'AddShareDialog':AddShareDialog,
-			'Ueditor':Ueditor,
+			'ueditor':ueditor,
 			'v-upload':upload,
 		},
         created(){
@@ -1233,20 +1167,24 @@
 					goods_init_info['materialUrl'] = goods_para['materialUrl']
 					goods_init_info['id'] = goods_para['id']
 					goods_init_info['img'].push(img_info)
-					console.log('goods edit created desc:',goods_init_info['desc'])
-					this.goods_desc = goods_init_info['desc']?goods_init_info['desc']:this.goods_desc
+					
 					this.goodsQuery['goodsTitle'] = goods_para['name']
 					this.goods_id = goods_para['id']
 				}
-				this.goods_sku_list = this.goods_sku_query
+				//this.goods_sku_list = this.goods_sku_query
+				
 			}
 			
 			this.goods_info=goods_init_info
+			this.goods_skulist_title = this.goods_skulist_title_init 
+			this.query_goods_info();
+			/*
 			if(this.goods_query_info){
 				for(var i=0;i<this.goods_query_info['img'].length;i++){
 					this.goods_info['img'].push(this.goods_query_info['img'][i])
 				}
 			}
+			*/
 			//初始化SKU属性到表头
 			if(this.goods_sku_speclist){
 				//插入新的属性项
@@ -1255,7 +1193,6 @@
         },
         mounted(){
 			this.productCateOptions = this.goods_category ;
-            this.getUserList();
         },
         methods: {
 			sku_title_init(){
@@ -1281,7 +1218,9 @@
 				}
 				this.goods_skulist_title = sku_title_list
 			},
-			
+			edit_goods_desc(){
+				this.is_goods_desc = !this.is_goods_desc
+			},
 			goods_attr_add(){
 				let goods_attr = {
 					name:'',
@@ -1569,27 +1508,71 @@
 			
 			query_goods_info(){
 			    let para = {
-			        pagesize:this.paginations.pageSize,
-			        page:this.paginations.pageIndex,
-					goods_id:this.goods_id,
+					username:this.username,
+					access_token:this.access_token,
 					shop_type:this.shop_type,
 					lang:this.lang,
+					goods_id:this.goods_id,
 			    }
 				
 				//let.seller=Object.assign({},this.seller,new.data)
 			    getGoodsList(para).then(res => {
+					/*
 			        this.$message({
 			          message: '保存成功',
 			          type: 'success',
 			          duration: 1000
 			        });
-					console.log('getGoodsList return:',res);
+					*/
+					var result = res.result
+					if(result[0]['img'].constructor === Array){
+						 this.goods_info['img']=[]
+						for(var k=0;k<result[0]['img'].length;k++){
+							this.goods_info['img'].push(result[0]['img'][k])
+						} 
+						 
+					}
+					this.goods_info['category'] = result[0]['category']
+					this.goods_info['materialUrl'] = result[0]['materialUrl']
+					this.goods_info['name'] = result[0]['name']
+					this.goods_info['id'] = result[0]['id']
+					this.goods_info['sell_price'] = result[0]['sell_price']
+					this.goods_sku_list = result[0]['sku_list']
+					this.goods_sku_speclist = result[0]['sku_speclist']
+					this.goods_skulist_title = result[0]['skulist_title']
+					this.goods_desc = result[0]['desc']
+					this.goods_attr_list = result[0]['attr_list']
+					console.log('getGoodsList return:',res,' goods info:',this.goods_info);
 			    })
 				.catch(err=>{
-					console.log('getBizPara err:',err)
+					console.log('getGoodsList err:',err)
 				});
 			},
-			
+			save_goods_info(){
+				let para = {
+					username:this.username,
+					access_token:this.access_token,
+					shop_type:this.shop_type,
+					lang:this.lang,
+					goods_id:this.goods_id,
+					goods_info:this.goods_info,
+					goods_sku_list:this.goods_sku_list,
+					goods_desc:this.goods_desc,
+					goods_attr_list:this.goods_attr_list,
+				}
+				saveGoodsInfo(para).then(res => {
+				    this.$message({
+				      message: 'Success',
+				      type: 'success',
+				      duration: 1000
+				    });
+					
+					console.log('save_goods_info return:',res);
+				})
+				.catch(err=>{
+					console.log('save_goods_info err:',err)
+				});
+			},
 			sku_delete(index, row){
 			  this.$confirm('是否要进行删除操作?', '提示', {
 			    confirmButtonText: '确定',
