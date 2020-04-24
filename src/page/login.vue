@@ -130,7 +130,7 @@
 		position: absolute;
 		width: 100%;
 		height: 100%;
-		background: #f2f2f2;
+		background: url(../assets/img/bg9.jpg) no-repeat center center;
 		background-size: 100% 100%;
 	}
 	.form_contianer{

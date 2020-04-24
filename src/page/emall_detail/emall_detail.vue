@@ -31,19 +31,19 @@
 				<div style="display: flex;flex-direction: column;justify-content: center;padding-left: 10px;">
 					<el-row :gutter="1" class="row_list">
 					<el-col :span="18" style="text-align: left; margin-bottom: 10px;font-size: 18px;">
-						<div style="font-size:18px;color:#666" @click="region_select(index)">{{ $t('index.emall_detail_index_score') }}:<span style="color:#F56C6C">{{ emall_list[0].score}}</span></div>
+						<div style="font-size:18px;color:#666" >{{ $t('index.emall_detail_index_score') }}:<span style="color:#F56C6C">{{ emall_list[0].score}}</span></div>
 					</el-col>
 					<el-col :span="18" style="text-align: left; margin-bottom: 10px;font-size: 18px;">
-						<div style="font-size:18px;color:#666" @click="region_select(index)">{{ $t('index.emall_detail_index_pv') }}:<span style="color:#666">{{ emall_list[0].pv}}</span></div>
+						<div style="font-size:18px;color:#666" >{{ $t('index.emall_detail_index_pv') }}:<span style="color:#666">{{ emall_list[0].pv}}</span></div>
 					</el-col>
 					<el-col :span="18" style="text-align: left; margin-bottom: 10px;font-size: 18px;">
-						<div style="font-size:18px;color:#666" @click="region_select(index)">{{ $t('index.emall_detail_index_orderspeed') }}:<span style="color:#666">{{ emall_list[0].orderspeed}}</span></div>
+						<div style="font-size:18px;color:#666" >{{ $t('index.emall_detail_index_orderspeed') }}:<span style="color:#666">{{ emall_list[0].orderspeed}}</span></div>
 					</el-col>
 					<el-col :span="18" style="text-align: left; margin-bottom: 10px;font-size: 18px;">
-						<div style="font-size:18px;color:#666" @click="region_select(index)">{{ $t('index.emall_detail_index_cost') }}:<span style="color:#666">{{ emall_list[0].cost}}</span></div>
+						<div style="font-size:18px;color:#666" >{{ $t('index.emall_detail_index_cost') }}:<span style="color:#666">{{ emall_list[0].cost}}</span></div>
 					</el-col>
 					<el-col :span="18" style="text-align: left; margin-bottom: 10px;font-size: 18px;">
-						<div style="font-size:18px;color:#666" @click="region_select(index)">{{ $t('index.emall_detail_index_profit') }}:<span style="color:#666">{{ emall_list[0].profit}}</span></div>
+						<div style="font-size:18px;color:#666" >{{ $t('index.emall_detail_index_profit') }}:<span style="color:#666">{{ emall_list[0].profit}}</span></div>
 					</el-col>
 					<!--
 					<el-col :span="18" style="text-align: left; margin-bottom: 10px;font-size: 18px;">
@@ -338,7 +338,7 @@
 				access_token:getToken('Token')||'zh',
 				username:getToken('Username')||'',
 				comment_index_selected:0,
-				region_selected:0,
+				
 				activeName: 'comment',
 				emall_detail_score_pv:50,
 				emall_detail_score_orderspeed:78,
@@ -1730,23 +1730,7 @@
 				this.comment_index_selected = selected ;
 				
 			},
-			region_select(selected=0) {
-				var k = parseInt(selected) ;
-				var region_selected = this.region_selected
-				this.emall_region[selected]['style_class'] = selected==0?'background-color:#BBBBBB;color:#FFFFFF;margin-bottom:10px;':'background-color:#BBBBBB;color:#FFFFFF;';
-				if(selected!=this.region_selected){
-					this.emall_region[region_selected]['style_class'] = region_selected==0?'background-color:#FFFFFF;color:#666;margin-bottom:10px;':'background-color:#FFFFFF;color:#666';
-				}
-				
-				this.region_selected = selected ;
-				if(k%3==1){
-					this.emall_list = this.emall_joined_list
-				}else if(k%3==2){
-					this.emall_list = this.emall_asia_list
-				}else{
-					this.emall_list = this.emall_china_list
-				}
-			},
+			
 			go_back(){
 				this.$router.go(-1)
 				//window.close();
