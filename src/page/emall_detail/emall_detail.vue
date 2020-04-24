@@ -63,9 +63,9 @@
 					</el-row>
 				</div>
 				-->
-				<div class="row_left row_base" style="width: 100%;margin-top:0px;margin-bottom: 60px;">
+				<div  class="row_left row_base" style="width: 100%;margin-top:0px;margin-bottom: 60px;">
 					<el-tabs type="border-card" v-model="activeName" @tab-click="emall_detail_operation">
-					<el-tab-pane name='comment'>
+					<el-tab-pane name='comment' v-if="emall_detail_commentlist">
 						<span slot="label" class="emall-tab-pane">{{ $t(`index.${emall_detail_index[0].name}`) }}</span>
 						<el-button icon="el-icon-circle-plus" type="primary" @click="publishComment">{{ $t('index.emall_detail_mycomment') }}</el-button>
 						<div v-if="is_comment_submit" style="display: flex;flex-direction: column;justify-content: center;margin-top:10px;">
@@ -144,7 +144,7 @@
 							</el-col>	
 						</div>
 					  </el-tab-pane>
-					  <el-tab-pane name='strategy'>
+					  <el-tab-pane name='strategy' v-if="emall_detail_strategylist">
 						<span slot="label" class="emall-tab-pane">{{ $t(`index.${emall_detail_index[1].name}`) }}</span>
 						<el-button icon="el-icon-circle-plus" type="primary" @click="publishStrategy">{{ $t('index.emall_detail_mystrategy') }}</el-button>
 						<div v-if="is_strategy_submit" style="display: flex;flex-direction: column;justify-content: flex-start;margin-top:10px;">
@@ -481,793 +481,8 @@
 					
 				],
 				emall_list:null,
-				
-				emall_all_list:[
-					{
-						id:'1',
-						name:'emallplatform_1',
-						title:'北美亚马逊',
-						sub_title:'美国最大的一家网络电子商务公司',
-						img:amazonlogoImg,
-						status:'1', //0未入驻 1已入驻
-						score:'90',
-						pv:'80',
-						orderspeed:'60',
-						cost:'40',
-						profit:'55',
-						type:'B2C',
-						region:'美国、加拿大、墨西哥',
-						strategy:'2300',
-						comment:'1688',
-						desc:'亚马逊中国(z.cn)坚持“以客户为中心”的理念,秉承“天天低价,正品行货”信念,销售图书、电脑、数码家电、母婴百货、服饰箱包等上千万种产品。亚马逊中国提供专业...',
-					},
-					{
-						id:'2',
-						name:'emallplatform_2',
-						title:'淘宝',
-						sub_title:'中国深受欢迎的网购零售平台,亚太地区较大的网络零售、商圈',
-						img:taobaologoImg,
-						status:'1', //0未入驻 1已入驻
-						score:'90',
-						pv:'80',
-						orderspeed:'60',
-						cost:'40',
-						profit:'55',
-						type:'B2C',
-						region:'中国、俄罗斯、巴西',
-						strategy:'2300',
-						comment:'1688',
-						desc:'淘宝已从单一的C2C网络集市变成了包括C2C、分销、拍卖、直供、众筹、定制等等多种电子商务模式在内的综合性零售商圈。',
-					},
-					{
-						id:'3',
-						name:'emallplatform_3',
-						title:'天猫',
-						sub_title:'中国零售百强之首,综合性购物网站',
-						img:tianmaologoImg,
-						status:'0', //0未入驻 1已入驻
-						score:'90',
-						pv:'80',
-						orderspeed:'60',
-						cost:'40',
-						profit:'55',
-						type:'B2C',
-						region:'中国、俄罗斯、巴西',
-						strategy:'2300',
-						comment:'1688',
-						desc:'专业线上综合购物平台，全球消费者挚爱的品质购物之城！旨在引领中国消费者第一时间发现和体验全球化、更优质的生活方式，提前开启趋势中的理想生活！理想生活，上天猫',
-					},
-					{
-						id:'4',
-						name:'emallplatform_4',
-						title:'WISH',
-						sub_title:'全球27个国家的购物类APP中排名第一',
-						img:wishlogoImg,
-						status:'0', //0未入驻 1已入驻
-						score:'90',
-						pv:'80',
-						orderspeed:'60',
-						cost:'40',
-						profit:'55',
-						type:'B2C',
-						region:'中国、俄罗斯、巴西',
-						strategy:'2300',
-						comment:'1688',
-						desc:'Wish累计向全球超过3.5亿的消费者供应了愈2亿款商品，月活跃用户超过9000万人，活跃商户有12.5万，日出货量峰值达到200万单，订单主要来自美国、加拿大、欧洲等全球各地区',
-					},
-					{
-						id:'5',
-						name:'emallplatform_5',
-						title:'易贝',
-						sub_title:'可让全球民众上网买卖物品的线上拍卖及购物网站',
-						img:ebaylogoImg,
-						status:'1', //0未入驻 1已入驻
-						score:'90',
-						pv:'80',
-						orderspeed:'60',
-						cost:'40',
-						profit:'55',
-						type:'B2C',
-						region:'美国、加拿大、亚洲',
-						strategy:'2300',
-						comment:'1688',
-						desc:'',
-					},
-					{
-						id:'6',
-						name:'emallplatform_6',
-						title:'虾皮',
-						sub_title:'东南亚及中国台湾地区发展最快的的电商,全球C2C购物类App中下载量排名第一',
-						img:shopeelogoImg,
-						status:'0', //0未入驻 1已入驻
-						score:'90',
-						pv:'80',
-						orderspeed:'60',
-						cost:'40',
-						profit:'55',
-						type:'B2C',
-						region:'东南亚、中国、台湾地区',
-						strategy:'2300',
-						comment:'1688',
-						desc:'社群媒体粉丝数量超过3000万，拥有700万活跃卖家，员工超8000人遍布东南亚及中国， [3]  是东南亚发展最快的电商平台，也是国货出海东南亚的首选平台。',
-					},
-					{
-						id:'7',
-						name:'emallplatform_7',
-						title:'拼多多',
-						sub_title:'中国主流的手机购物APP，2019福布斯中国最具创新力企业',
-						img:pingduoduologoImg,
-						status:'0', //0未入驻 1已入驻
-						score:'90',
-						pv:'80',
-						orderspeed:'60',
-						cost:'40',
-						profit:'55',
-						type:'B2C',
-						region:'中国',
-						strategy:'2300',
-						comment:'1688',
-						desc:'凝聚更多人的力量，用更低的价格买到更好的东西，体会更多的实惠和乐趣。通过沟通分享形成的社交理念，形成了拼多多独特的新社交电商思维',
-					},
-					{
-						id:'8',
-						name:'emallplatform_8',
-						title:'FlipKart',
-						sub_title:'印度最大电子商务零售商',
-						img:flipkartlogoImg,
-						status:'1', //0未入驻 1已入驻
-						score:'90',
-						pv:'80',
-						orderspeed:'60',
-						cost:'40',
-						profit:'55',
-						type:'B2C',
-						region:'印度、东南亚、台湾地区',
-						strategy:'2300',
-						comment:'1688',
-						desc:'SKU数量超过80万，物流覆盖1000座城市以上，月访客数高达6980万，网站国内排名第9，全球排名173名，整站用户数量超过10亿',
-					},
-					{
-						id:'9',
-						name:'emallplatform_9',
-						title:'京东',
-						sub_title:'全球最具价值500大品牌，中国自营式电商企业',
-						img:jingdonglogoImg,
-						status:'0', //0未入驻 1已入驻
-						score:'90',
-						pv:'80',
-						orderspeed:'60',
-						cost:'40',
-						profit:'55',
-						type:'B2C',
-						region:'中国、美国、加拿大',
-						strategy:'2300',
-						comment:'1688',
-						desc:'在线销售计算机、手机及其它数码产品、家电、汽车配件、服装与鞋类、奢侈品、家居与家庭用品、化妆品与其它个人护理用品、食品与营养品、书籍与其它媒体产品、母婴用品与玩具、体育与健身器材以及虚拟商品等，共13大类3150万种SKU的商品。',
-					},
-					{
-						id:'10',
-						name:'emallplatform_10',
-						title:'乐天',
-						sub_title:'日本最大电子商店街，福布斯全球数字经济100强',
-						img:rakutenlogoImg,
-						status:'1', //0未入驻 1已入驻
-						score:'90',
-						pv:'80',
-						orderspeed:'60',
-						cost:'40',
-						profit:'55',
-						type:'B2C',
-						region:'日本、中国、东南亚',
-						strategy:'2300',
-						comment:'1688',
-						desc:'乐天网站4万家店铺中有1万余家参加了直邮中国的服务，',
-					},
-				],
-				emall_detail_commentlist:[],
-				
-				emall_commentlist:{
-				"1":[
-						{
-							id:'1',
-							commentor:'义乌小卖家',
-							avatar:'http://shop.dreamer-inc.com/uploads/avatar.png',
-							update_time:'2020-03-12 12:01:02',
-							status:'1', //0未入驻 1已入驻
-							is_share:false,
-							is_reply:false,
-							pv:'200',
-							replynum:'110',
-							prizenum:'230',
-							sharenum:'168',
-							desc:'<span style="font-size:24px;">经营的好财务自由不是问题，</span><span style="font-size:14px;">最近在推品牌出海，想要出海镀个金的品牌可以早点跟进了。。。</span>',
-							replytotal:0,
-							replylist:[],
-						},
-						{
-							id:'2',
-							commentor:'义乌小卖家',
-							avatar:'http://shop.dreamer-inc.com/uploads/avatar.png',
-							update_time:'2020-03-10 13:01:02',
-							status:'1', //0未入驻 1已入驻
-							is_share:false,
-							is_reply:false,
-							pv:'200',
-							replynum:'123',
-							prizenum:'230',
-							sharenum:'168',
-							desc:'<h1>经营得好</h1>财务自由不是问题，最近在推品牌出海，想要出海镀个金的品牌可以早点跟进了。。。',
-							replytotal:5,
-							replylist:[
-								{
-									id:'1',
-									comment_id:'2',
-									commentor:'桐庐小卖家',
-									avatar:'http://shop.dreamer-inc.com/uploads/avatar.png',
-									update_time:'2020-03-12 12:01:02',
-									status:'1', //0未入驻 1已入驻
-									desc:'哈哈哈 说的不错！',
-								},
-								{
-									id:'2',
-									comment_id:'2',
-									commentor:'西湖小卖家:',
-									avatar:'http://shop.dreamer-inc.com/uploads/avatar.png',
-									update_time:'2020-03-10 13:01:02',
-									status:'1', //0未入驻 1已入驻
-									desc:'666!',
-								},
-							]
-						},
-				],
-				"2":[
-						{
-							id:'1',
-							commentor:'义乌小卖家',
-							avatar:'http://shop.dreamer-inc.com/uploads/avatar.png',
-							update_time:'2020-03-12 12:01:02',
-							status:'1', //0未入驻 1已入驻
-							is_share:false,
-							is_reply:false,
-							pv:'200',
-							replynum:'110',
-							prizenum:'230',
-							sharenum:'168',
-							desc:'价格很优惠，服务也很，东西不错，给个好评此次鼓励。。。',
-							replytotal:0,
-							replylist:[],
-						},
-						{
-							id:'2',
-							commentor:'义乌小卖家',
-							avatar:'http://shop.dreamer-inc.com/uploads/avatar.png',
-							update_time:'2020-03-10 13:01:02',
-							status:'1', //0未入驻 1已入驻
-							is_share:false,
-							is_reply:false,
-							pv:'200',
-							replynum:'123',
-							prizenum:'230',
-							sharenum:'168',
-							desc:'货晚了两天收到，不过东西真的很好，老板人也好。运输的速度应该是邮局的问题吧。',
-							replytotal:5,
-							replylist:[
-								{
-									id:'1',
-									comment_id:'2',
-									commentor:'桐庐小卖家',
-									avatar:'http://shop.dreamer-inc.com/uploads/avatar.png',
-									update_time:'2020-03-12 12:01:02',
-									status:'1', //0未入驻 1已入驻
-									desc:'哈哈哈 说的不错！',
-								},
-								{
-									id:'2',
-									comment_id:'2',
-									commentor:'西湖小卖家:',
-									avatar:'http://shop.dreamer-inc.com/uploads/avatar.png',
-									update_time:'2020-03-10 13:01:02',
-									status:'1', //0未入驻 1已入驻
-									desc:'666!',
-								},
-							]
-						},
-					],
-				"3":[
-						{
-							id:'1',
-							commentor:'义乌小卖家',
-							avatar:'http://shop.dreamer-inc.com/uploads/avatar.png',
-							update_time:'2020-03-12 12:01:02',
-							status:'1', //0未入驻 1已入驻
-							is_share:false,
-							is_reply:false,
-							pv:'200',
-							replynum:'110',
-							prizenum:'230',
-							sharenum:'168',
-							desc:'药效非常好、 精准度惊人的高、  推荐大家购买。。。',
-							replytotal:0,
-							replylist:[],
-						},
-						{
-							id:'2',
-							commentor:'义乌小卖家',
-							avatar:'http://shop.dreamer-inc.com/uploads/avatar.png',
-							update_time:'2020-03-10 13:01:02',
-							status:'1', //0未入驻 1已入驻
-							is_share:false,
-							is_reply:false,
-							pv:'200',
-							replynum:'123',
-							prizenum:'230',
-							sharenum:'168',
-							desc:'很好的东西物流很快，卖家发货很及时，服务也很好，全5分。',
-							replytotal:5,
-							replylist:[
-								{
-									id:'1',
-									comment_id:'2',
-									commentor:'桐庐小卖家',
-									avatar:'http://shop.dreamer-inc.com/uploads/avatar.png',
-									update_time:'2020-03-12 12:01:02',
-									status:'1', //0未入驻 1已入驻
-									desc:'哈哈哈 说的不错！',
-								},
-								{
-									id:'2',
-									comment_id:'2',
-									commentor:'西湖小卖家:',
-									avatar:'http://shop.dreamer-inc.com/uploads/avatar.png',
-									update_time:'2020-03-10 13:01:02',
-									status:'1', //0未入驻 1已入驻
-									desc:'666!',
-								},
-							]
-						},
-				],
-				"4":[
-						{
-							id:'1',
-							commentor:'义乌小卖家',
-							avatar:'http://shop.dreamer-inc.com/uploads/avatar.png',
-							update_time:'2020-03-12 12:01:02',
-							status:'1', //0未入驻 1已入驻
-							is_share:false,
-							is_reply:false,
-							pv:'200',
-							replynum:'110',
-							prizenum:'230',
-							sharenum:'168',
-							desc:'Wish——最美移动端电商平台。。。',
-							replytotal:0,
-							replylist:[],
-						},
-						{
-							id:'2',
-							commentor:'义乌小卖家',
-							avatar:'http://shop.dreamer-inc.com/uploads/avatar.png',
-							update_time:'2020-03-10 13:01:02',
-							status:'1', //0未入驻 1已入驻
-							is_share:false,
-							is_reply:false,
-							pv:'200',
-							replynum:'123',
-							prizenum:'230',
-							sharenum:'168',
-							desc:'跨境电商移动端平台的黑马，一个传奇！凭借仅50个人的团队，Wish只用了三年时间，就成为北美最大的移动购物平台，这种令人尖叫的传奇亮瞎了许多人的眼，也让Wish在中国跨境电商中迅速窜红。',
-							replytotal:5,
-							replylist:[
-								{
-									id:'1',
-									comment_id:'2',
-									commentor:'桐庐小卖家',
-									avatar:'http://shop.dreamer-inc.com/uploads/avatar.png',
-									update_time:'2020-03-12 12:01:02',
-									status:'1', //0未入驻 1已入驻
-									desc:'哈哈哈 说的不错！',
-								},
-								{
-									id:'2',
-									comment_id:'2',
-									commentor:'西湖小卖家:',
-									avatar:'http://shop.dreamer-inc.com/uploads/avatar.png',
-									update_time:'2020-03-10 13:01:02',
-									status:'1', //0未入驻 1已入驻
-									desc:'666!',
-								},
-							]
-						},
-				],
-				"5":[
-						{
-							id:'1',
-							commentor:'义乌小卖家',
-							avatar:'http://shop.dreamer-inc.com/uploads/avatar.png',
-							update_time:'2020-03-12 12:01:02',
-							status:'1', //0未入驻 1已入驻
-							is_share:false,
-							is_reply:false,
-							pv:'200',
-							replynum:'110',
-							prizenum:'230',
-							sharenum:'168',
-							desc:'eBay并未对平台上销售假货的卖家进行严格监管。许多美国消费者将eBay视为优惠商品的聚集地。。。',
-							replytotal:0,
-							replylist:[],
-						},
-						{
-							id:'2',
-							commentor:'义乌小卖家',
-							avatar:'http://shop.dreamer-inc.com/uploads/avatar.png',
-							update_time:'2020-03-10 13:01:02',
-							status:'1', //0未入驻 1已入驻
-							is_share:false,
-							is_reply:false,
-							pv:'200',
-							replynum:'123',
-							prizenum:'230',
-							sharenum:'168',
-							desc:'eBay推翻了以往那种规模较小的跳蚤市场，将买家与卖家拉在一起，创造一个永不休息的市场。',
-							replytotal:5,
-							replylist:[
-								{
-									id:'1',
-									comment_id:'2',
-									commentor:'桐庐小卖家',
-									avatar:'http://shop.dreamer-inc.com/uploads/avatar.png',
-									update_time:'2020-03-12 12:01:02',
-									status:'1', //0未入驻 1已入驻
-									desc:'哈哈哈 说的不错！',
-								},
-								{
-									id:'2',
-									comment_id:'2',
-									commentor:'西湖小卖家:',
-									avatar:'http://shop.dreamer-inc.com/uploads/avatar.png',
-									update_time:'2020-03-10 13:01:02',
-									status:'1', //0未入驻 1已入驻
-									desc:'666!',
-								},
-							]
-						},
-					],
-				},
-				 
-				emall_detail_strategylist:[],
-				emall_strategylist:{
-				"1":[
-						{
-							id:'1',
-							title:'如何简单轻松通过亚马逊的入驻审核',
-							commentor:'义乌小卖家',
-							avatar:'http://shop.dreamer-inc.com/uploads/avatar.png',
-							update_time:'2020-03-12 12:01:02',
-							status:'1', //0未入驻 1已入驻
-							is_share:false,
-							is_reply:false,
-							pv:'200',
-							replynum:'110',
-							prizenum:'230',
-							sharenum:'168',
-							desc:'<span style="font-size:24px;">Lorem ipsum dolor sit amet,</span>  consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar sic tempor. Sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus pronin sapien nunc accuan eget.',
-							replytotal:0,
-							replylist:[],
-						},
-						{
-							id:'2',
-							title:'如何简单轻松通过亚马逊的入驻审核',
-							commentor:'义乌小卖家',
-							avatar:'http://shop.dreamer-inc.com/uploads/avatar.png',
-							update_time:'2020-03-10 13:01:02',
-							status:'1', //0未入驻 1已入驻
-							is_share:false,
-							is_reply:false,
-							pv:'200',
-							replynum:'123',
-							prizenum:'230',
-							sharenum:'168',
-							desc:'<h2>Lorem ipsum dolor sit amet,</h2> consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar sic tempor. Sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus pronin sapien nunc accuan eget.',
-							replytotal:5,
-							replylist:[
-								{
-									id:'1',
-									strategy_id:'2',
-									commentor:'桐庐小卖家',
-									avatar:'http://shop.dreamer-inc.com/uploads/avatar.png',
-									update_time:'2020-03-12 12:01:02',
-									status:'1', //0未入驻 1已入驻
-									desc:'哈哈哈 说的不错！',
-								},
-								{
-									id:'2',
-									strategy_id:'2',
-									commentor:'西湖小卖家:',
-									avatar:'http://shop.dreamer-inc.com/uploads/avatar.png',
-									update_time:'2020-03-10 13:01:02',
-									status:'1', //0未入驻 1已入驻
-									desc:'666!',
-								},
-							]
-						},
-					],
-				"2":[
-						{
-							id:'1',
-							title:'如何简单轻松通过淘宝的入驻审核',
-							commentor:'义乌小卖家',
-							avatar:'http://shop.dreamer-inc.com/uploads/avatar.png',
-							update_time:'2020-03-12 12:01:02',
-							status:'1', //0未入驻 1已入驻
-							is_share:false,
-							is_reply:false,
-							pv:'200',
-							replynum:'110',
-							prizenum:'230',
-							sharenum:'168',
-							desc:'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar sic tempor. Sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus pronin sapien nunc accuan eget.',
-							replytotal:0,
-							replylist:[],
-						},
-						{
-							id:'2',
-							title:'如何简单轻松通过淘宝的入驻审核',
-							commentor:'义乌小卖家',
-							avatar:'http://shop.dreamer-inc.com/uploads/avatar.png',
-							update_time:'2020-03-10 13:01:02',
-							status:'1', //0未入驻 1已入驻
-							is_share:false,
-							is_reply:false,
-							pv:'200',
-							replynum:'123',
-							prizenum:'230',
-							sharenum:'168',
-							desc:'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar sic tempor. Sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus pronin sapien nunc accuan eget.',
-							replytotal:5,
-							replylist:[
-								{
-									id:'1',
-									strategy_id:'2',
-									commentor:'桐庐小卖家',
-									avatar:'http://shop.dreamer-inc.com/uploads/avatar.png',
-									update_time:'2020-03-12 12:01:02',
-									status:'1', //0未入驻 1已入驻
-									desc:'哈哈哈 说的不错！',
-								},
-								{
-									id:'2',
-									strategy_id:'2',
-									commentor:'西湖小卖家:',
-									avatar:'http://shop.dreamer-inc.com/uploads/avatar.png',
-									update_time:'2020-03-10 13:01:02',
-									status:'1', //0未入驻 1已入驻
-									desc:'666!',
-								},
-							]
-						},
-					],
-				"3":[
-						{
-							id:'1',
-							title:'如何简单轻松通过天猫的入驻审核',
-							commentor:'义乌小卖家',
-							avatar:'http://shop.dreamer-inc.com/uploads/avatar.png',
-							update_time:'2020-03-12 12:01:02',
-							status:'1', //0未入驻 1已入驻
-							is_share:false,
-							is_reply:false,
-							pv:'200',
-							replynum:'110',
-							prizenum:'230',
-							sharenum:'168',
-							desc:'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar sic tempor. Sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus pronin sapien nunc accuan eget.',
-							replytotal:0,
-							replylist:[],
-						},
-						{
-							id:'2',
-							title:'如何简单轻松通过天猫的入驻审核',
-							commentor:'义乌小卖家',
-							avatar:'http://shop.dreamer-inc.com/uploads/avatar.png',
-							update_time:'2020-03-10 13:01:02',
-							status:'1', //0未入驻 1已入驻
-							is_share:false,
-							is_reply:false,
-							pv:'200',
-							replynum:'123',
-							prizenum:'230',
-							sharenum:'168',
-							desc:'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar sic tempor. Sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus pronin sapien nunc accuan eget.',
-							replytotal:5,
-							replylist:[
-								{
-									id:'1',
-									strategy_id:'2',
-									commentor:'桐庐小卖家',
-									avatar:'http://shop.dreamer-inc.com/uploads/avatar.png',
-									update_time:'2020-03-12 12:01:02',
-									status:'1', //0未入驻 1已入驻
-									desc:'哈哈哈 说的不错！',
-								},
-								{
-									id:'2',
-									strategy_id:'2',
-									commentor:'西湖小卖家:',
-									avatar:'http://shop.dreamer-inc.com/uploads/avatar.png',
-									update_time:'2020-03-10 13:01:02',
-									status:'1', //0未入驻 1已入驻
-									desc:'666!',
-								},
-							]
-						},
-					],
-				"4":[
-						{
-							id:'1',
-							title:'如何简单轻松通过WISH的入驻审核',
-							commentor:'义乌小卖家',
-							avatar:'http://shop.dreamer-inc.com/uploads/avatar.png',
-							update_time:'2020-03-12 12:01:02',
-							status:'1', //0未入驻 1已入驻
-							is_share:false,
-							is_reply:false,
-							pv:'200',
-							replynum:'110',
-							prizenum:'230',
-							sharenum:'168',
-							desc:'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar sic tempor. Sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus pronin sapien nunc accuan eget.',
-							replytotal:0,
-							replylist:[],
-						},
-						{
-							id:'2',
-							title:'如何简单轻松通过WISH的入驻审核',
-							commentor:'义乌小卖家',
-							avatar:'http://shop.dreamer-inc.com/uploads/avatar.png',
-							update_time:'2020-03-10 13:01:02',
-							status:'1', //0未入驻 1已入驻
-							is_share:false,
-							is_reply:false,
-							pv:'200',
-							replynum:'123',
-							prizenum:'230',
-							sharenum:'168',
-							desc:'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar sic tempor. Sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus pronin sapien nunc accuan eget.',
-							replytotal:5,
-							replylist:[
-								{
-									id:'1',
-									strategy_id:'2',
-									commentor:'桐庐小卖家',
-									avatar:'http://shop.dreamer-inc.com/uploads/avatar.png',
-									update_time:'2020-03-12 12:01:02',
-									status:'1', //0未入驻 1已入驻
-									desc:'哈哈哈 说的不错！',
-								},
-								{
-									id:'2',
-									strategy_id:'2',
-									commentor:'西湖小卖家:',
-									avatar:'http://shop.dreamer-inc.com/uploads/avatar.png',
-									update_time:'2020-03-10 13:01:02',
-									status:'1', //0未入驻 1已入驻
-									desc:'666!',
-								},
-							]
-						},
-					],
-				"5":[
-						{
-							id:'1',
-							title:'如何简单轻松通过eBay的入驻审核',
-							commentor:'义乌小卖家',
-							avatar:'http://shop.dreamer-inc.com/uploads/avatar.png',
-							update_time:'2020-03-12 12:01:02',
-							status:'1', //0未入驻 1已入驻
-							is_share:false,
-							is_reply:false,
-							pv:'200',
-							replynum:'110',
-							prizenum:'230',
-							sharenum:'168',
-							desc:'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar sic tempor. Sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus pronin sapien nunc accuan eget.',
-							replytotal:0,
-							replylist:[],
-						},
-						{
-							id:'2',
-							title:'如何简单轻松通过eBay的入驻审核',
-							commentor:'义乌小卖家',
-							avatar:'http://shop.dreamer-inc.com/uploads/avatar.png',
-							update_time:'2020-03-10 13:01:02',
-							status:'1', //0未入驻 1已入驻
-							is_share:false,
-							is_reply:false,
-							pv:'200',
-							replynum:'123',
-							prizenum:'230',
-							sharenum:'168',
-							desc:'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar sic tempor. Sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus pronin sapien nunc accuan eget.',
-							replytotal:5,
-							replylist:[
-								{
-									id:'1',
-									strategy_id:'2',
-									commentor:'桐庐小卖家',
-									avatar:'http://shop.dreamer-inc.com/uploads/avatar.png',
-									update_time:'2020-03-12 12:01:02',
-									status:'1', //0未入驻 1已入驻
-									desc:'哈哈哈 说的不错！',
-								},
-								{
-									id:'2',
-									strategy_id:'2',
-									commentor:'西湖小卖家:',
-									avatar:'http://shop.dreamer-inc.com/uploads/avatar.png',
-									update_time:'2020-03-10 13:01:02',
-									status:'1', //0未入驻 1已入驻
-									desc:'666!',
-								},
-							]
-						},
-					],
-				"6":[
-						{
-							id:'1',
-							title:'如何简单轻松通过SHOPEE的入驻审核',
-							commentor:'义乌小卖家',
-							avatar:'http://shop.dreamer-inc.com/uploads/avatar.png',
-							update_time:'2020-03-12 12:01:02',
-							status:'1', //0未入驻 1已入驻
-							is_share:false,
-							is_reply:false,
-							pv:'200',
-							replynum:'110',
-							prizenum:'230',
-							sharenum:'168',
-							desc:'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar sic tempor. Sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus pronin sapien nunc accuan eget.',
-							replytotal:0,
-							replylist:[],
-						},
-						{
-							id:'2',
-							title:'如何简单轻松通过SHOPEE的入驻审核',
-							commentor:'义乌小卖家',
-							avatar:'http://shop.dreamer-inc.com/uploads/avatar.png',
-							update_time:'2020-03-10 13:01:02',
-							status:'1', //0未入驻 1已入驻
-							is_share:false,
-							is_reply:false,
-							pv:'200',
-							replynum:'123',
-							prizenum:'230',
-							sharenum:'168',
-							desc:'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar sic tempor. Sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus pronin sapien nunc accuan eget.',
-							replytotal:5,
-							replylist:[
-								{
-									id:'1',
-									strategy_id:'2',
-									commentor:'桐庐小卖家',
-									avatar:'http://shop.dreamer-inc.com/uploads/avatar.png',
-									update_time:'2020-03-12 12:01:02',
-									status:'1', //0未入驻 1已入驻
-									desc:'哈哈哈 说的不错！',
-								},
-								{
-									id:'2',
-									strategy_id:'2',
-									commentor:'西湖小卖家:',
-									avatar:'http://shop.dreamer-inc.com/uploads/avatar.png',
-									update_time:'2020-03-10 13:01:02',
-									status:'1', //0未入驻 1已入驻
-									desc:'666!',
-								},
-							]
-						},
-					],
-				},
-				
+				emall_detail_commentlist:null,
+				emall_detail_strategylist:null,
 				loading:true,
               //需的信息
                 paginations: {
@@ -1313,8 +528,8 @@
 				}
 				*/
 			}
-			this.emall_detail_commentlist = this.emall_commentlist[this.emall_query_id]?this.emall_commentlist[this.emall_query_id]:this.emall_commentlist['1'] ;
-			this.emall_detail_strategylist = this.emall_strategylist[this.emall_query_id]?this.emall_strategylist[this.emall_query_id]:this.emall_strategylist['1'] ;
+			//this.emall_detail_commentlist = this.emall_commentlist[this.emall_query_id]?this.emall_commentlist[this.emall_query_id]:this.emall_commentlist['1'] ;
+			//this.emall_detail_strategylist = this.emall_strategylist[this.emall_query_id]?this.emall_strategylist[this.emall_query_id]:this.emall_strategylist['1'] ;
 			this.get_emall_info();
         },
         mounted(){
@@ -1334,7 +549,8 @@
 			    const para = {
 			    	emall_id: this.emall_query_id ,
 					comment:this.my_comment_content['html'],
-			    	username:'username',
+			    	username:this.username,
+					access_token:this.access_token,
 			    	post_type:'3',
 			    	shop_type:this.shop_type,
 					lang:this.lang,
@@ -1387,7 +603,8 @@
 			    	emall_id: this.emall_query_id ,
 					strategy:this.my_strategy_content['html'],
 					title:this.my_strategy_title,
-			    	username:'username',
+			    	username:this.username,
+					access_token:this.access_token,
 			    	post_type:'4',
 			    	shop_type:this.shop_type,
 					lang:this.lang,
@@ -1506,18 +723,25 @@
 			    const para = {
 			    	comment_id: comment_id ,
 					replycomment:this.my_comment_reply,
-			    	username:'username',
+			    	username:this.username,
+					access_token:this.access_token,
 			    	post_type:'3',
 			    	shop_type:this.shop_type,
 					lang:this.lang,
 			    }
-			   
-			    replyComment(para).then(res => {
-			    	this.$message({
-			    		message: '评论回复成功 id:'+comment_id,
-			    		type: 'success'
-			    	})
-			    })
+				if(!this.my_comment_reply ){
+					this.$message({
+						message: 'No Reply',
+						type: 'error'
+					})
+				}else{
+					replyComment(para).then(res => {
+						this.$message({
+							message: '评论回复成功 id:'+comment_id,
+							type: 'success'
+						})
+					})
+				}
 			},
 			
 			emall_comment_share(comment_index){
@@ -1540,7 +764,8 @@
 			comment_reply_query(comment_id='0',comment_reply_index=0,comment_reply_id=0){
 			    const para = {
 			    	comment_id: comment_id ,
-			    	username:'username',
+			    	username:this.username,
+					access_token:this.access_token,
 			    	comment_reply_id:comment_reply_id,
 			    	shop_type:this.shop_type,
 					lang:this.lang,
@@ -1572,12 +797,19 @@
 			    		type: 'success'
 			    	})
 					*/
+				   let commentreplylist = res
+				   for(var i=0;i<commentreplylist.length;i++){
+						this.emall_detail_commentlist[comment_reply_index]['replylist'].push(commentreplylist[i]);
+				   }
+				   this.emall_detail_commentlist[comment_reply_index]['replytotal'] += commentreplylist.length ;
+				   /*
 					if(commentreplyquery){
 						for(var i=0;i<commentreplyquery.length;i++){
 							this.emall_detail_commentlist[comment_reply_index]['replylist'].push(commentreplyquery[i]);
 						}
 						this.emall_detail_commentlist[comment_reply_index]['replytotal'] += commentreplyquery.length ;
 					}
+					*/
 					console.log('emall_detail_commentlist:',this.emall_detail_commentlist[comment_reply_index]['replylist']);
 			    })
 			},
@@ -1618,13 +850,19 @@
 			    	shop_type:this.shop_type,
 					lang:this.lang,
 			    }
-			   
-			    replyStrategy(para).then(res => {
-			    	this.$message({
-			    		message: '攻略回复成功 id:'+strategy_id,
-			    		type: 'success'
-			    	})
-			    })
+				if(!this.my_strategy_reply ){
+					this.$message({
+						message: 'No Reply',
+						type: 'error'
+					})
+				}else{
+					replyStrategy(para).then(res => {
+						this.$message({
+							message: '攻略回复成功 id:'+strategy_id,
+							type: 'success'
+						})
+					})
+				}
 			},
 			emall_strategy_share(strategy_index){
 				const para = {
@@ -1645,8 +883,10 @@
 			
 			strategy_reply_query(strategy_id='',strategy_reply_index=0,strategy_reply_id=0){
 			    const para = {
+					emall_id:this.emall_query_id,
 			    	strategy_id: strategy_id ,
-			    	username:'username',
+			    	username:this.username,
+					access_token:this.access_token,
 			    	current_id:strategy_reply_id,
 			    	shop_type:this.shop_type,
 					lang:this.lang,
@@ -1678,12 +918,19 @@
 			    		type: 'success'
 			    	})
 					*/
+				   let strategyreplylist = res
+				   for(var i=0;i<strategyreplylist.length;i++){
+				   	this.emall_detail_strategylist[strategy_reply_index]['replylist'].push(strategyreplylist[i]);
+				   }
+				   this.emall_detail_strategylist[strategy_reply_index]['replytotal'] += strategyreplylist.length ;
+				   /*
 					if(strategyreplyquery){
 						for(var i=0;i<strategyreplyquery.length;i++){
 							this.emall_detail_strategylist[strategy_reply_index]['replylist'].push(strategyreplyquery[i]);
 						}
 						this.emall_detail_strategylist[strategy_reply_index]['replytotal'] += strategyreplyquery.length ;
 					}
+					*/
 			    })
 			},
             get_emall_info(){
@@ -1700,8 +947,18 @@
                     this.loading = false ;
 					this.emall_query_index = 0 ;
 					this.emall_list = []
-					let emall_list = res
-					this.emall_list.push(emall_list) 
+					for(let i=0;i<res.emall_base_info.length;i++){
+						this.emall_list.push(res.emall_base_info[i]) 
+					}
+					this.emall_detail_commentlist = []
+					for(let i=0;i<res.emall_comment_list.length;i++){
+						this.emall_detail_commentlist.push(res.emall_comment_list[i]) 
+					}
+					
+					this.emall_detail_strategylist = []
+					for(let i=0;i<res.emall_strategylist.length;i++){
+					 	this.emall_detail_strategylist.push(res.emall_strategylist[i]) 
+					 }
 					
 					console.log('get_emall_info return:',res);
                 })
