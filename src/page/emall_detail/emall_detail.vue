@@ -126,10 +126,10 @@
 											  v-model="my_comment_reply">
 											</el-input>
 											<div style="display: flex;flex-direction: row;justify-content: center;margin-top:5px;">
-												<el-button type="primary" plain @click="sumbit_comment_reply(item_comment.id)">{{ $t('commons.submit') }}</el-button>
+												<el-button type="primary" plain @click="sumbit_comment_reply(item_comment.id,comment_index)">{{ $t('commons.submit') }}</el-button>
 											</div>
 										</div>
-										<div v-if="item_comment.replytotal>item_comment.replylist.length" style="display: flex;flex-direction: column;justify-content: flex-start;">
+										<div v-if="item_comment.replylist.length>0" style="display: flex;flex-direction: column;justify-content: flex-start;">
 											<div v-for="(item_reply,reply_index) in item_comment.replylist" :key="reply_index">
 												<p class="emall-detail-comment-info">{{item_reply.commentor}}:{{ item_reply.desc}}</p>
 											</div>
@@ -224,10 +224,10 @@
 											  v-model="my_strategy_reply">
 											</el-input>
 											<div style="display: flex;flex-direction: row;justify-content: center;margin-top:5px;">
-												<el-button type="primary" plain @click="sumbit_strategy_reply(item_strategy.id)">{{ $t('commons.submit') }}</el-button>
+												<el-button type="primary" plain @click="sumbit_strategy_reply(item_strategy.id,strategy_index)">{{ $t('commons.submit') }}</el-button>
 											</div>
 										</div>
-										<div v-if="item_strategy.replytotal>item_strategy.replylist.length" style="display: flex;flex-direction: column;justify-content: flex-start;">
+										<div v-if="item_strategy.replylist.length>0" style="display: flex;flex-direction: column;justify-content: flex-start;">
 											<div v-for="(item_reply,index) in item_strategy.replylist" :key="index">
 												<p class="emall-detail-strategy-info" >{{item_reply.commentor}}:{{ item_reply.desc}}</p>
 											</div>
@@ -551,7 +551,7 @@
 					comment:this.my_comment_content['html'],
 			    	username:this.username,
 					access_token:this.access_token,
-			    	post_type:'3',
+			    	post_type:'7',
 			    	shop_type:this.shop_type,
 					lang:this.lang,
 			    }
@@ -605,7 +605,7 @@
 					title:this.my_strategy_title,
 			    	username:this.username,
 					access_token:this.access_token,
-			    	post_type:'4',
+			    	post_type:'8',
 			    	shop_type:this.shop_type,
 					lang:this.lang,
 			    }
@@ -719,13 +719,13 @@
 				this.emall_comment_reply_index = comment_index ;
 			},
 			
-			sumbit_comment_reply(comment_id='0'){
+			sumbit_comment_reply(comment_id='0',comment_reply_index=0){
 			    const para = {
 			    	comment_id: comment_id ,
 					replycomment:this.my_comment_reply,
 			    	username:this.username,
 					access_token:this.access_token,
-			    	post_type:'3',
+			    	post_type:'7',
 			    	shop_type:this.shop_type,
 					lang:this.lang,
 			    }
@@ -740,6 +740,12 @@
 							message: '评论回复成功 id:'+comment_id,
 							type: 'success'
 						})
+						let emall_detail_commentlist = []
+						emall_detail_commentlist.push(res)
+						this.emall_detail_commentlist[comment_reply_index]['replylist'] = emall_detail_commentlist.concat(this.emall_detail_commentlist[comment_reply_index]['replylist']) ;
+					
+						this.emall_detail_commentlist[comment_reply_index]['replytotal'] = parseInt(this.emall_detail_commentlist[comment_reply_index]['replylist'].length) ;
+						console.log('sumbit_comment_reply:',this.emall_detail_commentlist[comment_reply_index])		
 					})
 				}
 			},
@@ -818,7 +824,7 @@
 			    const para = {
 			    	id: '1' ,
 			    	username:'username',
-			    	post_type:'3',
+			    	post_type:'7',
 			    	shop_type:this.shop_type,
 					lang:this.lang,
 			    }
@@ -841,12 +847,13 @@
 			    
 			    this.emall_strategy_reply_index = strategy_index ;
 			},
-			sumbit_strategy_reply(strategy_id='0'){
+			sumbit_strategy_reply(strategy_id='0',strategy_reply_index=0){
 			    const para = {
 			    	strategy_id: strategy_id ,
 					replystrategy:this.my_strategy_reply,
-			    	username:'username',
-			    	post_type:'3',
+			    	username:this.username,
+					access_token:this.access_token,
+			    	post_type:'7',
 			    	shop_type:this.shop_type,
 					lang:this.lang,
 			    }
@@ -861,6 +868,12 @@
 							message: '攻略回复成功 id:'+strategy_id,
 							type: 'success'
 						})
+						let emall_detail_strategylist = []
+						emall_detail_strategylist.push(res)
+						this.emall_detail_strategylist[strategy_reply_index]['replylist'] = emall_detail_strategylist.concat(this.emall_detail_strategylist[strategy_reply_index]['replylist']) ;
+											
+						this.emall_detail_strategylist[strategy_reply_index]['replytotal'] = parseInt(this.emall_detail_strategylist[strategy_reply_index]['replylist'].length) ;
+						console.log('sumbit_strategy_reply:',this.emall_detail_strategylist[strategy_reply_index])
 					})
 				}
 			},
@@ -885,6 +898,7 @@
 			    const para = {
 					emall_id:this.emall_query_id,
 			    	strategy_id: strategy_id ,
+					post_type:'8',
 			    	username:this.username,
 					access_token:this.access_token,
 			    	current_id:strategy_reply_id,
