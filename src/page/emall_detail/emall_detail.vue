@@ -675,7 +675,8 @@
 			emall_score_submit(){
 			    const para = {
 			    	emall_id: this.emall_query_id ,
-			    	username:'username',
+			    	username:this.username,
+					access_token:this.access_token,
 			    	score_pv:this.emall_detail_score_pv,
 			    	score_orderspeed:this.emall_detail_score_orderspeed,
 			    	score_cost:this.emall_detail_score_cost,
@@ -690,6 +691,14 @@
 			    		type: 'success'
 			    	})
 			    	//this.getMoneyList()
+					console.log('emall_score_submit:',res)
+					let score_info = JSON.parse(res['note'])
+					this.emall_list[0].score = parseInt(res['score'])
+					this.emall_list[0].pv = parseInt(score_info['score_pv'])
+					this.emall_list[0].orderspeed = parseInt(score_info['score_orderspeed'])
+					this.emall_list[0].cost = parseInt(score_info['score_cost'])
+					this.emall_list[0].profit = parseInt(score_info['score_profit'])
+					
 			    })
 			},
 			emall_comment_prize(comment_index){

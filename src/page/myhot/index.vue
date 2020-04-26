@@ -2382,19 +2382,25 @@ import {
 				lang:this.lang,
 				goods_id:row.id,
 			}
-			deleteGoodsWarehouse(para).then(res => {
-				this.$message({
-					message: 'Success!',
-					type: 'success',
-					duration: 1000
-				});
-				this.list = [] ;
-				this.get_goods_list();
-				console.log('deleteGoodsWarehouse return:',res);
+			this.$confirm('是否要删除', '提示', {
+			  confirmButtonText: '确定',
+			  cancelButtonText: '取消',
+			  type: 'warning'
+			}).then(()=>{
+			  deleteGoodsWarehouse(para).then(res => {
+			  	this.$message({
+			  		message: 'Success!',
+			  		type: 'success',
+			  		duration: 1000
+			  	});
+			  	this.list = [] ;
+			  	this.get_goods_list();
+			  	console.log('deleteGoodsWarehouse return:',res);
+			  })
+			  .catch(err=>{
+			  	console.log('deleteGoodsWarehouse err:',err)
+			  });
 			})
-			.catch(err=>{
-				console.log('deleteGoodsWarehouse err:',err)
-			});
 		},
 	  
 		get_mywarehouse(){

@@ -3,11 +3,11 @@
 	<div :style="'height:'+win_height+'px;max-height:'+win_height+'px;'" class="newsContainer" >
 		<div class="newsArea el-scrollbar">
 			<div class="news-list" v-for="(item_news,index) in news_list" :key="index">
-				<div class="news-item">
+				<div class="news-item" @click="news_detail(0,item_news)">
 					<div v-if="item_news.hot_no" class="news-content-hotno" style="text-align: center;">
 						{{item_news.hot_no}}
 					</div>
-					<div class="news-content" :class="item_news.hot_no?'':'news-indent'" style="text-align: start;">{{item_news.content}}</div>
+					<div class="news-content" :class="item_news.hot_no?'':'news-indent'" style="text-align: start;">{{item_news.title}}</div>
 					<div class="news-content-time" style="text-align: start;">{{item_news.time}}</div>
 				</div>
 			</div>
@@ -16,6 +16,12 @@
 			</div>
 		</div>
 	</div>
+	<el-dialog :title="$t('commons.globalnews')" :visible.sync="setDialogVisible" width="40%">
+		<div class="ql-editor" v-html="setDialogData.news_content" style="white-space: pre-wrap;"></div>
+		<span slot="footer" class="dialog-footer">
+			<el-button @click="setDialogVisible = false" size="small">取 消</el-button>
+		</span>
+	</el-dialog>
 </div>
 </template>
 
@@ -42,6 +48,8 @@
 		lang:getToken('lang')||'zh',
 		access_token:getToken('Token')||'zh',
 		username:getToken('Username')||'',
+		setDialogVisible:false,
+		setDialogData:{news_content:'',news_title:'',news_time:''},
 		win_height:'225',
 		news_page:1,
 		news_total:10,
@@ -148,6 +156,12 @@
 		getNewsList,
 	},	
 	methods: {
+		news_detail(type=0,para={}){
+			this.setDialogVisible = !this.setDialogVisible;
+			console.log('news_detail type:',type,' para:',para)
+			this.setDialogData.news_content = para.content
+			this.setDialogData.news_time = para.time
+		},
 		getNewsMore(){
 		    const para = {
 		    	username:this.username,

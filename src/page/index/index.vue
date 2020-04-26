@@ -109,6 +109,7 @@
 					</el-col>	
 				</el-row>
 			</div>
+			
 			<el-row v-if="paginations">
 			     <el-col :span="24">
 			         <div class="pagination">
