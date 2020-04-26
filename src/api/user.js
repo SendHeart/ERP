@@ -70,6 +70,22 @@ export function getEmallInfo(reqData) {
     })
 }
 
+export function getEmallList(reqData) {
+    return request({
+      url:'/api/web_client/get_emall_list',
+      method: 'post',
+      data: reqData
+    })
+}
+
+export function getEmallIndex(reqData) {
+    return request({
+      url:'/api/web_client/get_emall_index',
+      method: 'post',
+      data: reqData
+    })
+}
+
 export function prizeComment(reqData) {
     return request({
       url:'/api/web_client/post_comment_prize',

@@ -10,7 +10,7 @@ const user  = {
     avatar:'',
     token: getToken('Token'),
     roles: [],
-    browserHeaderTitle: mUtils.getStore('browserHeaderTitle') || 'Dream-X 梦未来电商创业平台'
+    browserHeaderTitle: mUtils.getStore('browserHeaderTitle') || '追默科技'
   },
   getters : {
     token: state => state.token,

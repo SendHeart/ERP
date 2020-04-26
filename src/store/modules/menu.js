@@ -1,5 +1,3 @@
-
-
 const types = {
     HANDLE_LEFT_MENU:'HANDLE_LEFT_MENU',  // 收缩左侧菜单
     INIT_LEFT_MENU:'INIT_LEFT_MENU',     // 初始化左侧菜单
@@ -15,7 +13,7 @@ const menu = {
             width: 200
         },
         isCollapse:false, // 菜单默认展开
-        isFooter:false
+        isFooter:false,
     },
     getters : {
         sidebar:state => state.sidebar,

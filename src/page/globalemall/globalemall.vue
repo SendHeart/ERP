@@ -55,7 +55,7 @@
 						<div class="cflex wflex">
 							<div style="display: flex;flex-direction: row;justify-content: flex-start;">
 								<div style="display: flex;flex-direction: row;justify-content: center;">
-									<img :src="item_hot.img" class='goods-hot-img' alt="" @click="emall_detail(item_hot.name)">
+									<img :src="item_hot.img" class='goods-hot-img' alt="" @click="emall_detail(item_hot.name,item_hot.id)">
 								</div>
 								<div style="display: flex;flex-direction: column;justify-content: flex-start;">
 									<div style="text-align: left;">

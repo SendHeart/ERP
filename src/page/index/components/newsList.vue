@@ -20,16 +20,28 @@
 </template>
 
 <script>
-  //import { getNewsList } from "@/api/sales";
-import { github } from "@/utils/env";
-import {
-	getNewsList,
-} from "@/api/user";
-	
+	import { github } from "@/utils/env";
+	import {
+		getNewsList,
+	} from "@/api/user";
+	import {
+		getBizPara,
+	} from "@/api/user";
+	import {
+		shop_type,
+	} from "@/utils/env";
+	import {
+		setToken,
+		getToken,
+	} from '@/utils/auth';
   export default {
     name:'newsList',
     data() {
       return {
+		shop_type:shop_type?shop_type:10,
+		lang:getToken('lang')||'zh',
+		access_token:getToken('Token')||'zh',
+		username:getToken('Username')||'',
 		win_height:'225',
 		news_page:1,
 		news_total:10,
@@ -114,7 +126,7 @@ import {
 				this.news_list.push(this.newslist[i])
 			}
 		}else{
-			this.news_list = this.news_init_list
+			this.getNewsMore()
 		}
 		console.log('new list:',this.news_list) ;
 	},
@@ -138,14 +150,15 @@ import {
 	methods: {
 		getNewsMore(){
 		    const para = {
-		    	username:'username',
+		    	username:this.username,
+				access_token:this.access_token,
 				page:this.news_page,
 				pagesize:this.news_pagesize,
 		    	news_type:'',
 		    	shop_type:'2',
 				lang:'zh',
 		    }
-			var newsList = [
+			var newsList_init = [
 				{
 					hot_no:'',
 					content:'3月以来生活必需品价格全面回落 ',
@@ -177,12 +190,13 @@ import {
 					type: 'success'
 				})
 				*/
+			   let newsList = res
 				if(newsList.length>0){
 					for(var i=0;i<newsList.length;i++){
 						this.news_list.push(newsList[i])
 					}
 				}
-				//console.log('getNewsList:',newsList) ;
+				console.log('getNewsList:',newsList) ;
 			})
 		},
 	}

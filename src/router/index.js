@@ -47,7 +47,8 @@ export const constantRouterMap = [
 		component:Layout,
 		meta:{
 			title:'首页',
-			icon: 'dashboard',
+			icon: 'dashboard',	
+			keepAlive: true //不刷新
 		},
 		noDropdown:true,
 		children:[ 
@@ -56,7 +57,7 @@ export const constantRouterMap = [
 				meta:{
 					title:'首页', 
 					icon:'dashboard',
-					routerType:'leftmenu'
+					routerType:'leftmenu',
 				},
 				component: () => import('@/page/index/index'),
 			}

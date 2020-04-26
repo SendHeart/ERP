@@ -175,7 +175,7 @@ export const loadStyle = url => {
    * 设置浏览器头部标题
    */
   export const setTitle = (title) => {
-    title = title ? `${title}` : 'DreamX 梦未来电商创业平台'
+    title = title ? `${title}` : '追默科技'
     window.document.title = title
   }
 

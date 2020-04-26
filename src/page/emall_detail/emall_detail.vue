@@ -530,6 +530,7 @@
 			}
 			//this.emall_detail_commentlist = this.emall_commentlist[this.emall_query_id]?this.emall_commentlist[this.emall_query_id]:this.emall_commentlist['1'] ;
 			//this.emall_detail_strategylist = this.emall_strategylist[this.emall_query_id]?this.emall_strategylist[this.emall_query_id]:this.emall_strategylist['1'] ;
+			console.log('emall detail query:',this.emall_query)
 			this.get_emall_info();
         },
         mounted(){
