@@ -41,6 +41,7 @@ export const constantRouterMap = [
 	
 	{ path: '/emallplatform_detail', component: () => import('@/page/emall_detail/emall_detail'), hidden: true },
 	{ path: '/goodsedit', component: () => import('@/page/goodsedit/goodsedit'), hidden: true },
+	{ path: '/htmlview', component: () => import('@/page/myhot/htmlview'), hidden: true },
 	{
 		path: '/index',
 		name: 'index',
@@ -122,6 +123,17 @@ export const asyncRouterMap = [
 				},
 				component: () => import('@/page/myhot'),
 			},
+			/*
+			{
+				path:'htmlview', 
+				meta:{
+					title:'爆款详情页', 
+					icon:'my_da',
+				  routerType:'leftmenu'
+				},
+				component: () => import('@/page/myhot/htmlview'),
+			}
+			*/
 		]
 	},
 	{

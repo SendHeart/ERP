@@ -105,6 +105,7 @@ const zh = {
 	  realname:'您的姓名',
 	  email:'电子邮箱',
 	  logo:'头像',
+	  view:'查看',
 	  set_password:'设置密码',
 	  register_step_1:'注册',
 	  register_step_2:'完善资料',

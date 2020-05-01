@@ -42,7 +42,7 @@
 									<span style="font-size: 12px;"  @click="add_mywarehouse(index)">{{ $t('commons.addhotgoods') }}</span>
 								</el-col>
 								<el-col :span="10" style="text-align: center;">
-									<span style="font-size: 12px;" @click="gotoMaterialUrl(index)">{{ $t('commons.linkorg') }}</span>
+									<span style="font-size: 12px;" @click="goto_materialurl(index)">{{ $t('commons.linkorg') }}</span>
 								</el-col>
 							</el-row>
 						</div>
@@ -1461,9 +1461,13 @@
 				});
 				*/
 			},
-			gotoMaterialUrl(goods_index=0){
+			goto_materialurl(goods_index=0){
 				let url = this.bigdata_hot_list[goods_index].materialUrl
 				window.open(url, '_blank');
+			},
+			html_view(goods_index=0) {
+				let url = this.bigdata_hot_list[goods_index].materialUrl
+				this.$router.push({path:'/pms/htmlview',query:{url:url}});
 			},
 			add_mywarehouse(goods_index=0){
 				let para = {

@@ -108,6 +108,7 @@ const zh = {
 	  realname:'Realname',
 	  email:'Email',
 	  logo:'LOGO',
+	  view:'VIEW',
 	  vrcode:'Verify Code',
 	  register_step_1:'Register',
 	  register_step_2:'Provide User Info',

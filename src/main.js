@@ -23,6 +23,9 @@ import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 Vue.use(VueQuillEditor)
 
+import VueResource from 'vue-resource' ; //http服务
+Vue.use(VueResource) ;
+
 // 分享功能集合
 import { shareConfig } from './utils/share';
 Vue.prototype.shareConfig = shareConfig;
