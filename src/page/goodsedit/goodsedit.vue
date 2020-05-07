@@ -102,10 +102,10 @@
 						<el-table-column type="selection" width="60" align="center"></el-table-column>
 						<el-table-column v-for="(item_title,title_index) in goods_skulist_title" :key="title_index" :label="item_title.title" :prop="item_title.key" align="center" :width="item_title.width" @click="add_sku_spec(2,item_title)">
 							<template slot-scope="scope">
-								<div v-if="item_title.attr!=='spec'" >
+								<div v-if="item_title.attr!=='spec' && scope.row[item_title.key]" >
 									<el-input v-model="scope.row[item_title.key]"></el-input>
 								</div>
-								<div v-if="item_title.attr=='spec'"  style="margin-left:5px; margin-right: 5px; display: flex;flex-direction: row;justify-content: flex-start;">
+								<div v-if="item_title.attr=='spec' && scope.row.value"  style="margin-left:5px; margin-right: 5px; display: flex;flex-direction: row;justify-content: flex-start;">
 									<img v-if="item_title.type=='2'" style="width:40px;height: 30px" :src="scope.row.value[item_title.spec_index]['value']">
 									<p v-if="item_title.type=='1'" style="text-align: left;">
 										<el-input v-model="scope.row.value[item_title.spec_index]['value']"></el-input>
@@ -987,105 +987,11 @@
 				loading:true,
 				goods_sku_list:[],
 				goods_sku_speclist:[],
-				goods_sku_speclist_init:[
-					{
-						name:"型号",
-						type:1,
-					},
-					{
-						name:"颜色",
-						type:2, //1文字 2图片
-					},
-					{
-						name:"尺寸",
-						type:1,
-					},
-				],
+				goods_sku_speclist_init:[],
 				goods_skulist_title:[],
-				goods_skulist_title_init: [
-					{ title: "SKU序号", attr: "title", key: "sku_no",width:150 },
-					{ title: "淘宝货号", attr: "title", key: "tb_skuno",width:150 },
-					{ title: "库存", attr: "title", key: "store_nums",width:80 },
-					{ title: "重量(g)", attr: "title", key: "weight",width:100 },
-					{ title: "销售价格", attr: "title", key: "sell_price",width:100 },
-					{ title: "市场价格", attr: "title", key: "market_price",width:100 },
-					{ title: "税率(%)", attr: "title", key: "tax_rate",width:80 },
-					{ title: "HSN CODE", attr: "title", key: "hsncode",width:100 },
-				],
+				goods_skulist_title_init: [],
 				
-				goods_sku_query:[
-					{
-						id:'1',
-						title:'',
-						goods_id:'1',
-						sku_no:'11223001',
-						jd_skuno:'',
-						tb_skuno:'4219436382417',
-						pdd_skuno:'',
-						value:[
-							{
-								"name":"型号",
-								"type":1,
-								"value":"大礼盒",
-								"note":"",
-							},
-							{
-								"name":"颜色",
-								"type":2,
-								"value":"https:\/\/img11.360buyimg.com\/n1\/jfs\/t1945\/199\/773538707\/86482\/5419d771\/5629b305Nd5f55566.jpg",
-								"note":"蓝色",
-							},
-							{
-								"name":"容量",
-								"type":1,
-								"value":"500ML",
-								"note":"",
-							}
-						],
-						hsncode:'43556676',
-						store_nums:'100',
-						market_price:'12.00',
-						sell_price:'11.00',
-						weight:'100',
-						tax_rate:'5',
-						sales:'21',
-					},
-					{
-						id:'2',
-						goods_id:'1',
-						sku_no:'11223002',
-						jd_skuno:'',
-						tb_skuno:'4219436382516',
-						pdd_skuno:'',
-						value:[
-							{
-								"name":"型号",
-								"type":1,
-								"value":"小礼盒",
-								"note":"",
-							},
-							{
-								"name":"颜色",
-								"type":2,
-								"value":"https:\/\/sendheart.dreamer-inc.com\/jdgoods_img14\/n1\/s450x450_jfs\/t1\/25793\/36\/13718\/303624\/5ca2b902Efdf1f4fe\/3adc86d2ef3b3776.jpg",
-								"note":"优雅白",
-							},
-							{
-								"name":"容量",
-								"type":1,
-								"value":"200ML",
-								"note":"",
-							}
-						],
-						hsncode:'43556676',
-						store_nums:'100',
-						market_price:'12.00',
-						sell_price:'11.00',
-						weight:'100',
-						tax_rate:'5',
-						sales:'21',
-					},
-				],
+				goods_sku_query:[],
 				
 				goods_attr_title:[
 					{ title: "属性名称", attr: "title", key: "name",width:150 },
@@ -1176,7 +1082,6 @@
 			}
 			
 			this.goods_info=goods_init_info
-			this.goods_skulist_title = this.goods_skulist_title_init 
 			this.query_goods_info();
 			/*
 			if(this.goods_query_info){
@@ -1186,10 +1091,12 @@
 			}
 			*/
 			//初始化SKU属性到表头
+			/*
 			if(this.goods_sku_speclist){
 				//插入新的属性项
 				this.sku_title_init()
 			}
+			*/
         },
         mounted(){
 			this.productCateOptions = this.goods_category ;
@@ -1201,7 +1108,7 @@
 				sku_title_list.push(this.goods_skulist_title[1])
 				
 				for(var i=0;i<this.goods_sku_speclist.length;i++){
-					let width = this.goods_sku_speclist[i]['type']=='1'?100:280
+					let width = this.goods_sku_speclist[i]['type']=='1'?200:230
 					let sku_title_inf = { 
 						title: this.goods_sku_speclist[i]['name'], 
 						attr: "spec", 
@@ -1288,20 +1195,29 @@
 				  cancelButtonText: '取消',
 				  type: 'warning'
 				}).then(() => {
-					for(var i=0;i<this.goods_skulist_title.length;i++){
+					//删除数据项
+					for(let i=0; i<this.goods_sku_list.length;i++){
+						this.goods_sku_list[i]['value'].splice(sku_speclist_index,1)
+						//console.log('delete_sku_spec goods_sku_list :',this.goods_sku_list[i],' sku speclist index:',sku_speclist_index,' i:',i)
+						//this.$delete(this.goods_sku_list[i].value,sku_speclist_index)
+					}
+					//console.log('delete_sku_spec goods_sku_list :',this.goods_sku_list)
+					for(let i=0;i<this.goods_skulist_title.length;i++){
 						if(this.goods_skulist_title[i]['attr']=='spec' && this.goods_skulist_title[i]['title']==this.goods_sku_speclist[sku_speclist_index]['name']){
 							this.goods_skulist_title.splice(i,1)
+							break;
+						}
+					}
+					let k = 0 ;
+					for(let i=0;i<this.goods_skulist_title.length;i++){ //更新 spec_index
+						if(this.goods_skulist_title[i]['attr']=='spec'){
+							this.goods_skulist_title[i]['spec_index'] = k
+							k++
 						}
 					}
 					this.goods_sku_speclist.splice(sku_speclist_index,1)
-					
-					//删除数据项
-					for(var i=0; i<this.goods_sku_list.length;i++){
-						this.goods_sku_list[i]['value'].splice(sku_speclist_index,1)
-						//this.$delete(this.goods_sku_list[i].value,sku_speclist_index)
-					}
-					console.log('delete_sku_spec goods_sku_list :',this.goods_sku_list)
-				});
+					console.log('delete_sku_spec goods_sku_speclist :',this.goods_sku_speclist,' skulist title:',this.goods_skulist_title)
+				})
 			},
 			
 			edit_sku_spec(type=0,para={}){
@@ -1314,7 +1230,7 @@
 							if(this.goods_skulist_title[k]['attr']=='spec' && this.goods_skulist_title[k]['title'] == goods_sku_speclist[i]['name']){
 								this.goods_skulist_title[k]['title'] = goods_sku_speclist[i]['name']
 								this.goods_skulist_title[k]['type'] = goods_sku_speclist[i]['type']
-								this.goods_skulist_title[k]['width'] = goods_sku_speclist[i]['type']==1?100:280
+								this.goods_skulist_title[k]['width'] = goods_sku_speclist[i]['type']==1?200:280
 							}
 						}
 					}
@@ -1370,6 +1286,7 @@
 				}
 				this.goods_sku_speclist.push(sku_spec_inf) 
 				console.log('sku_add_attrc:',this.goods_sku_speclist)
+				//
 				for(var i=0; i<this.goods_sku_list.length;i++){
 					this.goods_sku_list[i].value.push(sku_spec_inf)
 				}
@@ -1386,7 +1303,7 @@
 						key: "",
 						spec_index:len,
 						type:sku_spec_inf['type'],
-						width:120 ,
+						width:200 ,
 					}
 					sku_title_list.push(sku_title_inf)
 					for(var i=len+2;i<this.goods_skulist_title.length;i++){
@@ -1424,7 +1341,7 @@
 						key: "",
 						spec_index:len,
 						type:sku_spec_inf['type'],
-						width:260 ,
+						width:230 ,
 					}
 					sku_title_list.push(sku_title_inf)
 					for(var i=len+2;i<this.goods_skulist_title.length;i++){
@@ -1542,7 +1459,8 @@
 					this.goods_skulist_title = result[0]['skulist_title']
 					this.goods_desc = result[0]['desc']
 					this.goods_attr_list = result[0]['attr_list']
-					console.log('getGoodsList return:',res,' goods info:',this.goods_info);
+					console.log('getGoodsList return:',res,' goods_sku_list:',this.goods_sku_list);
+					this.sku_title_init()
 			    })
 				.catch(err=>{
 					console.log('getGoodsList err:',err)

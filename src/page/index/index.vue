@@ -328,7 +328,7 @@
 				   });
 				   */
 				   this.emall_list = res 
-				   console.log('get_emall_list return:',res);
+				   //console.log('get_emall_list return:',res);
 				})
 				.catch(err=>{
 					console.log('get_emall_list err:',err)
@@ -404,6 +404,7 @@
 					
 			        this.paginations.total = res.total;
 					setToken("Pagenum",this.paginations.pageIndex)
+					console.log('getGoodsList result:',this.goods_list)
 			    })
 				.catch(err=>{
 					console.log('getGoodsList err:',err)
