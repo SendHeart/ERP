@@ -44,52 +44,19 @@
 				      :default-time="['00:00:00', '23:59:59']">
 				</el-date-picker>
 			</el-form-item>
-			 
-			<!--
-          <el-form-item label="输入搜索：">
-            <el-input style="width: 203px" v-model="listQuery.keyword" placeholder="商品名称"></el-input>
-          </el-form-item>
-          <el-form-item label="商品货号：">
-            <el-input style="width: 203px" v-model="listQuery.productSn" placeholder="商品货号"></el-input>
-          </el-form-item>
-          
-          
-          <el-form-item label="上架状态：">
-            <el-select v-model="listQuery.publishStatus" placeholder="全部" clearable>
-              <el-option
-                v-for="item in publishStatusOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="审核状态：">
-            <el-select v-model="listQuery.verifyStatus" placeholder="全部" clearable>
-              <el-option
-                v-for="item in verifyStatusOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
-          </el-form-item>
-		  -->
         </el-form>
       </div>
     </el-card>
-	<!--
+	 
     <el-card class="operate-container" shadow="never">
-      <i class="el-icon-tickets"></i>
-      <span>数据列表</span>
       <el-button
         class="btn-add"
-        @click="handleAddProduct()"
+        @click="add_hot_goods()"
+		type="primary"
         size="mini">
-        添加
+        手动添加
       </el-button>
     </el-card>
-	-->
     <div class="table-container">
 	<el-table ref="productTable"
                 :data="list"
@@ -243,63 +210,55 @@
     </div>
 	
     <el-dialog
-      title="编辑货品信息"
-      :visible.sync="editSkuInfo.dialogVisible"
-      width="40%">
-      <span>商品货号：</span>
-      <span>{{editSkuInfo.productSn}}</span>
-      <el-input placeholder="按sku编号搜索" v-model="editSkuInfo.keyword" size="small" style="width: 50%;margin-left: 20px">
-        <el-button slot="append" icon="el-icon-search" @click="handleSearchEditSku"></el-button>
-      </el-input>
-      <el-table style="width: 100%;margin-top: 20px"
-                :data="editSkuInfo.stockList"
-                border>
-        <el-table-column
-          label="SKU编号"
-          align="center">
-          <template slot-scope="scope">
-            <el-input v-model="scope.row.skuCode"></el-input>
-          </template>
-        </el-table-column>
-        <el-table-column
-          v-for="(item,index) in editSkuInfo.productAttr"
-          :label="item.name"
-          :key="item.id"
-          align="center">
-          <template slot-scope="scope">
-            {{getProductSkuSp(scope.row,index)}}
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="销售价格"
-          width="80"
-          align="center">
-          <template slot-scope="scope">
-            <el-input v-model="scope.row.price"></el-input>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="商品库存"
-          width="80"
-          align="center">
-          <template slot-scope="scope">
-            <el-input v-model="scope.row.stock"></el-input>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="库存预警值"
-          width="100"
-          align="center">
-          <template slot-scope="scope">
-            <el-input v-model="scope.row.lowStock"></el-input>
-          </template>
-        </el-table-column>
-      </el-table>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="editSkuInfo.dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="handleEditSkuConfirm">确 定</el-button>
-      </span>
-    </el-dialog>
+		:title="$t('commons.hot_goods_add')"
+		:visible.sync="addhotgoodsInfo.dialogVisible"
+		width="65%">
+		<el-form :model="addhotgoodsInfo" status-icon :rules="rules" ref="addhotgoodsInfo" label-width="100px">
+		  <el-form-item :label="$t('commons.goods_info_from')" prop="goodsFromId" style="width: 30%;margin-left: 0px">
+		  	<el-cascader
+		  	clearable
+		  	v-model="addhotgoodsInfo.goodsFromId"
+		  	:options="hot_supply"
+		  	filterable>
+		  	</el-cascader>
+		  </el-form-item>
+		  <el-form-item :label="$t('commons.hot_goods_sku')">
+		  	<el-input :placeholder="$t('commons.hot_goods_sku')" v-model="addhotgoodsInfo.productId" size="small" style="width: 30%;margin-left: 0px"></el-input>
+		  </el-form-item>
+		  <el-form-item :label="$t('commons.hot_goods_name')">
+		  	<el-input :placeholder="$t('commons.hot_goods_name')" v-model="addhotgoodsInfo.productName" size="small" style="width: 50%;margin-left: 0px"></el-input>
+		  </el-form-item>
+		  <el-form-item :label="$t('commons.hot_goods_link')" prop="productLink">
+		    <el-input v-model="addhotgoodsInfo.productLink"></el-input>
+		  </el-form-item>
+		  <el-form-item>
+			 <el-button @click="addhotgoodsInfo.dialogVisible = false">取 消</el-button>
+		    <el-button type="primary" @click="add_hot_confirm('addhotgoodsInfo')">提交</el-button>
+		  </el-form-item>
+		</el-form>
+		<!--
+		<el-form :model="addhotgoodsInfo" :rules="rules" ref="ref_addhotgoodsInfo">
+			<el-form-item :label="$t('commons.goods_info_from')">
+				<el-cascader
+				clearable
+				v-model="addhotgoodsInfo.goodsFromId"
+				:options="hot_supply"
+				filterable>
+				</el-cascader>
+			</el-form-item>
+			<el-form-item :label="$t('commons.hot_goods_link')">
+				<el-input :placeholder="$t('commons.hot_goods_link')" v-model="addhotgoodsInfo.productLink" size="small" style="width: 80%;margin-left: 0px">
+					 
+				</el-input>
+			</el-form-item>
+		</el-form>
+		<span slot="footer" class="dialog-footer">
+			<el-button @click="addhotgoodsInfo.dialogVisible = false">取 消</el-button>
+			<el-button type="primary" @click="add_hot_confirm">确 定</el-button>
+		</span>
+		-->
+		
+	</el-dialog>
 	<el-row>
 	     <el-col :span="24">
 	         <div class="pagination">
@@ -338,14 +297,22 @@
 		deleteGoodsWarehouse,
 		getGoodsCategory,
 		getGoodsSupply,
+		addMyWarehouse,
 	} from "@/api/user";
+	
 	import {
 		shop_type,
 	} from "@/utils/env" ;
+	
 	import {
 		setToken,
 		getToken,
 	} from '@/utils/auth';
+	
+	import {
+		validateURL,
+	} from "@/utils/validate" ;
+	
   const defaultListQuery = {
     keyword: null,
     pageNum: 1,
@@ -362,22 +329,51 @@
   export default {
     name: "productList",
     data() {
-      return {
-		shop_type:shop_type?shop_type:10,
-		lang:getToken('lang')||'zh',
-		access_token:getToken('Token')||'zh',
-		username:getToken('Username')||'',
-		goods_id:0,
-		scrollTop:0,
-        editSkuInfo:{
-          dialogVisible:false,
-          productId:null,
-          productSn:'',
-          goodsCategoryId:null,
-          stockList:[],
-          productAttr:[],
-          keyword:null
-        },
+		var validUrl=(rule, value,callback)=>{
+			if (!value){
+				callback(new Error('请输入商品信息链接'))
+			}
+			setTimeout(() => {
+			  if (!validateURL(value)){
+			  	callback(new Error('请输入正确的商品信息链接'))
+			  }else {
+			  	callback()
+			  }
+			}, 1000);
+		};
+		
+		return {
+			shop_type:shop_type?shop_type:10,
+			lang:getToken('lang')||'zh',
+			access_token:getToken('Token')||'zh',
+			username:getToken('Username')||'',
+			goods_id:0,
+			scrollTop:0,
+			addhotgoodsInfo:{
+				dialogVisible:false,
+				productId:'',
+				productLink:'',
+				productName:'',
+				goodsCategoryId:0,
+				goodsFromId:0,
+				productAttr:[],
+				keyword:''
+			},
+		rules: {
+		    productLink: [
+				{ required: true, trigger: 'blur', validator: validUrl } //这里需要用到全局变量
+			],
+			goodsFromId: [
+				 { required: true, message: '请选择来源', trigger: 'change' }
+			],
+			productName: [
+				 { required: true, message: 'Name', trigger: 'change' }
+			],
+			productId: [
+				 { required: true, message: 'SKU', trigger: 'change' }
+			],
+		},
+		 
         operates: [
           {
             label: "商品上架",
@@ -431,617 +427,26 @@
 				value:'10002'
 			}
 		],
-		goods_supply:[],
-		goods_supply_init: [
+		hot_supply:[
 			{
 				label:'1688',
 				value:'1',
-				children:[
-					{
-						label:'全部',
-						value:'1_0',
-					},
-					{
-						label:'天天特卖',
-						value:'1_1',
-						children:[
-							{
-								label:'全部',
-								value:'1_1_0',
-								children:'',
-							},
-							{
-								label:'家居百货',
-								value:'1_1_1',
-								children:'',
-							},
-							{
-								label:'内衣',
-								value:'1_1_2',
-								children:'',
-							},
-							{
-								label:'母婴童玩',
-								value:'1_1_3',
-								children:'',
-							},
-							{
-								label:'美妆个护',
-								value:'1_1_4',
-								children:'',
-							},
-							{
-								label:'服饰配件',
-								value:'1_1_5',
-								children:'',
-							},
-							{
-								label:'数码家电',
-								value:'1_1_6',
-								children:'',
-							},
-							{
-								label:'女装',
-								value:'1_1_7',
-								children:'',
-							},
-							{
-								label:'鞋包',
-								value:'1_1_8',
-								children:'',
-							},
-							{
-								label:'男装运动',
-								value:'1_1_9',
-								children:'',
-							},
-							{
-								label:'食品生鲜',
-								value:'1_1_10',
-								children:'',
-							},
-						]
-					},
-					{
-						label:'热采排行榜',
-						value:'1_2',
-						children:[
-							{
-								label:'全部',
-								value:'1_2_0',
-								children:'',
-							},
-							{
-								label:'女装',
-								value:'1_2_1',
-								children:'',
-							},
-							{
-								label:'鞋靴',
-								value:'1_2_2',
-								children:'',
-							},
-							{
-								label:'内衣',
-								value:'1_2_3',
-								children:'',
-							},
-							{
-								label:'日用百货',
-								value:'1_2_4',
-								children:'',
-							},
-							{
-								label:'童装',
-								value:'1_2_5',
-								children:'',
-							},
-							{
-								label:'男装',
-								value:'1_2_6',
-								children:'',
-							},
-							{
-								label:'饰品',
-								value:'1_2_7',
-								children:'',
-							},
-							{
-								label:'服饰配件',
-								value:'1_2_8',
-								children:'',
-							},
-							{
-								label:'玩具',
-								value:'1_2_9',
-								children:'',
-							},
-							{
-								label:'箱包皮具',
-								value:'1_2_10',
-								children:'',
-							},
-							{
-								label:'美妆',
-								value:'1_2_11',
-								children:'',
-							},
-							{
-								label:'运动服饰',
-								value:'1_2_12',
-								children:'',
-							},
-							{
-								label:'运动装备',
-								value:'1_2_13',
-								children:'',
-							},
-							{
-								label:'个护家清',
-								value:'1_2_14',
-								children:'',
-							},
-							{
-								label:'家居饰品',
-								value:'1_2_15',
-								children:'',
-							},
-							{
-								label:'床上用品',
-								value:'1_2_16',
-								children:'',
-							},
-							{
-								label:'毛巾巾类',
-								value:'1_2_17',
-								children:'',
-							},
-							{
-								label:'数码电脑',
-								value:'1_2_18',
-								children:'',
-							},
-							{
-								label:'家用电器',
-								value:'1_2_19',
-								children:'',
-							},
-							{
-								label:'食品生鲜',
-								value:'1_2_20',
-								children:'',
-							},
-							{
-								label:'母婴用品',
-								value:'1_2_21',
-								children:'',
-							},
-							{
-								label:'办公文教',
-								value:'1_2_22',
-								children:'',
-							},
-							{
-								label:'家装建材',
-								value:'1_2_23',
-								children:'',
-							},
-							{
-								label:'包装辅料',
-								value:'1_2_24',
-								children:'',
-							},
-							{
-								label:'电工电气',
-								value:'1_2_25',
-								children:'',
-							},
-							{
-								label:'五金工具',
-								value:'1_2_26',
-								children:'',
-							},
-							{
-								label:'安全防护',
-								value:'1_2_27',
-								children:'',
-							},
-							{
-								label:'照明工业',
-								value:'1_2_28',
-								children:'',
-							},
-						]
-					},
-					{
-						label:'利润爆款榜',
-						value:'1_3',
-						children:[
-							{
-								label:'全部',
-								value:'1_3_0',
-								children:'',
-							},
-							{
-								label:'女装',
-								value:'1_3_1',
-								children:'',
-							},
-							{
-								label:'鞋靴',
-								value:'1_3_2',
-								children:'',
-							},
-							{
-								label:'内衣',
-								value:'1_3_3',
-								children:'',
-							},
-							{
-								label:'日用百货',
-								value:'1_3_4',
-								children:'',
-							},
-							{
-								label:'童装',
-								value:'1_3_5',
-								children:'',
-							},
-							{
-								label:'男装',
-								value:'1_3_6',
-								children:'',
-							},
-							{
-								label:'饰品',
-								value:'1_3_7',
-								children:'',
-							},
-							{
-								label:'服饰配件',
-								value:'1_3_8',
-								children:'',
-							},
-							{
-								label:'玩具',
-								value:'1_3_9',
-								children:'',
-							},
-							{
-								label:'箱包皮具',
-								value:'1_3_10',
-								children:'',
-							},
-							{
-								label:'美妆',
-								value:'1_3_11',
-								children:'',
-							},
-							{
-								label:'运动服饰',
-								value:'1_3_12',
-								children:'',
-							},
-							{
-								label:'运动装备',
-								value:'1_3_13',
-								children:'',
-							},
-							{
-								label:'个护家清',
-								value:'1_3_14',
-								children:'',
-							},
-							{
-								label:'家居饰品',
-								value:'1_3_15',
-								children:'',
-							},
-							{
-								label:'床上用品',
-								value:'1_3_16',
-								children:'',
-							},
-							{
-								label:'毛巾巾类',
-								value:'1_3_17',
-								children:'',
-							},
-							{
-								label:'数码电脑',
-								value:'1_3_18',
-								children:'',
-							},
-							{
-								label:'家用电器',
-								value:'1_3_19',
-								children:'',
-							},
-							{
-								label:'食品生鲜',
-								value:'1_3_20',
-								children:'',
-							},
-							{
-								label:'母婴用品',
-								value:'1_3_21',
-								children:'',
-							},
-							{
-								label:'办公文教',
-								value:'1_3_22',
-								children:'',
-							},
-							{
-								label:'家装建材',
-								value:'1_3_23',
-								children:'',
-							},
-							{
-								label:'包装辅料',
-								value:'11',
-								children:'',
-							},
-							{
-								label:'电工电气',
-								value:'1_3_24',
-								children:'',
-							},
-							{
-								label:'五金工具',
-								value:'1_3_25',
-								children:'',
-							},
-							{
-								label:'安全防护',
-								value:'1_3_26',
-								children:'',
-							},
-							{
-								label:'照明工业',
-								value:'1_3_27',
-								children:'',
-							},
-						]
-					},
-					{
-						label:'预测热卖榜',
-						value:'1_4',
-						children:[
-							{
-								label:'全部',
-								value:'1_4_0',
-								children:'',
-							},
-							{
-								label:'女装',
-								value:'1_4_1',
-								children:'',
-							},
-							{
-								label:'鞋靴',
-								value:'1_4_2',
-								children:'',
-							},
-							{
-								label:'内衣',
-								value:'1_4_3',
-								children:'',
-							},
-							{
-								label:'日用百货',
-								value:'1_4_4',
-								children:'',
-							},
-							{
-								label:'童装',
-								value:'1_4_5',
-								children:'',
-							},
-							{
-								label:'男装',
-								value:'1_4_6',
-								children:'',
-							},
-							{
-								label:'饰品',
-								value:'1_4_7',
-								children:'',
-							},
-							{
-								label:'服饰配件',
-								value:'1_4_8',
-								children:'',
-							},
-							{
-								label:'玩具',
-								value:'1_4_9',
-								children:'',
-							},
-							{
-								label:'箱包皮具',
-								value:'1_4_10',
-								children:'',
-							},
-							{
-								label:'美妆',
-								value:'1_4_11',
-								children:'',
-							},
-							{
-								label:'运动服饰',
-								value:'1_4_12',
-								children:'',
-							},
-							{
-								label:'运动装备',
-								value:'1_4_13',
-								children:'',
-							},
-							{
-								label:'个护家清',
-								value:'1_4_14',
-								children:'',
-							},
-							{
-								label:'家居饰品',
-								value:'1_4_15',
-								children:'',
-							},
-							{
-								label:'床上用品',
-								value:'1_4_16',
-								children:'',
-							},
-							{
-								label:'毛巾巾类',
-								value:'1_4_17',
-								children:'',
-							},
-							{
-								label:'数码电脑',
-								value:'1_4_18',
-								children:'',
-							},
-							{
-								label:'家用电器',
-								value:'1_4_19',
-								children:'',
-							},
-							{
-								label:'食品生鲜',
-								value:'1_4_20',
-								children:'',
-							},
-							{
-								label:'母婴用品',
-								value:'1_4_21',
-								children:'',
-							},
-							{
-								label:'办公文教',
-								value:'1_4_22',
-								children:'',
-							},
-							{
-								label:'家装建材',
-								value:'1_4_23',
-								children:'',
-							},
-							{
-								label:'包装辅料',
-								value:'11',
-								children:'',
-							},
-							{
-								label:'电工电气',
-								value:'1_4_24',
-								children:'',
-							},
-							{
-								label:'五金工具',
-								value:'1_4_25',
-								children:'',
-							},
-							{
-								label:'安全防护',
-								value:'1_4_26',
-								children:'',
-							},
-							{
-								label:'照明工业',
-								value:'1_4_27',
-								children:'',
-							},
-						]
-					},
-					{
-						label:'昆明产业带',
-						value:'1_5',
-						children:[
-							{
-								label:'全部',
-								value:'1_5_0',
-								children:'',
-							},
-							{
-								label:'核心卖家热销',
-								value:'11',
-								children:'',
-							},
-							{
-								label:'复购热销',
-								value:'1_5_1',
-								children:'',
-							},
-							{
-								label:'近期热销',
-								value:'1_5_2',
-								children:'',
-							},
-							{
-								label:'最受关注',
-								value:'1_5_3',
-								children:'',
-							},
-						]
-					},
-					{
-						label:'广州产业带',
-						value:'1_6',
-						children:[
-							{
-								label:'全部',
-								value:'1_6_0',
-								children:'',
-							},
-							{
-								label:'近期热销',
-								value:'1_6_1',
-								children:'',
-							},
-							{
-								label:'复购热销',
-								value:'1_6_2',
-								children:'',
-							},
-							{
-								label:'核心卖家热销',
-								value:'1_6_3',
-								children:'',
-							},
-							{
-								label:'最受关注',
-								value:'1_6_4',
-								children:'',
-							},
-						]
-					},
-					{
-						label:'杭州产业带',
-						value:'1_7',
-						children:[
-							{
-								label:'全部',
-								value:'1_7_0',
-								children:'',
-							},
-							{
-								label:'最受关注',
-								value:'1_7_1',
-								children:'',
-							},
-							{
-								label:'近期热销',
-								value:'1_7_2',
-								children:'',
-							},
-						]
-					},
-				],
-				icon:''
 			},
+			{
+				label:'多多进宝',
+				value:'2',
+			},
+			{
+				label:'淘宝联盟',
+				value:'3',
+			},
+			{
+				label:'京东联盟',
+				value:'4',
+			}
 		],
+		goods_supply:[],
+		
         publishStatusOptions: [{
           value: 1,
           label: '上架'
@@ -1265,43 +670,75 @@
           });
         }
       },
-      handleSearchEditSku(){
-        fetchSkuStockList(this.editSkuInfo.productId,{keyword:this.editSkuInfo.keyword}).then(response=>{
-          this.editSkuInfo.stockList=response.data;
-        });
-      },
-      handleEditSkuConfirm(){
-        if(this.editSkuInfo.stockList==null||this.editSkuInfo.stockList.length<=0){
-          this.$message({
-            message: '暂无sku信息',
-            type: 'warning',
-            duration: 1000
-          });
-          return
-        }
-        this.$confirm('是否要进行修改', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(()=>{
-          updateSkuStockList(this.editSkuInfo.productId,this.editSkuInfo.stockList).then(response=>{
-            this.$message({
-              message: '修改成功',
-              type: 'success',
-              duration: 1000
-            });
-            this.editSkuInfo.dialogVisible=false;
-          });
-        });
-      },
-      search() {
-        this.listQuery.pageNum = 1;
-        this.get_goods_list(1);
-      },
-      handleAddProduct() {
-        this.$router.push({path:'/pms/addProduct'});
-      },
-      handleBatchOperate() {
+      
+		handleSearchEditSku(){
+			fetchSkuStockList(this.editSkuInfo.productId,{keyword:this.editSkuInfo.keyword}).then(response=>{
+				this.editSkuInfo.stockList=response.data;
+			});
+		},
+		
+		add_hot_confirm(formName) {
+	         this.$refs[formName].validate((valid) => {
+	           if (valid) {
+				   if(this.addhotgoodsInfo.goodsFromId==0 ||this.addhotgoodsInfo.productName=='' ||this.addhotgoodsInfo.productId=='' ||!this.addhotgoodsInfo.productLink ){
+						this.$message({
+						  message: '输入信息不完整!',
+						  type: 'warn',
+						  duration: 1000
+						});
+						console.log('add_hot_confirm 输入信息有误');
+						return false;
+					}else{
+						this.$confirm('是否要添加', '提示', {
+							confirmButtonText: '确定',
+							cancelButtonText: '取消',
+							type: 'warning'
+							}).then(()=>{
+							let para = {
+								username:this.username,
+								access_token:this.access_token,
+								type:1, //
+								goods_org:2, //第三方商品
+							    goods_from_id:this.addhotgoodsInfo.goodsFromId[0],
+								goods_from_sku:this.addhotgoodsInfo.productId,
+								goods_from_link:this.addhotgoodsInfo.productLink,
+								goods_name:this.addhotgoodsInfo.productName,
+								shop_type:this.shop_type,
+								lang:this.lang,
+							}
+							console.log('add_hot_confirm para:',para);
+							addMyWarehouse(para).then(res => {
+								this.$message({
+							     message: 'Completed!',
+							     type: 'success',
+							     duration: 1000
+							   });
+							   this.addhotgoodsInfo.dialogVisible=false;
+							   console.log('add_hot_confirm return:',res);
+							})
+							.catch(err=>{
+								console.log('add_hot_confirm err:',err)
+							});
+						});
+					}
+				} else {
+					console.log('add_hot_confirm 输入信息有误');
+					return false;
+				}
+			});
+		},
+      
+	
+		search() {
+			this.listQuery.pageNum = 1;
+			this.get_goods_list(1);
+		},
+	
+		add_hot_goods() {
+			this.addhotgoodsInfo.dialogVisible = !this.addhotgoodsInfo.dialogVisible
+		},
+	
+	handleBatchOperate() {
         if(this.operateType==null){
           this.$message({
             message: '请选择操作类型',
@@ -1356,40 +793,49 @@
           }
           this.get_goods_list();
         });
-      },
-      handleSizeChange(val) {
+	},
+	  
+	handleSizeChange(val) {
         this.listQuery.pageNum = 1;
         this.listQuery.pageSize = val;
         this.get_goods_list();
-      },
-      handleCurrentChange(val) {
+	},
+	
+	handleCurrentChange(val) {
         this.listQuery.pageNum = val;
         this.get_goods_list();
-      },
-      handleSelectionChange(val) {
-        this.multipleSelection = val;
-      },
-      handlePublishStatusChange(index, row) {
-        let ids = [];
+	},
+    
+	handleSelectionChange(val) {
+		this.multipleSelection = val;
+	},
+    
+	handlePublishStatusChange(index, row) {
+		let ids = [];
         ids.push(row.id);
         this.updatePublishStatus(row.publishStatus, ids);
-      },
-      handleNewStatusChange(index, row) {
+	
+	},
+	
+	handleNewStatusChange(index, row) {
         let ids = [];
         ids.push(row.id);
         this.updateNewStatus(row.newStatus, ids);
-      },
-      handleRecommendStatusChange(index, row) {
+	},
+	
+	handleRecommendStatusChange(index, row) {
         let ids = [];
         ids.push(row.id);
         this.updateRecommendStatus(row.recommandStatus, ids);
-      },
-      handleResetSearch() {
+	},
+    
+	handleResetSearch() {
         this.selectProductCateValue = [];
 		this.selectGoodsSupplyValue = [];
         this.listQuery = Object.assign({}, defaultListQuery);
-      },
-      handleDelete(index, row){
+	},
+    
+	handleDelete(index, row){
         this.$confirm('是否要进行删除操作?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -1399,11 +845,13 @@
           ids.push(row.id);
           this.updateDeleteStatus(1,ids);
         });
-      },
-      handleUpdateProduct(index,row){
+	},
+	
+	handleUpdateProduct(index,row){
         this.$router.push({path:'/pms/updateProduct',query:{id:row.id}});
-      },
-      handleShowProduct(index,row){
+	},
+	
+	handleShowProduct(index,row){
         console.log("handleShowProduct",row);
       },
       handleShowVerifyDetail(index,row){
@@ -1448,11 +896,12 @@
           });
         });
       },
-      updateDeleteStatus(deleteStatus, ids) {
-		let params = new URLSearchParams();
-		params.append('ids', ids);
-		params.append('deleteStatus', deleteStatus);
-      },
+		
+		updateDeleteStatus(deleteStatus, ids) {
+			let params = new URLSearchParams();
+			params.append('ids', ids);
+			params.append('deleteStatus', deleteStatus);
+		},
 	  
 		delete_mywarehouse(index, row){
 			let para = {
@@ -1536,7 +985,8 @@
 	}
 	
 	.operate-container .btn-add {
-	  float: right;
+	  float: left;
+	  margin-bottom: 20px;
 	}
 	
 	//表格栏样式

@@ -175,7 +175,10 @@
 					</div>
 					<div v-if="is_goods_desc" >
 						<el-col v-if="goods_desc" :md="15" style="margin-top: 10px;">
+							<!-- 
 							<ueditor @on-change="get_goods_desc" :initContent="goods_desc"></ueditor>
+							-->
+							<Kind-editor  ref="kindeditor" :content="goods_desc" @input="get_goods_desc_k"></Kind-editor>
 						</el-col>
 					</div>
 					
@@ -249,6 +252,7 @@
 		saveGoodsInfo,
 	} from "@/api/user";
 	import ueditor from "@/components/editor/editor.vue"; //富文本编辑器
+	import KindEditor from "@/components/Kindeditor";
 	import YanShare from "@/components/yanShare.vue"; //
 	import InfoShare from "@/components/infoShare.vue"; //
 	import AddShareDialog from "@/components/addShareDialog.vue"; //
@@ -1046,6 +1050,7 @@
 			'AddShareDialog':AddShareDialog,
 			'ueditor':ueditor,
 			'v-upload':upload,
+			'KindEditor':KindEditor,
 		},
         created(){
 			//传参初始化
@@ -1505,6 +1510,10 @@
 			
 			get_goods_desc(ctx) {
 				this.my_strategy_content = ctx ;
+				//console.log('Rich Text:',ctx)
+			},
+			get_goods_desc_k(content) {
+				this.my_strategy_content = content ;
 				//console.log('Rich Text:',ctx)
 			},
 			//设置表格行的样式

@@ -144,6 +144,10 @@ const zh = {
 		goods_sku_marketprice:'市场价格',
 		goods_sku_taxrate:'税率(%)',
 		goods_desc:'商品详情',
+		hot_goods_add:'添加爆款商品',
+		hot_goods_link:'商品链接',
+		hot_goods_sku:'商品货号',
+		hot_goods_name:'商品名称',
     },
     index:{
 		yearLoss:'年度总盈亏',

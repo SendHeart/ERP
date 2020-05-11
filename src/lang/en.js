@@ -144,6 +144,10 @@ const zh = {
 	  goods_sku_marketprice:'Market Price',
 	  goods_sku_taxrate:'Tax Rate(%)',
 	  goods_desc:'Goods Description',
+	  hot_goods_add:'Add Hot Goods',
+	  hot_goods_link:'Goods Link',
+	  hot_goods_sku:'Goods SKU',
+	  hot_goods_name:'Goods Name',
     },
     index:{
       yearLoss:'Year Loss',
