@@ -81,7 +81,7 @@
 				</div>
 			</template>
         </el-table-column>
-		<el-table-column label="商品ID" width="100" align="center">
+		<el-table-column label="商品ID" width="130" align="center">
 		  <template slot-scope="scope">{{scope.row.goods_id}}</template>
 		</el-table-column>
 		<!--
