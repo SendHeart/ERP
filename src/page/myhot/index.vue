@@ -709,12 +709,13 @@
 							console.log('add_hot_confirm para:',para);
 							addMyWarehouse(para).then(res => {
 								this.$message({
-							     message: 'Completed!',
-							     type: 'success',
-							     duration: 1000
-							   });
-							   this.addhotgoodsInfo.dialogVisible=false;
-							   console.log('add_hot_confirm return:',res);
+									message: 'Completed!',
+									type: 'success',
+									duration: 1000
+								});
+								this.addhotgoodsInfo.dialogVisible=false;
+								console.log('add_hot_confirm return:',res);
+								this.get_goods_list();
 							})
 							.catch(err=>{
 								console.log('add_hot_confirm err:',err)
