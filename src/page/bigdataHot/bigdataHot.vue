@@ -1474,6 +1474,9 @@
 					username:this.username,
 					access_token:this.access_token,
 				    goods_id:this.bigdata_hot_list[goods_index]['id'],
+					goods_org:1, //1688商品
+					goods_from_id:1,
+					type:1, //
 					shop_type:this.shop_type,
 					lang:this.lang,
 				}
@@ -1603,6 +1606,8 @@
 		}
 		.goods-hot-title{
 			font-size: 12px;
+			height: 40px;
+			line-height: 20px;
 			padding: 2px;
 			color:#666;
 			overflow: hidden;

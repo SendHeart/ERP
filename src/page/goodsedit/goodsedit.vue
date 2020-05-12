@@ -21,6 +21,7 @@
 						</div>
 						<div style="display: flex;flex-direction: row;justify-content: flex-start;margin-top:15px;">
 							<el-button icon="el-icon-circle-plus" type="primary" @click="goods_linkorg(goods_info.materialUrl)">{{ $t('commons.linkorg') }}</el-button>
+							<el-button icon="el-icon-circle-plus" type="primary" @click="add_mywarehouse()">{{ $t('commons.hot_goods_add') }}</el-button>
 						</div>
 					</div>
 				</el-col>
@@ -250,6 +251,7 @@
 		getEmallInfo,
 		getGoodsList,
 		saveGoodsInfo,
+		addMyWarehouse,
 	} from "@/api/user";
 	import ueditor from "@/components/editor/editor.vue"; //富文本编辑器
 	import KindEditor from "@/components/Kindeditor";
@@ -1077,6 +1079,7 @@
 					goods_init_info['sell_price'] = goods_para['sell_price']
 					goods_init_info['materialUrl'] = goods_para['materialUrl']
 					goods_init_info['id'] = goods_para['id']
+					goods_init_info['goods_id'] = goods_para['goods_id']
 					goods_init_info['img'].push(img_info)
 					
 					this.goodsQuery['goodsTitle'] = goods_para['name']
@@ -1243,6 +1246,7 @@
 				}
 			  
 			},
+			
 			sku_add(){
 				let sku_inf={
 					id:'',
@@ -1512,9 +1516,36 @@
 				this.my_strategy_content = ctx ;
 				//console.log('Rich Text:',ctx)
 			},
+			
 			get_goods_desc_k(content) {
 				this.my_strategy_content = content ;
 				//console.log('Rich Text:',ctx)
+			},
+			
+			add_mywarehouse(){
+				let para = {
+					username:this.username,
+					access_token:this.access_token,
+				    goods_id:this.goods_info['goods_id']?this.goods_info['goods_id']:this.goods_info['id'],
+					goods_name:this.goods_info['name'],
+					goods_org:1, //1688商品
+					goods_from_id:1,
+					type:1, //
+					shop_type:this.shop_type,
+					lang:this.lang,
+				}
+				console.log('addMyWarehouse para:',para);
+				addMyWarehouse(para).then(res => {
+					this.$message({
+				     message: 'Completed!',
+				     type: 'success',
+				     duration: 1000
+				   });
+				   console.log('addMyWarehouse return:',res);
+				})
+				.catch(err=>{
+					console.log('addMyWarehouse err:',err)
+				});
 			},
 			//设置表格行的样式
 			 tableRowStyle({row,rowIndex}){

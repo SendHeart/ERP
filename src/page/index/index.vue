@@ -364,6 +364,7 @@
 					username:this.username,
 					access_token:this.access_token,
 				    goods_id:this.goods_list[goods_index]['id'],
+					goods_name:this.goods_list[goods_index]['name'],
 					shop_type:this.shop_type,
 					lang:this.lang,
 				}

@@ -263,14 +263,14 @@
 	     <el-col :span="24">
 	         <div class="pagination">
 	             <el-pagination
-	                 v-if='paginations.total > 0'
+	                 v-if="paginations.total > 0"
 	                 :page-sizes="paginations.pageSizes"
 	                 :page-size="paginations.pageSize"
 	                 :layout="paginations.layout"
 	                 :total="paginations.total"
-	                 :current-page='paginations.pageIndex'
-	                 @current-change='handleCurrentChange'
-	                 @size-change='handleSizeChange'>
+	                 :current-page="paginations.pageIndex"
+	                 @current-change="handleCurrentChange"
+	                 @size-change="handleSizeChange">
 	             </el-pagination>
 	         </div>
 	     </el-col>
@@ -546,13 +546,6 @@
 			}
 		//console.log('get_goods_list para:',para);
 			getMyWarehouse(para).then(res => {
-			/*
-			this.$message({
-		     message: 'Completed!',
-		     type: 'success',
-		     duration: 1000
-		   });
-		   */
 				this.list = []
 				for(var i=0;i<res.result.length;i++){
 					this.list.push(res.result[i])
@@ -796,16 +789,18 @@
         });
 	},
 	  
-	handleSizeChange(val) {
-        this.listQuery.pageNum = 1;
-        this.listQuery.pageSize = val;
-        this.get_goods_list();
+	// 每页多少条切换
+	handleSizeChange(pageSize) {
+	   this.paginations.pageSize = pageSize;
+	   this.get_goods_list();
+	},
+	// 上下分页
+	handleCurrentChange(page) {
+	   this.paginations.pageIndex = page;
+	   setToken("Pagenum",this.paginations.pageIndex)
+	   this.get_goods_list();
 	},
 	
-	handleCurrentChange(val) {
-        this.listQuery.pageNum = val;
-        this.get_goods_list();
-	},
     
 	handleSelectionChange(val) {
 		this.multipleSelection = val;
