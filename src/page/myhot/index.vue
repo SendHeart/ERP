@@ -56,6 +56,7 @@
         size="mini">
         手动添加
       </el-button>
+	  <el-button type="primary" class="btn-add"  size="mini" @click="get_goods_list(2)">导出</el-button>
     </el-card>
     <div class="table-container">
 	<el-table ref="productTable"
@@ -349,6 +350,216 @@
 			username:getToken('Username')||'',
 			goods_id:0,
 			scrollTop:0,
+			exportList:[],
+			tableData:[
+				{
+					title:'title',
+					cid:'cid',
+					seller_cids:'seller_cids',
+					stuff_status:'stuff_status',
+					location_state:'location_state',
+					location_city:'location_city',
+					item_type:'item_type',
+					price:'price',
+					auction_increment:'auction_increment',
+					num:'num',
+					valid_thru:'valid_thru',
+					freight_payer:'freight_payer',
+					post_fee:'post_fee',
+					ems_fee:'ems_fee',
+					express_fee:'express_fee',
+					has_invoice:'has_invoice',
+					has_warranty:'has_warranty',
+					approve_status:'approve_status',
+					has_showcase:'has_showcase',
+					list_time:'list_time',	
+					description:'description',
+					cateProps:'cateProps',
+					postage_id:'postage_id',
+					has_discount:'has_discount',
+					modified:'modified',
+					upload_fail_msg:'upload_fail_msg',
+					picture_status:'picture_status',
+					auction_point:'auction_point',
+					picture:'picture',
+					video:'video',
+					skuProps:'skuProps',
+					inputPids:'inputPids',
+					inputValues:'inputValues',
+					outer_id:'outer_id',
+					propAlias:'propAlias',
+					auto_fill:'auto_fill',
+					num_id:'num_id',
+					local_cid:'local_cid',
+					navigation_type:'navigation_type',
+					user_name:'user_name',
+					syncStatus:'syncStatus',
+					is_lighting_consigment:'is_lighting_consigment',
+					is_xinpin:'is_xinpin',
+					foodparame:'foodparame',
+					features:'features',
+					buyareatype:'buyareatype',
+					global_stock_type:'global_stock_type',
+					global_stock_country:'global_stock_country',
+					sub_stock_type:'sub_stock_type',
+					item_size:'item_size',
+					item_weight:'item_weight',
+					sell_promise:'sell_promise',
+					custom_design_flag:'custom_design_flag',
+					wireless_desc:'wireless_desc',
+					barcode:'barcode',
+					sku_barcode:'sku_barcode',
+					newprepay:'newprepay',
+					subtitle:'subtitle',
+					cpv_memo:'cpv_memo',
+					input_custom_cpv:'input_custom_cpv',
+					qualification:'qualification',
+					add_qualification:'add_qualification',
+					o2o_bind_service:'o2o_bind_service',
+					tmall_extend:'tmall_extend',	
+					product_combine:'product_combine',
+					tmall_item_prop_combine:'tmall_item_prop_combine',
+					taoschema_extend:'taoschema_extend'
+				},
+			],
+			tableHeader:[
+				'宝贝名称',
+				'宝贝类目',
+				'店铺类目',
+				'新旧程度',
+				'省',
+				'城市',
+				'出售方式',
+				'宝贝价格',
+				'加价幅度',
+				'宝贝数量',
+				'有效期',
+				'运费承担',
+				'平邮',
+				'EMS',
+				'快递',
+				'发票',
+				'保修',
+				'放入仓库',
+				'橱窗推荐',
+				'开始时间',	
+				'宝贝描述',
+				'宝贝属性',
+				'邮费模版ID',
+				'会员打折',
+				'修改时间',
+				'上传状态',
+				'图片状态',
+				'返点比例',
+				'新图片',
+				'视频',
+				'销售属性组合',
+				'用户输入ID串',
+				'用户输入名-值对',
+				'商家编码',
+				'销售属性别名',
+				'代充类型',
+				'数字ID',
+				'本地ID',
+				'宝贝分类',
+				'用户名称',
+				'宝贝状态',
+				'闪电发货',
+				'新品',
+				'食品专项',
+				'尺码库',
+				'采购地',
+				'库存类型',
+				'国家地区',
+				'库存计数',
+				'物流体积',
+				'物流重量',
+				'退换货承诺',
+				'定制工具',
+				'无线详情',
+				'商品条形码',
+				'sku条形码',
+				'7天退货',
+				'宝贝卖点',
+				'属性值备注',
+				'自定义属性值',
+				'商品资质',
+				'增加商品资质',
+				'关联线下服务',
+				'tmall扩展字段',	
+				'产品组合',
+				'tmall属性组合',
+				'taoschema扩展字段'
+			],
+			tableTitle:[
+				'title',
+				'cid',
+				'seller_cids',
+				'stuff_status',
+				'location_state',
+				'location_city',
+				'item_type',
+				'price',
+				'auction_increment',
+				'num',
+				'valid_thru',
+				'freight_payer',
+				'post_fee',
+				'ems_fee',
+				'express_fee',
+				'has_invoice',
+				'has_warranty',
+				'approve_status',
+				'has_showcase',
+				'list_time',	
+				'description',
+				'cateProps',
+				'postage_id',
+				'has_discount',
+				'modified',
+				'upload_fail_msg',
+				'picture_status',
+				'auction_point',
+				'picture',
+				'video',
+				'skuProps',
+				'inputPids',
+				'inputValues',
+				'outer_id',
+				'propAlias',
+				'auto_fill',
+				'num_id',
+				'local_cid',
+				'navigation_type',
+				'user_name',
+				'syncStatus',
+				'is_lighting_consigment',
+				'is_xinpin',
+				'foodparame',
+				'features',
+				'buyareatype',
+				'global_stock_type',
+				'global_stock_country',
+				'sub_stock_type',
+				'item_size',
+				'item_weight',
+				'sell_promise',
+				'custom_design_flag',
+				'wireless_desc',
+				'barcode',
+				'sku_barcode',
+				'newprepay',
+				'subtitle',
+				'cpv_memo',
+				'input_custom_cpv',
+				'qualification',
+				'add_qualification',
+				'o2o_bind_service',
+				'tmall_extend',	
+				'product_combine',
+				'tmall_item_prop_combine',
+				'taoschema_extend'
+			],
 			addhotgoodsInfo:{
 				dialogVisible:false,
 				productId:'',
@@ -454,13 +665,15 @@
           value: 0,
           label: '下架'
         }],
-        verifyStatusOptions: [{
+		
+		verifyStatusOptions: [{
           value: 1,
           label: '审核通过'
-        }, {
+		}, {
           value: 0,
           label: '未审核'
-        }],
+		}],
+		
 		paginations: {
 		    total: 0,        // 总数
 		    pageIndex: 1,  // 当前位于哪页
@@ -496,6 +709,95 @@
       }
     },
     methods: {
+		//本地数据导出的Excel方法
+		exportExcel() {
+		  require.ensure([], () => {
+		    const { export_json_to_excel } = require('@/Excel/Export2Excel');//Export2Excel路径
+		    const tHeader = this.tableHeader;   // 上面设置Excel的表格第一行的标题
+		    const filterVal = this.tableTitle; // 上面的index、nickName、name是tableData里对象的属性key值
+			let hot_list = this.export_list
+			for(let j=0; j<hot_list.length;j++){
+				let hot_goods = {
+					title:hot_list[j]['name']?hot_list[j]['name']:'(商品名称)',
+					cid:hot_list[j]['category1']?hot_list[j]['category1']:'',
+					seller_cids:hot_list[j]['seller_cids']?hot_list[j]['seller_cids']:'',
+					stuff_status:hot_list[j]['stuff_status']?hot_list[j]['stuff_status']:'1',
+					location_state:hot_list[j]['productArea']?hot_list[j]['productArea']:'',
+					location_city:hot_list[j]['productAreaCity']?hot_list[j]['productAreaCity']:'',
+					item_type:hot_list[j]['item_type']?hot_list[j]['item_type']:'1',
+					price:hot_list[j]['sell_price']?hot_list[j]['sell_price']:'',
+					auction_increment:hot_list[j]['auction_increment']?hot_list[j]['auction_increment']:'0',
+					num:hot_list[j]['storenum']?hot_list[j]['storenum']:'',
+					valid_thru:hot_list[j]['valid_thru']?hot_list[j]['valid_thru']:'7',
+					freight_payer:hot_list[j]['freight_payer']?hot_list[j]['freight_payer']:'2',
+					post_fee:hot_list[j]['post_fee']?hot_list[j]['post_fee']:'1.03',
+					ems_fee:hot_list[j]['ems_fee']?hot_list[j]['ems_fee']:'4.49',
+					express_fee:hot_list[j]['express_fee']?hot_list[j]['express_fee']:'0',
+					has_invoice:hot_list[j]['has_invoice']?hot_list[j]['has_invoice']:'0',
+					has_warranty:hot_list[j]['has_warranty']?hot_list[j]['has_warranty']:'0',
+					approve_status:hot_list[j]['approve_status']?hot_list[j]['approve_status']:'1',
+					has_showcase:hot_list[j]['has_showcase']?hot_list[j]['has_showcase']:'1',
+					list_time:hot_list[j]['list_time']?hot_list[j]['list_time']:'',	
+					description:hot_list[j]['description']?hot_list[j]['description']:'',
+					cateProps:hot_list[j]['cateProps']?hot_list[j]['cateProps']:'',
+					postage_id:hot_list[j]['postage_id']?hot_list[j]['postage_id']:'27817412700',
+					has_discount:hot_list[j]['has_discount']?hot_list[j]['has_discount']:'0',
+					modified:hot_list[j]['modified']?hot_list[j]['modified']:'',
+					upload_fail_msg:hot_list[j]['upload_fail_msg']?hot_list[j]['upload_fail_msg']:'200',
+					picture_status:hot_list[j]['picture_status']?hot_list[j]['picture_status']:'1',
+					auction_point:hot_list[j]['auction_point']?hot_list[j]['auction_point']:'0',
+					picture:hot_list[j]['picture']?hot_list[j]['picture']:'',
+					video:hot_list[j]['video']?hot_list[j]['video']:'',
+					skuProps:hot_list[j]['skuProps']?hot_list[j]['skuProps']:'',
+					inputPids:hot_list[j]['inputPids']?hot_list[j]['inputPids']:'',
+					inputValues:hot_list[j]['inputValues']?hot_list[j]['inputValues']:'',
+					outer_id:hot_list[j]['outer_id']?hot_list[j]['outer_id']:'',
+					propAlias:hot_list[j]['propAlias']?hot_list[j]['propAlias']:'',
+					auto_fill:hot_list[j]['auto_fill']?hot_list[j]['auto_fill']:'',
+					num_id:hot_list[j]['goods_id']?hot_list[j]['goods_id']:'',
+					local_cid:hot_list[j]['local_cid']?hot_list[j]['local_cid']:'0',
+					navigation_type:hot_list[j]['navigation_type']?hot_list[j]['navigation_type']:'2',
+					user_name:hot_list[j]['user_name']?hot_list[j]['user_name']:'',
+					syncStatus:hot_list[j]['syncStatus']?hot_list[j]['syncStatus']:'1',
+					is_lighting_consigment:hot_list[j]['is_lighting_consigment']?hot_list[j]['is_lighting_consigment']:'200',
+					is_xinpin:hot_list[j]['is_xinpin']?hot_list[j]['is_xinpin']:'116',
+					foodparame:hot_list[j]['foodparame']?hot_list[j]['foodparame']:'',
+					features:hot_list[j]['features']?hot_list[j]['features']:'',
+					buyareatype:hot_list[j]['buyareatype']?hot_list[j]['buyareatype']:'0',
+					global_stock_type:hot_list[j]['global_stock_type']?hot_list[j]['global_stock_type']:'-1',
+					global_stock_country:hot_list[j]['global_stock_country']?hot_list[j]['global_stock_country']:'',
+					sub_stock_type:hot_list[j]['global_stock_country']?hot_list[j]['global_stock_country']:'1',
+					item_size:hot_list[j]['item_size']?hot_list[j]['item_size']:'',
+					item_weight:hot_list[j]['item_weight']?hot_list[j]['item_weight']:'',
+					sell_promise:hot_list[j]['sell_promise']?hot_list[j]['sell_promise']:'0',
+					custom_design_flag:hot_list[j]['custom_design_flag']?hot_list[j]['custom_design_flag']:'0',
+					wireless_desc:hot_list[j]['wireless_desc']?hot_list[j]['wireless_desc']:'',
+					barcode:hot_list[j]['barcode']?hot_list[j]['barcode']:'',
+					sku_barcode:hot_list[j]['sku_barcode']?hot_list[j]['sku_barcode']:'',
+					newprepay:hot_list[j]['newprepay']?hot_list[j]['newprepay']:'1',
+					subtitle:hot_list[j]['subtitle']?hot_list[j]['subtitle']:'',
+					cpv_memo:hot_list[j]['cpv_memo']?hot_list[j]['cpv_memo']:'',
+					input_custom_cpv:hot_list[j]['input_custom_cpv']?hot_list[j]['input_custom_cpv']:'',
+					qualification:hot_list[j]['qualification']?hot_list[j]['qualification']:'',
+					add_qualification:hot_list[j]['add_qualification']?hot_list[j]['add_qualification']:'',
+					o2o_bind_service:hot_list[j]['o2o_bind_service']?hot_list[j]['o2o_bind_service']:'',
+					tmall_extend:hot_list[j]['tmall_extend']?hot_list[j]['tmall_extend']:'',	
+					product_combine:hot_list[j]['product_combine']?hot_list[j]['product_combine']:'',
+					tmall_item_prop_combine:hot_list[j]['tmall_item_prop_combine']?hot_list[j]['tmall_item_prop_combine']:'',
+					taoschema_extend:hot_list[j]['tmall_item_prop_combine']?hot_list[j]['tmall_item_prop_combine']:''
+				}
+				this.tableData.push(hot_goods) ;
+			}
+		    const list = this.tableData;  //把要导出的数据tableData存到list
+		    const data = this.formatJson(filterVal, list);
+		    export_json_to_excel(tHeader, data, 'HotGoodsList');//最后一个是表名字
+		  })
+		},
+		
+		formatJson(filterVal, jsonData) {
+		  return jsonData.map(v => filterVal.map(j => v[j]))
+		},
+		
 		goods_detail(goods_index=0){
 			//this.$router.push({path:'/myhot/goodsedit',query:{goods_name:goods_name,goods_id:goods_id,goods_from:goods_from}});
 			let goods_para = JSON.stringify(this.list[goods_index])
@@ -531,7 +833,7 @@
 		
 		get_goods_list(is_search=0) {
 			this.listLoading = true;
-			let pagenum = getToken('Pagenum_hot')
+			let pagenum = getToken('Pagenum_hot	`1	')
 			this.paginations.pageIndex = pagenum?parseInt(pagenum):this.paginations.pageIndex
 			let para = {
 				username:this.username,
@@ -545,14 +847,23 @@
 			if(is_search == 1){
 				para['page'] = this.listQuery.pageNum
 				para['query_info'] = this.listQuery
+			}else if(is_search == 2){
+				para['type'] = 1 //全部导出查询
 			}
 		//console.log('get_goods_list para:',para);
 			getMyWarehouse(para).then(res => {
-				this.list = []
+				let hot_goods_list = []
 				for(var i=0;i<res.result.length;i++){
-					this.list.push(res.result[i])
+					hot_goods_list.push(res.result[i])
 				} 
 				this.paginations.total = parseInt(res.total);
+				if(is_search == 2){
+					this.export_list = hot_goods_list ;
+					this.exportExcel()
+				}else{
+					this.list = hot_goods_list ;
+					
+				}
 				console.log('get_goods_list return:',res);
 			})
 			.catch(err=>{
@@ -650,21 +961,21 @@
 		});
 	  },
 	  
-      handleShowSkuEditDialog(index,row){
-        this.editSkuInfo.dialogVisible=true;
-        this.editSkuInfo.productId=row.id;
-        this.editSkuInfo.productSn=row.productSn;
-        this.editSkuInfo.productAttributeCategoryId = row.productAttributeCategoryId;
-        this.editSkuInfo.keyword=null;
-        fetchSkuStockList(row.id,{keyword:this.editSkuInfo.keyword}).then(response=>{
-          this.editSkuInfo.stockList=response.data;
-        });
-        if(row.productAttributeCategoryId!=null){
-          fetchProductAttrList(row.productAttributeCategoryId,{type:0}).then(response=>{
-            this.editSkuInfo.productAttr=response.data.list;
-          });
-        }
-      },
+		handleShowSkuEditDialog(index,row){
+			this.editSkuInfo.dialogVisible=true;
+			this.editSkuInfo.productId=row.id;
+			this.editSkuInfo.productSn=row.productSn;
+			this.editSkuInfo.productAttributeCategoryId = row.productAttributeCategoryId;
+			this.editSkuInfo.keyword=null;
+			fetchSkuStockList(row.id,{keyword:this.editSkuInfo.keyword}).then(response=>{
+				this.editSkuInfo.stockList=response.data;
+			});
+			if(row.productAttributeCategoryId!=null){
+				fetchProductAttrList(row.productAttributeCategoryId,{type:0}).then(response=>{
+				this.editSkuInfo.productAttr=response.data.list;
+			});
+			}
+		},
       
 		handleSearchEditSku(){
 			fetchSkuStockList(this.editSkuInfo.productId,{keyword:this.editSkuInfo.keyword}).then(response=>{
@@ -870,6 +1181,7 @@
           });
         });
       },
+	  
       updateNewStatus(newStatus, ids) {
         let params = new URLSearchParams();
         params.append('ids', ids);
@@ -882,6 +1194,7 @@
           });
         });
       },
+	  
       updateRecommendStatus(recommendStatus, ids) {
         let params = new URLSearchParams();
         params.append('ids', ids);

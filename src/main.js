@@ -26,6 +26,11 @@ Vue.use(VueQuillEditor)
 import VueResource from 'vue-resource' ; //http服务
 Vue.use(VueResource) ;
 
+import Blob from '@/Excel/Blob'
+import Export2Excel from '@/Excel/Export2Excel.js'
+//import JsonExcel from 'vue-json-excel'
+//Vue.component('downloadExcel', JsonExcel)
+
 // 分享功能集合
 import { shareConfig } from './utils/share';
 Vue.prototype.shareConfig = shareConfig;
