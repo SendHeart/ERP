@@ -531,6 +531,8 @@
 		
 		get_goods_list(is_search=0) {
 			this.listLoading = true;
+			let pagenum = getToken('Pagenum_hot')
+			this.paginations.pageIndex = pagenum?parseInt(pagenum):this.paginations.pageIndex
 			let para = {
 				username:this.username,
 				access_token:this.access_token,
@@ -797,7 +799,7 @@
 	// 上下分页
 	handleCurrentChange(page) {
 	   this.paginations.pageIndex = page;
-	   setToken("Pagenum",this.paginations.pageIndex)
+	   setToken("Pagenum_hot",this.paginations.pageIndex)
 	   this.get_goods_list();
 	},
 	
