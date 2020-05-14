@@ -30,6 +30,9 @@ import Blob from '@/Excel/Blob'
 import Export2Excel from '@/Excel/Export2Excel.js'
 //import JsonExcel from 'vue-json-excel'
 //Vue.component('downloadExcel', JsonExcel)
+// 微信扫码支付
+import wx from "weixin-jsapi"; 
+Vue.prototype.wx = wx
 
 // 分享功能集合
 import { shareConfig } from './utils/share';

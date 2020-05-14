@@ -242,3 +242,11 @@ export function goodsNewSet(reqData) { //推荐商品
     })
 }
 
+export function rechargeOrder(reqData) { //充值
+    return request({
+      url:'/api/web_client/recharge_order',
+      method: 'post',
+      data: reqData
+    })
+}
+

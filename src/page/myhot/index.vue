@@ -3,31 +3,31 @@
     <el-card class="filter-container" shadow="never">
       <div>
         <i class="el-icon-search"></i>
-        <span>筛选搜索</span>
+        <span>{{$t('commons.search')}}</span>
         <el-button
           style="float: right"
           @click="search()"
           type="primary"
           size="small">
-          查询结果
+          {{$t('commons.findresult')}}
         </el-button>
         <el-button
           style="float: right;margin-right: 15px"
           @click="search()"
           size="small">
-          重置
+          {{$t('commons.reset')}}
         </el-button>
       </div>
       <div style="margin-top: 15px">
         <el-form :inline="true" :model="listQuery" size="small" label-width="120px">
-			<el-form-item label="货源：">
+			<el-form-item :label="$t('commons.goodsorg')">
 				<el-cascader
 				  clearable
 				  v-model="listQuery.goodsSupplyId"
 				  :options="goods_supply">
 				</el-cascader>
 			</el-form-item>
-			<el-form-item label="所属类目：">
+			<el-form-item :label="$t('commons.goodscate')">
 			  <el-cascader
 			    clearable
 			    v-model="listQuery.goodsCategoryId"
@@ -35,12 +35,12 @@
 				filterable>
 			  </el-cascader>
 			</el-form-item>
-			<el-form-item label="入库时间">
+			<el-form-item :label="$t('commons.storedate')">
 				<el-date-picker
 				      v-model="listQuery.storage_in"
 				      type="daterange"
-				      start-placeholder="开始日期"
-				      end-placeholder="结束日期"
+				      :start-placeholder="$t('commons.startdate')"
+				      :end-placeholder="$t('commons.enddate')"
 				      :default-time="['00:00:00', '23:59:59']">
 				</el-date-picker>
 			</el-form-item>
@@ -54,9 +54,9 @@
         @click="add_hot_goods()"
 		type="primary"
         size="mini">
-        手动添加
+         {{$t('commons.addbyself')}}
       </el-button>
-	  <el-button type="primary" class="btn-add"  size="mini" @click="get_goods_list(2)">导出</el-button>
+	  <el-button type="primary" class="btn-add"  size="mini" @click="get_goods_list(2)"> {{$t('commons.exportexcel')}}</el-button>
     </el-card>
     <div class="table-container">
 	<el-table ref="productTable"
@@ -192,7 +192,7 @@
     <div class="batch-operate-container">
       <el-select
         size="small"
-        v-model="operateType" placeholder="批量操作">
+        v-model="operateType" :placeholder="$t('commons.batch')">
         <el-option
           v-for="item in operates"
           :key="item.value"
@@ -206,7 +206,7 @@
         @click="handleBatchOperate()"
         type="primary"
         size="small">
-        确定
+        {{$t('commons.confirm')}}
       </el-button>
 	  <el-select
 	    size="small"
@@ -355,7 +355,7 @@
 			  	callback()
 			  }
 			}, 1000);
-		};
+		}
 		
 		return {
 			shop_type:shop_type?shop_type:10,

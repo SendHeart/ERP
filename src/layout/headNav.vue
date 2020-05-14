@@ -8,20 +8,12 @@
                         <li class="li-badge">
                             <el-tooltip class="item" effect="dark" content="发邮件" placement="top">
                                 <a :href='sendemail' target="_blank">
-									<!-- 
-									<svg-icon icon-class="email" />
-									<img :src="emailImg" class='langAvatar' alt="">
-									-->
 									<svg-icon icon-class="email" />
                                 </a>
                             </el-tooltip>
                         </li>
                         <li class="li-badge">
                             <a :href='github' target="_blank" v-popover:qcode>
-								<!--
-								<icon-svg icon-class="iconwechat" />
-								<img :src="wechatSvg" class='langAvatar' alt="">
-								-->
 								<svg-icon icon-class="wechat" />
                                 <el-popover
                                     ref="qcode"
@@ -37,9 +29,6 @@
                         </li>
                         <li class="li-badge">
                             <a :href='qqcodeUrl' target="_blank" v-popover:qqcode>
-								<!--
-								
-								-->
 								<svg-icon icon-class="qq" />
                                  <el-popover
                                     ref="qqcode"
@@ -63,7 +52,16 @@
 						:active-text-color="menuObj.activeTextColor" 
 						mode="horizontal" 
                        >
-                        <el-submenu index="1" popper-class="langItem">
+					   <el-submenu index="1" popper-class="langItem">
+					       <template slot="title">
+								<svg-icon icon-class="pay" />
+					       </template>
+					       <el-menu-item index="1-1" @click="recharge()">
+					           <span class="intro"> {{$t('commons.recharge')}}</span>
+					       </el-menu-item>
+					       
+					   </el-submenu>
+                        <el-submenu index="2" popper-class="langItem">
                             <template slot="title">
                                 <img :src="langLogo" class='langAvatar' alt="">
 								<span v-if="langLogo!=americaImg" class="intro">中文</span>
@@ -79,14 +77,8 @@
                             </el-menu-item>
                         </el-submenu>
 
-                        <el-submenu index="2"  popper-class="infoItem">
+                        <el-submenu index="3"  popper-class="infoItem">
                             <template slot="title">
-								<!--
-                                <div class='welcome'>
-                                    <span class="name">{{$t('commons.hi')}},</span>
-                                    <span class='name avatarname'> {{ $t(`commons.${name}`)}}</span>
-                                </div>
-								-->
                                 <img :src="startImg" class='start' alt="">
                             </template>
                             <el-menu-item index="2-1" @click="setDialogInfo('info')">{{ $t('commons.settings') }}</el-menu-item>
@@ -210,6 +202,9 @@
                         break;
                 }
             },
+			recharge(){
+			    this.$router.push('/pay/recharge');
+			},
             // 切换语言
             changeLocale(type){
                 setToken('lang',type);

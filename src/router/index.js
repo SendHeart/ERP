@@ -41,6 +41,7 @@ export const constantRouterMap = [
 	
 	{ path: '/emallplatform_detail', component: () => import('@/page/emall_detail/emall_detail'), hidden: true },
 	{ path: '/goodsedit', component: () => import('@/page/goodsedit/goodsedit'), hidden: true },
+	{ path: '/pay/recharge', component: () => import('@/page/pay/recharge'), hidden: true },
 	{ path: '/htmlview', component: () => import('@/page/myhot/htmlview'), hidden: true },
 	{
 		path: '/index',
