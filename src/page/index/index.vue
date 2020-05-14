@@ -318,7 +318,7 @@
 					shop_type:this.shop_type,
 					lang:this.lang,
 				}
-				console.log('addMyWarehouse para:',para);
+				//console.log('get_emall_list para:',para);
 				getEmallList(para).then(res => {
 					/*
 					this.$message({
@@ -342,7 +342,7 @@
 					shop_type:this.shop_type,
 					lang:this.lang,
 				}
-				console.log('addMyWarehouse para:',para);
+				//console.log('get_emall_index para:',para);
 				getEmallIndex(para).then(res => {
 					/*
 					this.$message({

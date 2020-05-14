@@ -201,13 +201,23 @@
         </el-option>
       </el-select>
       <el-button
-        style="margin-left: 20px"
+        style="margin-left: 20px;margin-right:20px;"
         class="search-button"
         @click="handleBatchOperate()"
         type="primary"
         size="small">
         确定
       </el-button>
+	  <el-select
+	    size="small"
+	    v-model="emall_id" :placeholder="$t('commons.emallplatform')">
+	    <el-option
+	      v-for="item in emall_list"
+	      :key="item.id"
+	      :label="item.title"
+	      :value="item.id">
+	    </el-option>
+	  </el-select>
     </div>
 	
     <el-dialog
@@ -299,6 +309,10 @@
 		getGoodsCategory,
 		getGoodsSupply,
 		addMyWarehouse,
+		goodsUpDown,
+		goodsRecommSet,
+		goodsNewSet,
+		getEmallList,
 	} from "@/api/user";
 	
 	import {
@@ -560,6 +574,7 @@
 				'tmall_item_prop_combine',
 				'taoschema_extend'
 			],
+			emall_list:[],
 			addhotgoodsInfo:{
 				dialogVisible:false,
 				productId:'',
@@ -610,16 +625,20 @@
             label: "取消新品",
             value: "newOff"
           },
+		  /*
           {
             label: "转移到分类",
             value: "transferCategory"
           },
+		 
           {
             label: "移入回收站",
             value: "recycle"
           }
+		  */
         ],
         operateType: null,
+		emall_id:null,
         listQuery: Object.assign({}, defaultListQuery),
         list: null,
         total: null,
@@ -678,17 +697,18 @@
 		    total: 0,        // 总数
 		    pageIndex: 1,  // 当前位于哪页
 		    pageSize: 20,   // 1页显示多少条
-		    pageSizes: [5, 10, 15, 20],  //每页显示多少条
+		    pageSizes: [5, 10, 15, 20, 30],  //每页显示多少条
 		    layout: "total, sizes, prev, pager, next, jumper"   // 翻页属性
 		},
 		goods_category:[],
       }
     },
     created() {
-     this.get_goods_list();
-     this.get_mywarehouse();
-     this.get_goods_category();
-	 this.get_goods_supply();
+     this.get_goods_list()
+     this.get_mywarehouse()
+     this.get_goods_category()
+	 this.get_goods_supply()
+	 this.get_emall_list()
     },
     watch: {
       selectProductCateValue: function (newValue) {
@@ -798,6 +818,31 @@
 		  return jsonData.map(v => filterVal.map(j => v[j]))
 		},
 		
+		get_emall_list(){
+			let para = {
+				username:this.username,
+				access_token:this.access_token,
+				shop_type:this.shop_type,
+				lang:this.lang,
+				type:1, //
+			}
+			//console.log('get_emall_list para:',para);
+			getEmallList(para).then(res => {
+				/*
+				this.$message({
+			     message: 'Completed!',
+			     type: 'success',
+			     duration: 1000
+			   });
+			   */
+			   this.emall_list = res 
+			   console.log('get_emall_list return:',res);
+			})
+			.catch(err=>{
+				console.log('get_emall_list err:',err)
+			});
+		},
+		
 		goods_detail(goods_index=0){
 			//this.$router.push({path:'/myhot/goodsedit',query:{goods_name:goods_name,goods_id:goods_id,goods_from:goods_from}});
 			let goods_para = JSON.stringify(this.list[goods_index])
@@ -889,6 +934,7 @@
           }
         });
       },
+	  
       get_goods_category() {
 		  let para = {
 		  	username:this.username,
@@ -1062,7 +1108,15 @@
           });
           return;
         }
-        this.$confirm('是否要进行该批量操作?', '提示', {
+		if(this.emall_id==null){
+		  this.$message({
+		    message: '请选择电商平台',
+		    type: 'warning',
+		    duration: 1000
+		  });
+		  return;
+		}
+        this.$confirm('是否进行该批量操作?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
@@ -1073,27 +1127,25 @@
           }
           switch (this.operateType) {
             case this.operates[0].value:
-              this.updatePublishStatus(1,ids);
+              this.goods_up_down(1,ids);
               break;
             case this.operates[1].value:
-              this.updatePublishStatus(0,ids);
+              this.goods_up_down(0,ids);
               break;
             case this.operates[2].value:
-              this.updateRecommendStatus(1,ids);
+              this.goods_recomm_set(1,ids);
               break;
             case this.operates[3].value:
-              this.updateRecommendStatus(0,ids);
+              this.goods_recomm_set(0,ids);
               break;
             case this.operates[4].value:
-              this.updateNewStatus(1,ids);
+              this.goods_new_set(1,ids);
               break;
             case this.operates[5].value:
-              this.updateNewStatus(0,ids);
+              this.goods_new_set(0,ids);
               break;
             case this.operates[6].value:
-              break;
-            case this.operates[7].value:
-              this.updateDeleteStatus(1,ids);
+              this.goods_cancel_set(1,ids);
               break;
             default:
               break;
@@ -1144,76 +1196,136 @@
         this.listQuery = Object.assign({}, defaultListQuery);
 	},
     
-	handleDelete(index, row){
-        this.$confirm('是否要进行删除操作?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          let ids = [];
-          ids.push(row.id);
-          this.updateDeleteStatus(1,ids);
-        });
-	},
+		handleDelete(index, row){
+			this.$confirm('是否要进行删除操作?', '提示', {
+			confirmButtonText: '确定',
+			cancelButtonText: '取消',
+			type: 'warning'
+			}).then(() => {
+			let ids = [];
+			ids.push(row.id);
+			this.updateDeleteStatus(1,ids);
+			});
+		},
 	
-	handleUpdateProduct(index,row){
-        this.$router.push({path:'/pms/updateProduct',query:{id:row.id}});
-	},
+		handleUpdateProduct(index,row){
+			this.$router.push({path:'/pms/updateProduct',query:{id:row.id}});
+		},
 	
-	handleShowProduct(index,row){
-        console.log("handleShowProduct",row);
-      },
-      handleShowVerifyDetail(index,row){
-        console.log("handleShowVerifyDetail",row);
-      },
-      handleShowLog(index,row){
-        console.log("handleShowLog",row);
-      },
-      updatePublishStatus(publishStatus, ids) {
-        let params = new URLSearchParams();
-        params.append('ids', ids);
-        params.append('publishStatus', publishStatus);
-        updatePublishStatus(params).then(response => {
-          this.$message({
-            message: '修改成功',
-            type: 'success',
-            duration: 1000
-          });
-        });
-      },
-	  
-      updateNewStatus(newStatus, ids) {
-        let params = new URLSearchParams();
-        params.append('ids', ids);
-        params.append('newStatus', newStatus);
-        updateNewStatus(params).then(response => {
-          this.$message({
-            message: '修改成功',
-            type: 'success',
-            duration: 1000
-          });
-        });
-      },
-	  
-      updateRecommendStatus(recommendStatus, ids) {
-        let params = new URLSearchParams();
-        params.append('ids', ids);
-        params.append('recommendStatus', recommendStatus);
-        updateRecommendStatus(params).then(response => {
-          this.$message({
-            message: '修改成功',
-            type: 'success',
-            duration: 1000
-          });
-        });
-      },
+		handleShowProduct(index,row){
+			console.log("handleShowProduct",row);
+		},
 		
+		handleShowVerifyDetail(index,row){
+			console.log("handleShowVerifyDetail",row);
+		},
+		
+		handleShowLog(index,row){
+			console.log("handleShowLog",row);
+		},
+	  
+		goods_up_down(updown, ids) {
+			let params = new URLSearchParams();
+			params.append('ids', ids);
+			params.append('publishStatus', updown);
+			if(this.emall_id){
+				let para = {
+					username:this.username,
+					access_token:this.access_token,
+					shop_type:this.shop_type,
+					lang:this.lang,
+					goods_ids:ids,
+					emall_id:this.emall_id,
+					updown:updown,  //0下架 1上架
+				}
+				console.log("goods_up_down para:",para,' ids:',ids);
+				goodsUpDown(para).then(response => {
+				this.$message({
+					message: 'Completed',
+					type: 'success',
+					duration: 1000
+					});
+				});
+			}else{
+				this.$message({
+					message: '请选则电商平台',
+					type: 'warn',
+					duration: 2000
+				}); 
+			}
+		},
+	  
+		goods_new_set(new_status, ids) {
+			let params = new URLSearchParams();
+			params.append('ids', ids);
+			params.append('newStatus', new_status);
+			
+			if(this.emall_id){
+				let para = {
+					username:this.username,
+					access_token:this.access_token,
+					shop_type:this.shop_type,
+					lang:this.lang,
+					goods_ids:ids,
+					emall_id:this.emall_id,
+					new_status:new_status,  //1新品 0取消新品
+				}
+				console.log("goods_new_set para:",para,' ids:',ids);
+				goodsNewSet(para).then(response => {
+				this.$message({
+					message: 'Completed',
+					type: 'success',
+					duration: 1000
+					});
+				});
+			}else{
+				this.$message({
+					message: '请选则电商平台',
+					type: 'warn',
+					duration: 2000
+				}); 
+			}
+		},
+	  
+		goods_recomm_set(recommend_status, ids) {
+			let params = new URLSearchParams();
+			params.append('ids', ids);
+			params.append('recommendStatus', recommend_status);
+			if(this.emall_id){
+				let para = {
+					username:this.username,
+					access_token:this.access_token,
+					shop_type:this.shop_type,
+					lang:this.lang,
+					goods_ids:ids,
+					emall_id:this.emall_id,
+					recommend_status:recommend_status,  //1推荐 0取消推荐
+				}
+				console.log("goods_recomm_set para:",para,' ids:',ids);
+				goodsRecommSet(para).then(response => {
+					this.$message({
+						message: 'Completed!',
+						type: 'success',
+						duration: 1000
+					});
+				});
+			}else{
+				this.$message({
+					message: '请选则电商平台',
+					type: 'warn',
+					duration: 2000
+				}); 
+			}
+		},
+		
+		/*
 		updateDeleteStatus(deleteStatus, ids) {
 			let params = new URLSearchParams();
 			params.append('ids', ids);
 			params.append('deleteStatus', deleteStatus);
 		},
-	  
+		*/
+	   
 		delete_mywarehouse(index, row){
 			let para = {
 				username:this.username,

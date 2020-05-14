@@ -124,8 +124,7 @@
 						emall_id:'4',
 					}
                 ],
-				goods_category:[],
-				goods_category_init:[],
+				goods_category:null,
 				bigdata_hot_list:[],
 				hot_goods_list:[],
 				latest_hot_list:[],
@@ -165,9 +164,12 @@
 			},
 			get_goods_list(){
 				let category_selected = getToken('category_selected_big')
+				category_selected = category_selected?category_selected:this.category_selected
 				let emall_selected = getToken('emall_selected_big')
+				emall_selected = emall_selected?emall_selected:this.emall_selected
 				let pagenum = getToken('Pagenum_big')
 				this.paginations.pageIndex = pagenum?parseInt(pagenum):this.paginations.pageIndex
+				console.log('get_goods_list emall_provider:',this.emall_provider,' emall_selected:',emall_selected)
 			    let para = {
 					username:this.username,
 					access_token:this.access_token,
@@ -189,10 +191,17 @@
 					} 
 					console.log('getGoodsList return:',res);
 			        this.paginations.total = parseInt(res.total);
-					this.category_selected = getToken('category_selected_big')
-					this.emall_selected = getToken('emall_selected_big')
-					this.goods_category[this.category_selected]['style_class'] = 'background-color:#BBBBBB;color:#FFFFFF;';
-					this.emall_provider[this.emall_selected]['style_class'] = 'background-color:#BBBBBB;color:#FFFFFF;';
+					//设置选中颜色
+					
+					for(let k=0;k<this.goods_category.length;k++){
+						 this.goods_category[k]['style_class'] = 'background-color:#FFFFFF;color:#666;';
+					}
+					this.goods_category[category_selected]['style_class'] = 'background-color:#BBBBBB;color:#FFFFFF;';
+					
+					for(let j=0;j<this.emall_provider.length;j++){
+						 this.emall_provider[j]['style_class'] = 'background-color:#FFFFFF;color:#666;';
+					}
+					this.emall_provider[emall_selected]['style_class'] = 'background-color:#BBBBBB;color:#FFFFFF;';
 			    })
 				.catch(err=>{
 					console.log('getGoodsList err:',err)
@@ -215,13 +224,22 @@
 					       duration: 1000
 					     });
 						*/
+					console.log('get_goods_category return:',res);
 					let goods_category = res
 					this.goods_category = [] ;
-					for(var i=0;i<goods_category.length;i++){
-						this.goods_category.push(goods_category[i])
-					} 
-					this.get_goods_list()
-					console.log('get_goods_category return:',res);
+					if(goods_category){
+						for(var i=0;i<goods_category.length;i++){
+							this.goods_category.push(goods_category[i])
+						}
+						
+						this.get_goods_list()
+					}else{
+						this.$message({
+						   message: 'Nothing!',
+						   type: 'warn',
+						   duration: 2000
+						 });
+					}
 				})
 				.catch(err=>{
 					console.log('get_goods_category err:',err)
@@ -306,31 +324,31 @@
 			},
 			
 			emall_select(selected=0) {
-				let category_selected = this.category_selected
-				//var category_selected = this.category_selected
 				let emall_selected = this.emall_selected
+				/*
 				this.emall_provider[selected]['style_class'] = 'background-color:#BBBBBB;color:#FFFFFF;';
-				
 				if(selected!=this.emall_selected){
 					this.emall_provider[this.emall_selected]['style_class'] = 'background-color:#FFFFFF;color:#666';
 				}
+				*/
 				this.emall_selected = selected ;
-				
-				this.goods_category[category_selected]['style_class'] = 'background-color:#FFFFFF;color:#666';
+				this.category_selected = 0 
 				this.paginations.pageIndex = 1 ;
 				setToken("Pagenum_big",this.paginations.pageIndex)
 				setToken("emall_selected_big",this.emall_selected)
+				setToken("category_selected_big",this.category_selected)
 				this.get_goods_category()
-				this.category_selected = 0 ;
+				
 			},
 			category_select(selected=0) {	
 				//let category_selected = getToken('category_selected_big')
 				//var category_selected = this.category_selected
+				/*
 				this.goods_category[selected]['style_class'] = 'background-color:#BBBBBB;color:#FFFFFF;';
 				if(selected!=this.category_selected){
 					this.goods_category[this.category_selected]['style_class'] = 'background-color:#FFFFFF;color:#666';
 				}
-				
+				*/
 				this.category_selected = selected ;
 				this.paginations.pageIndex = 1 ;
 				setToken("Pagenum_big",this.paginations.pageIndex)

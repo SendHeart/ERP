@@ -217,3 +217,28 @@ export function getGoodsCategory(reqData) {
       data: reqData
     })
 }
+
+export function goodsUpDown(reqData) { //上架
+    return request({
+      url:'/api/web_client/goods_up_down',
+      method: 'post',
+      data: reqData
+    })
+}
+
+export function goodsRecommSet(reqData) { //推荐商品
+    return request({
+      url:'/api/web_client/goods_recomment_set',
+      method: 'post',
+      data: reqData
+    })
+}
+
+export function goodsNewSet(reqData) { //推荐商品
+    return request({
+      url:'/api/web_client/goods_new_set',
+      method: 'post',
+      data: reqData
+    })
+}
+
