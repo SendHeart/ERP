@@ -21,6 +21,7 @@ const zh = {
 	  pay:'支付',
 	  recharge:'充值',
 	  amount:'金额',
+	  orderno:'订单号',
 	  prompt:'提醒',
       hi: '您好',
       index: '我的首页',

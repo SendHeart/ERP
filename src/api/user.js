@@ -250,3 +250,11 @@ export function rechargeOrder(reqData) { //充值
     })
 }
 
+export function wxPay(reqData) { //充值
+    return request({
+      url:'/wxpay/webpay',
+      method: 'post',
+      data: reqData
+    })
+}
+

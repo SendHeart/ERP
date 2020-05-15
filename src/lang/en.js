@@ -21,6 +21,7 @@ const zh = {
 	  pay:'Pay',
 	  recharge:'Recharge',
 	  amount:'Amount',
+	  orderno:'Order No',
 	  prompt:'Attention',
       hi: 'Hi',
       index: 'Dashboard',
