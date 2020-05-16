@@ -264,15 +264,11 @@ import QRCode from 'qrcodejs2'
 			},
 			
 			query_bal_account(){
-				let pagenum = getToken('Pagenum')
-				this.paginations.pageIndex = pagenum?parseInt(pagenum):this.paginations.pageIndex
 				let para = {
 					username:this.username,
 					access_token:this.access_token,
 					shop_type:this.shop_type,
 					lang:this.lang,
-					pagesize:this.paginations.pageSize,
-					page:this.paginations.pageIndex,
 				}
 				console.log('query_order para:',para);
 				queryBalAccount(para).then(res => {
