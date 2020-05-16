@@ -291,7 +291,7 @@ import QRCode from 'qrcodejs2'
 				});
 			},
 			query_details_account(){
-				let pagenum = getToken('Pagenum')
+				let pagenum = getToken('account_Pagenum')
 				this.paginations.pageIndex = pagenum?parseInt(pagenum):this.paginations.pageIndex
 				let para = {
 					username:this.username,
@@ -445,7 +445,7 @@ import QRCode from 'qrcodejs2'
 			// 上下分页
 			handleCurrentChange(page) {
 			   this.paginations.pageIndex = page;
-			   setToken("Pagenum",this.paginations.pageIndex)
+			   setToken("account_Pagenum",this.paginations.pageIndex)
 			   this.query_account();
 			},
 		}
