@@ -52,14 +52,16 @@
 						:active-text-color="menuObj.activeTextColor" 
 						mode="horizontal" 
                        >
-					   <el-submenu index="1" popper-class="langItem">
+					   <el-submenu index="1" popper-class="">
 					       <template slot="title">
 								<svg-icon icon-class="pay" />
 					       </template>
 					       <el-menu-item index="1-1" @click="recharge()">
 					           <span class="intro"> {{$t('commons.recharge')}}</span>
 					       </el-menu-item>
-					       
+						   <el-menu-item index="1-1" @click="account()">
+						       <span class="intro"> {{$t('commons.account')}}</span>
+						   </el-menu-item>
 					   </el-submenu>
                         <el-submenu index="2" popper-class="langItem">
                             <template slot="title">
@@ -204,6 +206,23 @@
             },
 			recharge(){
 			    this.$router.push('/pay/recharge');
+				let routeUrl = this.$router.resolve({
+				    path: "/pay/recharge",
+				    query: {
+						type:'recharge',
+					}
+				  });
+				  window.open(routeUrl.href, '_self'); //_self _blank
+			},
+			account(){
+			    this.$router.push('/pay/recharge');
+				let routeUrl = this.$router.resolve({
+				    path: "/pay/recharge",
+				    query: {
+						type:'account',
+					}
+				  });
+				  window.open(routeUrl.href, '_self'); //_self _blank
 			},
             // 切换语言
             changeLocale(type){

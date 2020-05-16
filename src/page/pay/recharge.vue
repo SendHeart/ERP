@@ -1,6 +1,5 @@
 <template>
 <div>
-	
 	<el-dialog
 		:title="$t('commons.recharge')"
 		:visible.sync="rechargeInfo.dialogVisible"
@@ -25,8 +24,8 @@
 							<el-input :placeholder="$t('commons.amount')" v-model="rechargeInfo.amount" size="small" style="width: 30%;margin-left: 0px"></el-input>
 						</el-form-item>
 						<el-form-item>
-							<el-button @click="recharge_quit()">取 消</el-button>
-							<el-button type="primary" @click="recharge_order('rechargeInfo')">提交</el-button>
+							<el-button @click="recharge_quit()">{{$t('commons.cancel')}}</el-button>
+							<el-button type="primary" @click="recharge_order('rechargeInfo')">{{$t('commons.confirm')}}</el-button>
 						</el-form-item>
 					</el-form>
 				</div>
@@ -35,8 +34,20 @@
 				<div id="qrcode" class="wechat_code"></div>
 			</el-col>
 		</el-row>
-		
-		
+	</el-dialog>
+	<el-dialog
+		:title="$t('commons.accountinfo')"
+		:visible.sync="accountInfo.dialogVisible"
+		:before-close="recharge_quit"
+		width="30%">
+		<el-form :label-position="labelPosition" label-width="80px" :model="accountInfo">
+			<el-form-item :label="$t('commons.m_id')">
+				<el-input v-model="accountInfo.m_id"  readonly style="width:100px;"></el-input>
+			</el-form-item>
+			<el-form-item :label="$t('commons.balance_cash')">
+				<el-input v-model="accountInfo.balance_cash[0]['bal_desc']"  readonly style="width:180px;font-size: 18px;color:#ff0000;background-color: #FFFFFF;"></el-input>
+			</el-form-item>
+		</el-form>
 	</el-dialog>
 </div>
 </template>
@@ -44,6 +55,7 @@
 import {
 		rechargeOrder,
 		wxPay,
+		queryAccount,
 	} from "@/api/user";
 	
 import {
@@ -76,9 +88,12 @@ import QRCode from 'qrcodejs2'
 				username:getToken('Username')||'',
 				order_no:'',
 				code_url:null,
+				page_type:'',
 				rechargeInfo:{
-					dialogVisible:true,
+					dialogVisible:false,
 					order_no:'',
+					order_price:0,
+					order_status:0,
 					amount:0,
 					type:0,
 					channel:0,
@@ -100,20 +115,35 @@ import QRCode from 'qrcodejs2'
 						label:'微信支付',
 						value:'1',
 					},
-					{
-						label:'支付宝',
-						value:'2',
-					},
-					{
-						label:'银行卡',
-						value:'3',
-					},
 				],
+				accountInfo:{
+					dialogVisible:false,
+					m_id:0,
+					level:'',
+					balance_cash:[{"bal":"0","currency":"RMB","bal_desc":""}],
+					balance_quan:[{"bal":"0","type":"score"},{"bal":"0","reward":"0"}],
+					type:0,
+					note:''
+				},
+				
+				labelPosition: 'right',
+				 
+				
 			}
 		},
 		
 		created(){
-			console.log('recharge starting...'); 
+			console.log('recharge starting...')
+			if(this.$route.query){
+				this.page_query= this.$route.query;
+				this.page_type=this.page_query['type']?this.page_query['type']:'recharge' 
+				if(this.page_type=='recharge'){
+					this.rechargeInfo.dialogVisible = !this.rechargeInfo.dialogVisible
+				}else if(this.page_type=='account'){
+					this.query_account()
+					this.accountInfo.dialogVisible = !this.accountInfo.dialogVisible
+				}
+			}
 		},
 		
 		mounted(){
@@ -129,16 +159,83 @@ import QRCode from 'qrcodejs2'
 						height: 120, // 高度
 						text: this.code_url // 二维码内容
 					})
+					let pay_note = ''
+					if(this.rechargeInfo.channel==1){
+						pay_note = this.$t('commons.wechat')
+					}else if(this.rechargeInfo.channel==2){
+						pay_note = this.$t('commons.alipay')
+					}else if(this.rechargeInfo.channel==2){
+						pay_note = this.$t('commons.bancard')
+					}
 					this.$message({
-					  message: '请扫码支付',
+					  message: '请'+pay_note+'扫码支付',
 					  type: 'success',
 					  duration: 2000
 					});
-					//this.setTimeout=setTimeout(this.queryOrder,3000)
+					this.query_order()
 				}
 			},
 			
-			get_pay_qrcode(codeurl=''){
+			query_order(){
+				let para = {
+					username:this.username,
+					access_token:this.access_token,
+					shop_type:this.shop_type,
+					lang:this.lang,
+					amount:(this.rechargeInfo.amount+0)*100,
+					channel:this.rechargeInfo.channel,
+					type:this.rechargeInfo.type,
+					order_no:this.rechargeInfo.order_no
+				}
+				console.log('query_order para:',para);
+				rechargeOrder(para).then(res => {
+					let pay_info  = res
+					this.rechargeInfo.order_no = pay_info.order_no
+					this.rechargeInfo.order_price = pay_info.order_price
+					this.rechargeInfo.order_status = pay_info.order_status
+					console.log('query_order return:',pay_info)
+					if(this.rechargeInfo.order_status == '2'){
+						this.$message({
+						message: this.$t('commons.success'),
+						type: 'success',
+						duration: 3000
+						});
+						this.query_account()
+					}else{
+						this.setTimeout=setTimeout(this.query_order(),5000)
+					}
+					
+				})
+				.catch(err=>{
+					console.log('query_order err:',err)
+				});
+			},
+			
+			query_account(){
+				let para = {
+					username:this.username,
+					access_token:this.access_token,
+					shop_type:this.shop_type,
+					lang:this.lang,
+				}
+				console.log('query_order para:',para);
+				queryAccount(para).then(res => {
+					let account_info = res
+					this.accountInfo.balance_cash = account_info.balance_cash
+					this.accountInfo.balance_quan = account_info.balance_quan
+					this.accountInfo.level = account_info.level
+					this.accountInfo.type = account_info.type
+					this.accountInfo.m_id = account_info.m_id
+					console.log('query_account return:',account_info)
+					this.rechargeInfo.dialogVisible = false
+					this.accountInfo.dialogVisible = true
+				})
+				.catch(err=>{
+					console.log('query_account err:',err)
+				});
+			},
+			
+			get_pay_qrcode(order_no=''){
 				let para = {
 					username:this.username,
 					access_token:this.access_token,
@@ -149,8 +246,11 @@ import QRCode from 'qrcodejs2'
 					tradeNo:this.rechargeInfo.order_no,
 					totalFee:(this.rechargeInfo.amount+0)*100
 				}
-				console.log('get_pay_qrcode para:',para);
+				let token_codeurl = 'code_url'+order_no
+				let codeurl = getToken(token_codeurl)||''
+				
 				if(codeurl==''){
+					console.log('get_pay_qrcode para:',para);
 					wxPay(para).then(res => {
 						this.$message({
 					     message: 'Completed!',
@@ -159,6 +259,8 @@ import QRCode from 'qrcodejs2'
 					   });
 					   console.log('get_pay_qrcode return:',res);
 					   this.code_url= res.code_url 
+					   let token_code_url = 'code_url'+this.rechargeInfo.order_no
+					   setToken(token_code_url,this.code_url)
 					   this.qrCode()
 					})
 					.catch(err=>{
@@ -190,12 +292,23 @@ import QRCode from 'qrcodejs2'
 								type:this.rechargeInfo.type,
 								order_no:this.rechargeInfo.order_no
 							}
-							console.log('recharge_init para:',para);
+							//console.log('recharge_init para:',para);
 							rechargeOrder(para).then(res => {
 								let pay_info  = res
 								this.rechargeInfo.order_no = res.order_no
-								console.log('recharge_init return:',res)
-								this.get_pay_qrcode()
+								this.rechargeInfo.order_price = res.order_price
+								this.rechargeInfo.order_status = res.order_status
+								//
+								if(this.rechargeInfo.order_status == '2'){
+									this.$message({
+									message: 'Success!',
+									type: 'success',
+									duration: 2000
+									});
+									console.log('recharge_init return:',res)
+								}else{
+									this.get_pay_qrcode(this.rechargeInfo.order_no)
+								}
 							})
 							.catch(err=>{
 								console.log('recharge_init err:',err)
