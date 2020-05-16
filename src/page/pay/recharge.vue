@@ -39,15 +39,59 @@
 		:title="$t('commons.accountinfo')"
 		:visible.sync="accountInfo.dialogVisible"
 		:before-close="recharge_quit"
-		width="30%">
+		width="50%">
 		<el-form :label-position="labelPosition" label-width="80px" :model="accountInfo">
-			<el-form-item :label="$t('commons.m_id')">
-				<el-input v-model="accountInfo.m_id"  readonly style="width:100px;"></el-input>
-			</el-form-item>
-			<el-form-item :label="$t('commons.balance_cash')">
-				<el-input v-model="accountInfo.balance_cash[0]['bal_desc']"  readonly style="width:180px;font-size: 18px;color:#ff0000;background-color: #FFFFFF;"></el-input>
-			</el-form-item>
+			<el-row :gutter="24">
+				<el-col :span="8">
+					<el-form-item :label="$t('commons.m_id')">
+						<el-input v-model="accountInfo.m_id"  readonly style="width:100px;"></el-input>
+					</el-form-item>
+				</el-col>
+				<el-col :span="16">
+					<el-form-item :label="$t('commons.balance_cash')">
+						<el-input v-model="accountInfo.balance_cash[0]['bal_desc']"  readonly style="width:180px;font-size: 18px;color:#ff0000;background-color: #FFFFFF;"></el-input>
+					</el-form-item>
+				</el-col>
+			</el-row>
 		</el-form>
+		<el-table v-if="accountInfo.details" 
+			:data="accountInfo.details"
+			:row-class-name="account_detail_class"
+			height="250"
+			border
+			stripe
+			style="width: 100%">
+			<el-table-column
+				prop="date"
+				:label="$t('commons.date')"
+				width="180">
+			</el-table-column>
+		    <el-table-column 
+				prop="amount_desc"
+				:label="$t('commons.amount')"
+				width="180">
+			</el-table-column>
+			<el-table-column
+				prop="note"
+				:label="$t('commons.note')">
+			</el-table-column>
+		</el-table>
+		<el-row v-if="paginations">
+		     <el-col :span="24">
+		         <div class="pagination">
+		             <el-pagination
+		                 v-if='paginations.total > 0'
+		                 :page-sizes="paginations.pageSizes"
+		                 :page-size="paginations.pageSize"
+		                 :layout="paginations.layout"
+		                 :total="paginations.total"
+		                 :current-page='paginations.pageIndex'
+		                 @current-change='handleCurrentChange'
+		                 @size-change='handleSizeChange'>
+		             </el-pagination>
+		         </div>
+		     </el-col>
+		 </el-row>
 	</el-dialog>
 </div>
 </template>
@@ -55,7 +99,8 @@
 import {
 		rechargeOrder,
 		wxPay,
-		queryAccount,
+		queryBalAccount,
+		queryDetailsAccount,
 	} from "@/api/user";
 	
 import {
@@ -122,13 +167,19 @@ import QRCode from 'qrcodejs2'
 					level:'',
 					balance_cash:[{"bal":"0","currency":"RMB","bal_desc":""}],
 					balance_quan:[{"bal":"0","type":"score"},{"bal":"0","reward":"0"}],
+					details:[],
 					type:0,
 					note:''
 				},
-				
 				labelPosition: 'right',
-				 
-				
+				paginations:
+				{
+					total: 0,        // 总数
+					pageIndex: 1,  // 当前位于哪页
+					pageSize: 20,   // 1页显示多少条
+					pageSizes: [5, 10, 15, 20],  //每页显示多少条
+					layout: "total, sizes, prev, pager, next, jumper"   // 翻页属性
+				},
 			}
 		},
 		
@@ -140,7 +191,8 @@ import QRCode from 'qrcodejs2'
 				if(this.page_type=='recharge'){
 					this.rechargeInfo.dialogVisible = !this.rechargeInfo.dialogVisible
 				}else if(this.page_type=='account'){
-					this.query_account()
+					this.query_bal_account()
+					this.query_details_account()
 					this.accountInfo.dialogVisible = !this.accountInfo.dialogVisible
 				}
 			}
@@ -200,7 +252,7 @@ import QRCode from 'qrcodejs2'
 						type: 'success',
 						duration: 3000
 						});
-						this.query_account()
+						this.query_bal_account()
 					}else{
 						this.setTimeout=setTimeout(this.query_order(),5000)
 					}
@@ -211,30 +263,74 @@ import QRCode from 'qrcodejs2'
 				});
 			},
 			
-			query_account(){
+			query_bal_account(){
+				let pagenum = getToken('Pagenum')
+				this.paginations.pageIndex = pagenum?parseInt(pagenum):this.paginations.pageIndex
 				let para = {
 					username:this.username,
 					access_token:this.access_token,
 					shop_type:this.shop_type,
 					lang:this.lang,
+					pagesize:this.paginations.pageSize,
+					page:this.paginations.pageIndex,
 				}
 				console.log('query_order para:',para);
-				queryAccount(para).then(res => {
+				queryBalAccount(para).then(res => {
 					let account_info = res
 					this.accountInfo.balance_cash = account_info.balance_cash
 					this.accountInfo.balance_quan = account_info.balance_quan
 					this.accountInfo.level = account_info.level
 					this.accountInfo.type = account_info.type
 					this.accountInfo.m_id = account_info.m_id
-					console.log('query_account return:',account_info)
+					console.log('query_bal_account return:',account_info)
 					this.rechargeInfo.dialogVisible = false
 					this.accountInfo.dialogVisible = true
 				})
 				.catch(err=>{
-					console.log('query_account err:',err)
+					console.log('query_bal_account err:',err)
+				});
+			},
+			query_details_account(){
+				let pagenum = getToken('Pagenum')
+				this.paginations.pageIndex = pagenum?parseInt(pagenum):this.paginations.pageIndex
+				let para = {
+					username:this.username,
+					access_token:this.access_token,
+					shop_type:this.shop_type,
+					lang:this.lang,
+					pagesize:this.paginations.pageSize,
+					page:this.paginations.pageIndex,
+				}
+				console.log('query_order para:',para);
+				queryDetailsAccount(para).then(res => {
+					let account_details = res.result
+					this.paginations.total = res.total
+					for(let i=0;i<account_details.length;i++){
+						 if(account_details[i]['amount_type'] == 2){
+							 account_details[i]['amount_desc'] = '-'+account_details[i]['amount']
+						 } else{
+							 account_details[i]['amount_desc'] = '+'+account_details[i]['amount']
+						 }
+					} 
+					this.accountInfo.details = account_details
+					
+					console.log('query_details_account return:',account_details)
+					this.rechargeInfo.dialogVisible = false
+					this.accountInfo.dialogVisible = true
+				})
+				.catch(err=>{
+					console.log('query_details_account err:',err)
 				});
 			},
 			
+			account_detail_class({row, rowIndex}) {
+				if (row.amount_type == 2) {
+					return 'account-decrease';
+				} else  {
+					return 'account-increase';
+				}
+			},
+				 
 			get_pay_qrcode(order_no=''){
 				let para = {
 					username:this.username,
@@ -339,7 +435,19 @@ import QRCode from 'qrcodejs2'
 				.catch(_ => {
 					
 				});
-			}
+			},
+			
+			// 每页多少条切换
+			handleSizeChange(pageSize) {
+			   this.paginations.pageSize = pageSize;
+			   this.query_account()();
+			},
+			// 上下分页
+			handleCurrentChange(page) {
+			   this.paginations.pageIndex = page;
+			   setToken("Pagenum",this.paginations.pageIndex)
+			   this.query_account();
+			},
 		}
 	}
 </script>
@@ -384,4 +492,12 @@ import QRCode from 'qrcodejs2'
 	  align-items: center;
 	  text-align: center;
   }
+  .account-decrease {
+	  color:#E60000;
+	  font-weight: bold;
+  }
+  .account-increase {
+  	  color:#666;
+  }
+  
 </style>

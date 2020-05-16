@@ -24,6 +24,8 @@ const zh = {
 	  orderno:'Order No',
 	  prompt:'Attention',
 	  m_id:'ID',
+	  date:'Date',
+	  note:'Note',
 	  account:'Account',
 	  accountinfo:'Account Info',
 	  balance_cash:'Balance',

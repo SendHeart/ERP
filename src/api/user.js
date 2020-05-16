@@ -258,9 +258,17 @@ export function wxPay(reqData) { //充值
     })
 }
 
-export function queryAccount(reqData) { //充值
+export function queryBalAccount(reqData) { //充值
     return request({
       url:'/api/web_client/get_member_account_bal',
+      method: 'post',
+      data: reqData
+    })
+}
+
+export function queryDetailsAccount(reqData) { //充值
+    return request({
+      url:'/api/web_client/get_member_account_detail',
       method: 'post',
       data: reqData
     })
