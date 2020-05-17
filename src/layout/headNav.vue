@@ -83,8 +83,10 @@
                             <template slot="title">
                                 <img :src="startImg" class='start' alt="">
                             </template>
+							<!--
                             <el-menu-item index="2-1" @click="setDialogInfo('info')">{{ $t('commons.settings') }}</el-menu-item>
-                            <el-menu-item index="2-3" @click="setDialogInfo('logout')">{{ $t('commons.quit') }}</el-menu-item>
+                            -->
+							<el-menu-item index="2-3" @click="setDialogInfo('logout')">{{ $t('commons.quit') }}</el-menu-item>
                         </el-submenu>
                     </el-menu>
                 </div>

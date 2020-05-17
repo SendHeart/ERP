@@ -65,14 +65,6 @@ export const constantRouterMap = [
 			}
 		]
 	},
-	/*
-	{
-		path: '/goodsedit',
-		name: 'goodsedit',
-		component:Layout,
-		//component: () => import('@/page/goodsedit/goodsedit'),
-	},
-	*/
 ]
 
 	//注册路由
@@ -208,12 +200,35 @@ export const asyncRouterMap = [
 	  ]
 	  */
 	},
+	{
+		path: '/settings',
+		name: 'settings',
+		meta: {
+			title: '设置',
+			icon: 'ums-menu',
+			roles: ['admin'] // you can set roles in root nav
+		},
+		component: Layout,
+		redirect: '/permission/page',
+		children: [
+			{
+				path: 'newslist',
+				name: 'newslist',
+				meta: {
+					title: '新闻列表',
+					icon: 'news',
+					roles: ['admin'] // or you can only set roles in sub nav
+				},
+				component: () => import('@/page/advertise/index'),
+			}, 
+		]
+	},
 	/*
 	{
 	  path:'/infoManage',
 	  name: 'infoManage',
 	  meta: {
-			title:'设置',
+			title:'信息管理',
 			icon: 'settingwrenches',
 	  },
 	  component:Layout,
@@ -277,35 +292,7 @@ export const asyncRouterMap = [
 		]
 	},
 	
-	{
-		path: '/settings',
-		name: 'settings',
-		meta: {
-			title: '设置',
-			icon: 'permission',
-			roles: ['admin', 'editor'] // you can set roles in root nav
-		},
-		component: Layout,
-		redirect: '/permission/page',
-		children: [{
-			path: 'page',
-			name: 'pagePer',
-			meta: {
-				title: '页面权限',
-				roles: ['admin'] // or you can only set roles in sub nav
-			},
-			component: () => import('@/page/permission/page'),
-		}, 
-		{
-			path: 'directive',
-			name: 'directivePer',
-			meta: {
-				title: '按钮权限',
-				roles:['editor']
-			},
-			component: () => import('@/page/permission/directive'),
-	  }]
-	},
+	
 	{
 		path:'/share',
 		name: 'share',

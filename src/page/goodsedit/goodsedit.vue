@@ -254,7 +254,7 @@
 		addMyWarehouse,
 	} from "@/api/user";
 	import ueditor from "@/components/editor/editor.vue"; //富文本编辑器
-	import KindEditor from "@/components/Kindeditor";
+	import KindEditor from "@/components/Kindeditor"; //富文本编辑器 
 	import YanShare from "@/components/yanShare.vue"; //
 	import InfoShare from "@/components/infoShare.vue"; //
 	import AddShareDialog from "@/components/addShareDialog.vue"; //

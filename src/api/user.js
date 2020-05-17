@@ -258,7 +258,7 @@ export function wxPay(reqData) { //充值
     })
 }
 
-export function queryBalAccount(reqData) { //充值
+export function queryBalAccount(reqData) { //账户余额
     return request({
       url:'/api/web_client/get_member_account_bal',
       method: 'post',
@@ -266,7 +266,7 @@ export function queryBalAccount(reqData) { //充值
     })
 }
 
-export function queryDetailsAccount(reqData) { //充值
+export function queryDetailsAccount(reqData) { //账户明细
     return request({
       url:'/api/web_client/get_member_account_detail',
       method: 'post',
@@ -274,3 +274,34 @@ export function queryDetailsAccount(reqData) { //充值
     })
 }
 
+export function queryNewsList(reqData) { //新闻列表
+    return request({
+      url:'/api/web_client/get_emall_news',
+      method: 'post',
+      data: reqData
+    })
+}
+
+export function updateNewsStatus(reqData) { //新闻状态
+    return request({
+      url:'/api/web_client/update_news_status',
+      method: 'post',
+      data: reqData
+    })
+}
+
+export function deleteNewsAdvertise(reqData) { //新闻删除
+    return request({
+      url:'/api/web_client/delete_news_info',
+      method: 'post',
+      data: reqData
+    })
+}
+
+export function addNewsAdvertise(reqData) { //新闻删除
+    return request({
+      url:'/api/web_client/add_news_info',
+      method: 'post',
+      data: reqData
+    })
+}

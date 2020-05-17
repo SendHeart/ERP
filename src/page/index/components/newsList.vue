@@ -40,7 +40,9 @@
 		setToken,
 		getToken,
 	} from '@/utils/auth';
-  export default {
+	let moment = require("moment")
+	
+	export default {
     name:'newsList',
     data() {
       return {
@@ -168,8 +170,7 @@
 				access_token:this.access_token,
 				page:this.news_page,
 				pagesize:this.news_pagesize,
-		    	news_type:'',
-		    	shop_type:'2',
+		    	shop_type:this.shop_type,
 				lang:'zh',
 		    }
 			var newsList_init = [
@@ -204,14 +205,22 @@
 					type: 'success'
 				})
 				*/
-			   let newsList = res.result
-			   let total = res.total
-				if(newsList.length>0){
-					for(var i=0;i<newsList.length;i++){
-						this.news_list.push(newsList[i])
+				let news_list = res.result 
+				this.total = res.total
+				if(news_list){
+					for(let i=0;i<news_list.length;i++){
+						let duration = []
+						let start_dt = parseInt(news_list[i].start_dt)*1000
+						let end_dt = parseInt(news_list[i].end_dt)*1000
+						duration.push(moment(start_dt).format())
+						duration.push(moment(end_dt).format())
+						news_list[i]['duration'] = duration
+						news_list[i]['start_dt'] = start_dt
+						news_list[i]['end_dt'] = end_dt
 					}
-				}
-				console.log('getNewsList:',newsList) ;
+					this.news_list = news_list
+				} 
+				console.log('getNewsList:',news_list) ;
 			})
 		},
 	}
