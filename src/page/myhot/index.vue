@@ -878,7 +878,7 @@
 		
 		get_goods_list(is_search=0) {
 			this.listLoading = true;
-			let pagenum = getToken('Pagenum_hot	`1	')
+			let pagenum = getToken('Pagenum_hot')
 			this.paginations.pageIndex = pagenum?parseInt(pagenum):this.paginations.pageIndex
 			let para = {
 				username:this.username,
