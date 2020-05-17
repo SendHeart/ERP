@@ -62,7 +62,7 @@ module.exports = {
 	 
     proxy: { 
        '/api': {
-           target: 'https://shop.dreamer-inc.com',
+           target: 'http://shop.dreamer-inc.com',
            changeOrigin: true,
 		   // 是否代理websocket
 			//ws: true,
@@ -77,8 +77,24 @@ module.exports = {
 			//[`^/${key}`]: ''
 			//}
        },
+	   '/wxpay': {
+	       target: 'http://sendheart.dreamer-inc.com',
+	       changeOrigin: true,
+	   		   // 是否代理websocket
+	   			//ws: true,
+	   			// 是否验证SSL证书
+	   			//secure: false,
+	   			// 重写set-cookie标头的域，删除域名
+	   			//cookieDomainRewrite: '',
+	   			// 代理响应事件
+	   			//onProxyRes: onProxyRes,
+	   			// 重写目标的url路径
+	   			pathRewrite: {
+					[`^/wxpay`]: '/api/WXPay'
+	   			}
+	   },
 	   '/erp_upload': {
-	       target: 'https://shop.dreamer-inc.com',
+	       target: 'http://shop.dreamer-inc.com',
 	       changeOrigin: true,
 	   		   // 是否代理websocket
 	   			//ws: true,
@@ -91,6 +107,54 @@ module.exports = {
 	   			// 重写目标的url路径
 	   			pathRewrite: {
 					[`^/erp_upload`]: '/api/upload/erp_upload'
+	   			}
+	   },
+	   '/detail_1688': {
+	       target: 'https://detail.1688.com',
+	       changeOrigin: true,
+	   		   // 是否代理websocket
+	   			//ws: true,
+	   			// 是否验证SSL证书
+	   			//secure: false,
+	   			// 重写set-cookie标头的域，删除域名
+	   			//cookieDomainRewrite: '',
+	   			// 代理响应事件
+	   			//onProxyRes: onProxyRes,
+	   			// 重写目标的url路径
+	   			pathRewrite: {
+	   					[`^/detail_1688`]: ''
+	   			}
+	   },
+	   '/login_1688': {
+	       target: 'https://login.1688.com',
+	       changeOrigin: true,
+	   		   // 是否代理websocket
+	   			//ws: true,
+	   			// 是否验证SSL证书
+	   			//secure: false,
+	   			// 重写set-cookie标头的域，删除域名
+	   			//cookieDomainRewrite: '',
+	   			// 代理响应事件
+	   			//onProxyRes: onProxyRes,
+	   			// 重写目标的url路径
+	   			pathRewrite: {
+	   					[`^/login_1688`]: ''
+	   			}
+	   },
+	   '/login_taobao_1688': {
+	       target: 'https://login.taobao.com',
+	       changeOrigin: true,
+	   		   // 是否代理websocket
+	   			//ws: true,
+	   			// 是否验证SSL证书
+	   			//secure: false,
+	   			// 重写set-cookie标头的域，删除域名
+	   			//cookieDomainRewrite: '',
+	   			// 代理响应事件
+	   			//onProxyRes: onProxyRes,
+	   			// 重写目标的url路径
+	   			pathRewrite: {
+	   					[`^/login_taobao_1688`]: ''
 	   			}
 	   },
     },
