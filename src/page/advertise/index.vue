@@ -248,12 +248,7 @@
 		total: null,
 		listLoading: false,
 		multipleSelection: [],
-		operates: [
-		{
-			label: "删除",
-			value: 0
-		}
-		],
+		operates: [],
 		operateType: null,
 		addnewsInfo:{
 			dialogVisible:false,
@@ -336,7 +331,7 @@
 					message: '修改成功!'
 				});
 			});
-			}).catch(() => {
+		}).catch(() => {
 				this.$message({
 					type: 'success',
 					message: '已取消操作!'
@@ -347,12 +342,12 @@
 	  
 		handleBatchOperate(){
 			if (this.multipleSelection < 1) {
-			this.$message({
-				message: '请选择一条记录',
-				type: 'warning',
-				duration: 1000
-			});
-			return;
+				this.$message({
+					message: '请选择一条记录',
+					type: 'warning',
+					duration: 1000
+				});
+				return;
 			}
 			let ids = [];
 			for (let i = 0; i < this.multipleSelection.length; i++) {
@@ -360,8 +355,8 @@
 			}
 			if(this.operateType===0){
 			//删除
-				this.deleteNewsAdvertise(ids);
-			}else {
+				this.delete_news_info(ids);
+			} else {
 			this.$message({
 				message: '请选择批量操作类型',
 				type: 'warning',
