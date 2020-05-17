@@ -204,7 +204,8 @@
 					type: 'success'
 				})
 				*/
-			   let newsList = res
+			   let newsList = res.result
+			   let total = res.total
 				if(newsList.length>0){
 					for(var i=0;i<newsList.length;i++){
 						this.news_list.push(newsList[i])

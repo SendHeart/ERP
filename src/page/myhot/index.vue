@@ -1166,7 +1166,6 @@
 	   this.get_goods_list();
 	},
 	
-    
 	handleSelectionChange(val) {
 		this.multipleSelection = val;
 	},
@@ -1175,7 +1174,6 @@
 		let ids = [];
         ids.push(row.id);
         this.updatePublishStatus(row.publishStatus, ids);
-	
 	},
 	
 	handleNewStatusChange(index, row) {

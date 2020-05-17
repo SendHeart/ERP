@@ -117,9 +117,10 @@
 							setToken("Roles",user_info.roles)
 							this.$router.push({ path: '/' })
 							this.$store.dispatch('initLeftMenu'); //设置左边菜单始终为展开状态
+							console.log('login return user_info:',user_info)
 						})
 					}
-				});
+				})
 			}
 		}
 	}
