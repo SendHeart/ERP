@@ -61,13 +61,14 @@
         <el-table-column :label="$t('commons.news_id')" width="80" align="center">
           <template slot-scope="scope">{{scope.row.id}}</template>
         </el-table-column>
-        <el-table-column :label="$t('commons.news_title')" width="220" align="center">
+        <el-table-column :label="$t('commons.news_title')" width="380" align="center">
           <template slot-scope="scope">{{scope.row.title}}</template>
         </el-table-column>
+		<!--
         <el-table-column :label="$t('commons.news_content')" width="300" align="center">
           <template slot-scope="scope">{{scope.row.content}}</template>
         </el-table-column>
-		 
+		-->
         <el-table-column :label="$t('commons.news_duration')" width="260" align="center">
           <template slot-scope="scope">
             <p>开始时间：{{scope.row.start_dt | formatTime}}</p>

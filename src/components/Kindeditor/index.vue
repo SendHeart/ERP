@@ -151,7 +151,7 @@ export default {
         this.loadUrl(val);
       } else {
         this.outContent = "";
-        this.outContent ? this.editor.appendHtml(this.outContent) : "";
+        //this.outContent ? this.editor.appendHtml(this.outContent) : "";
 		//console.log('watch html:',this.outContent)
       }
     }
@@ -161,12 +161,10 @@ export default {
       this.loadUrl(this.html);
     } else {
       this.outContent = "";
-	  /*
       setTimeout(() => {
-        //this.content ? this.editor.appendHtml(this.content) : "";
+		this.content ? this.editor.appendHtml(this.content) : "";
 		console.log('setTimeout html:',this.content,' outContent:',this.outContent)
       }, 1000);
-	  */
     }
   },
   mounted() {
@@ -199,7 +197,7 @@ export default {
   methods: {
 	  beforeUpload() {
 	      // 显示loading动画
-	      this.quillUpdateImg = true
+	      //this.quillUpdateImg = true
 	  },
 	  uploadSuccess(res, file) {
 	    // res为图片服务器返回的数据
@@ -234,7 +232,7 @@ export default {
 	    }
 	    */
 	    // loading动画消失
-	    this.quillUpdateImg = false
+	    //this.quillUpdateImg = false
 	  },
 	  // 富文本图片上传失败
 	  uploadError() {

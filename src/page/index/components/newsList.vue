@@ -16,7 +16,7 @@
 			</div>
 		</div>
 	</div>
-	<el-dialog :title="$t('commons.globalnews')" :visible.sync="setDialogVisible" width="40%">
+	<el-dialog :title="$t('commons.globalnews')" :visible.sync="setDialogVisible" width="70%">
 		<div class="ql-editor" v-html="setDialogData.news_content" style="white-space: pre-wrap;"></div>
 		<span slot="footer" class="dialog-footer">
 			<el-button @click="setDialogVisible = false" size="small">取 消</el-button>

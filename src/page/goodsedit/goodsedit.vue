@@ -1466,9 +1466,12 @@
 					this.goods_sku_list = result[0]['sku_list']
 					this.goods_sku_speclist = result[0]['sku_speclist']
 					this.goods_skulist_title = result[0]['skulist_title']
-					this.goods_desc = result[0]['desc']
+					setTimeout(() => {
+						this.goods_desc = result[0]['desc']
+					}, 1000);
+					
 					this.goods_attr_list = result[0]['attr_list']
-					console.log('getGoodsList return:',res,' goods_sku_list:',this.goods_sku_list);
+					console.log('getGoodsList return:',res,' goods_desc:',this.goods_desc);
 					this.sku_title_init()
 			    })
 				.catch(err=>{
