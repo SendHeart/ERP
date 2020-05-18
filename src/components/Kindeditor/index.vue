@@ -1,6 +1,7 @@
 <template>
   <div class="margin-top-20">
-    <textarea :id="id" name="content" v-model="outContent"></textarea>
+    <textarea :id="id" name="content" v-model="outContent" @change="onEditorChange($event)">></textarea>
+	<!--
     <input
       @change="selectedFile"
       style="visibility: hidden;height:0;"
@@ -8,6 +9,19 @@
       name
       id="inputFile"
     />
+	-->
+	<el-upload
+		style="display: none;"
+		class="uploader"
+		:action="serverUrl"
+		name="erp_upimg"
+		:data="params"
+		:headers="header"
+		:show-file-list="false"
+		:on-success="uploadSuccess"
+		:on-error="uploadError"
+		:before-upload="beforeUpload">
+	</el-upload>
   </div>
 </template>
 <script>
@@ -26,6 +40,12 @@ import otherConfig from "./config/otherConfig";
 export default {
   name: "kindeditor-component",
   props: {
+	  params:{
+	  	type:Object,
+	  	default(){
+	  		return {}
+	  	}
+	  },
     // 编辑器内容 url
     html: {
       type: String,
@@ -104,7 +124,13 @@ export default {
   data() {
     return {
       editor: null,
-      outContent: this.content
+      outContent: this.content,
+	  tips:'',
+	  err:false,
+	  isInit:true,
+	  quillUpdateImg: false, // 根据图片上传状态来确定是否显示loading动画，刚开始是false,不显示
+	  serverUrl: '/erp_upload',  // 这里写你要上传的图片服务器地址
+	  header: {token: sessionStorage.token},  // 有的图片服务器要求请求头需要有token之类的参数，写在这里
     };
   },
 
@@ -114,11 +140,11 @@ export default {
 	  //console.log('watch content:',val)
     },
     // 分发编辑器内容改变事件
-    outContent(val) {
-      this.$emit("update:content", val);
-      this.$emit("on-content-change", val);
-      this.$emit("input", val);
-    },
+	outContent(val) {
+		this.$emit("update:content", val);
+		this.$emit("on-content-change", val);
+		this.$emit("input", val);
+	},
     // 初始化编辑器内容
     html(val) {
       if (this.html && (this.html.startsWith("https://") || this.html.startsWith("http://"))) {
@@ -135,10 +161,12 @@ export default {
       this.loadUrl(this.html);
     } else {
       this.outContent = "";
+	  /*
       setTimeout(() => {
-        this.content ? this.editor.appendHtml(this.content) : "";
-		//console.log('setTimeout html:',this.content,' outContent:',this.outContent)
+        //this.content ? this.editor.appendHtml(this.content) : "";
+		console.log('setTimeout html:',this.content,' outContent:',this.outContent)
       }, 1000);
+	  */
     }
   },
   mounted() {
@@ -151,7 +179,9 @@ export default {
       // 禁用自带的图片弹窗
       this.editor.hideDialog();
       // 打开文件
-      this.handleOpenFile();
+      //this.handleOpenFile();
+	  //upload组件
+	  document.querySelector(".uploader input").click()
     });
   },
   activated() {
@@ -167,32 +197,82 @@ export default {
     this.removeEditor();
   },
   methods: {
+	  beforeUpload() {
+	      // 显示loading动画
+	      this.quillUpdateImg = true
+	  },
+	  uploadSuccess(res, file) {
+	    // res为图片服务器返回的数据
+	    // 获取富文本组件实例
+	    //let quill = this.$refs.myQuillEditor.quill
+	    // 如果上传成功
+	    console.log('uploadSuccess:',res)
+	    if (res.status == 'y' ) {
+	      // 获取光标所在位置
+	      //let length = quill.getSelection().index;
+	      // 插入图片  res.info为服务器返回的图片地址
+	      //quill.insertEmbed(length, 'image', res.result.img_url)
+	      // 调整光标到最后
+	      //quill.setSelection(length + 1)
+			let img_url  = res.result.img_url 
+			this.editor.appendHtml(
+				 `<img style="max-width:100%;" src=" ${img_url}">`
+			);
+	    } else {
+	      //this.$message.error('图片插入失败')
+	    }
+	    /*
+	    if (res.code === '200' && res.info !== null ) {
+	      // 获取光标所在位置
+	      let length = quill.getSelection().index;
+	      // 插入图片  res.info为服务器返回的图片地址
+	      quill.insertEmbed(length, 'image', res.info)
+	      // 调整光标到最后
+	      quill.setSelection(length + 1)
+	    } else {
+	      this.$message.error('图片插入失败')
+	    }
+	    */
+	    // loading动画消失
+	    this.quillUpdateImg = false
+	  },
+	  // 富文本图片上传失败
+	  uploadError() {
+	    // loading动画消失
+	    this.$message.error('图片插入失败')
+	  },
+	  
+	  
     // 打开文件
-    handleOpenFile() {
-      let input = document.getElementById("inputFile");
+	/* 
+	handleOpenFile() {
+		let input = document.getElementById("inputFile");
       // 解决同一个文件不能监听的问题
-      input.addEventListener(
-        "click",
-        function() {
-          this.value = "";
-        },
-        false
-      );
-      // 点击input
-      input.click();
+		input.addEventListener(
+			"click",
+			function() {
+				this.value = "";
+			},
+			false
+		);
+		// 点击input
+		input.click();
     },
+	
     // 选择好文件
-  async  selectedFile($event) {
-      const file = $event.target.files[0];
+	async  selectedFile($event) {
+		const file = $event.target.files[0];
+		console.log('KindEditor selectedFile:',file)
 
     // 把图片上传到后端服务器 拿到url  uploadImage 是自己后端上传图片的接口
     // 调用appendHtml方法把图片追加到富文本
 
-    // const url= await  uploadImage (file)
+    //	 const url= await  uploadImage (file)
     //   this.editor.appendHtml(
     //           `<img style="max-width:100%;" src="https://${data.Location}">`
-    //         ); 
+    //  ); 
     },
+	*/
     // 编辑器内容上传到cos，调用返回url
     async content2Url() {
    // 把html片段上传到后端服务器 拿到url  uploadHtml 是自己后端上传的接口

@@ -77,10 +77,10 @@
         <el-table-column label="上线/下线" width="120" align="center">
           <template slot-scope="scope">
             <el-switch
-              @change="handleUpdateStatus(scope.$index, scope.row)"
-              :active-value="1"
-              :inactive-value="0"
-              v-model="scope.row.news_status">
+				@change="handleUpdateStatus(scope.$index, scope.row)"
+				active-color="#13ce66"
+				inactive-color="#ff4949"
+				v-model="scope.row.status">
             </el-switch>
           </template>
         </el-table-column>
@@ -156,14 +156,15 @@
 				      :default-time="['00:00:00', '23:59:59']">
 					</el-date-picker>
 				</el-form-item>
-				<el-form-item :label="$t('commons.news_status')">
-					<el-radio-group v-model="addnewsInfo.news_status">
-						<el-radio :label="0">{{$t('commons.news_up')}}</el-radio>
-						<el-radio :label="1">{{$t('commons.news_down')}}</el-radio>
-					</el-radio-group>
+				<el-form-item :label="$t('commons.news_status')" prop="status">
+					<el-switch v-model="addnewsInfo.status"
+						active-color="#13ce66"
+						inactive-color="#ff4949"
+					>
+					</el-switch>
 				</el-form-item>
 				<el-form-item :label="$t('commons.news_content')">
-					<Kind-editor  ref="kindeditor" :content="addnewsInfo.content" @input="get_news_desc"></Kind-editor>
+					<Kind-editor  ref="kindeditor" :content="addnewsInfo.content"  @input="get_news_desc"></Kind-editor>
 				</el-form-item>
 				<el-form-item>
 					<el-button type="primary" @click="add_news_info()">提交</el-button>
@@ -241,8 +242,6 @@
 		  duration: [
 		    {required: true, message: '请选择有效期', trigger: 'blur'}
 		  ],
-		   
-		  
 		},
 		list: null,
 		total: null,
@@ -252,12 +251,15 @@
 		operateType: null,
 		addnewsInfo:{
 			dialogVisible:false,
-			hot_flag:0, //热点新闻
+			hot_flag:"0", //热点新闻
 			title:null,
 			content:null,
 			duration: null,
 			type:null,
-			news_status:0
+			status:false,
+			news_status:"0",
+			id:0,
+			rowindex:0,
 		},
 		paginations: {
 			total: 0,        // 总数
@@ -324,7 +326,7 @@
 				cancelButtonText: '取消',
 				type: 'warning'
         }).then(() => {
-			updateNewsStatus(row.id,{status:row.status}).then(response=>{
+			updateNewsStatus(row.id,{news_status:row.news_status}).then(response=>{
 				this.get_news_list();
 					this.$message({
 					type: 'success',
@@ -369,19 +371,27 @@
 			this.addnewsInfo.title='' 
 			this.addnewsInfo.content=null 
 			this.addnewsInfo.type=null
-			this.addnewsInfo.news_status=0 
+			this.addnewsInfo.news_status="0" 
 			this.addnewsInfo.duration=null
 			this.addnewsInfo.dialogVisible = !this.addnewsInfo.dialogVisible
 		},
 		update_news(index,row){
 			//this.$router.push({path: '/settings/updateAdvertise', query: {id: row.id}})
+			console.log('update_news row:',row.content)
 			this.addnewsInfo.id=row.id 
 			this.addnewsInfo.title=row.title 
-			this.addnewsInfo.content=row.content 
+			//this.addnewsInfo.content=row.content
 			this.addnewsInfo.type=row.type
-			this.addnewsInfo.news_status=row.status 
+			this.addnewsInfo.news_status=row.news_status 
+			this.addnewsInfo.status=row.status 
 			this.addnewsInfo.duration=row.duration 
+			this.addnewsInfo.rowindex = index
 			this.addnewsInfo.dialogVisible = !this.addnewsInfo.dialogVisible
+			console.log('update_news info:',this.addnewsInfo)
+			setTimeout(() => {
+				this.addnewsInfo.content=row.content
+			}, 300);
+			
 		},
 	  
 		get_news_list() {
@@ -391,10 +401,11 @@
 			this.listQuery.username = this.username
 			this.listQuery.access_token = this.access_token
 			this.listQuery.shop_type = this.shop_type
-			queryNewsList(this.listQuery).then(res => {
+			queryNewsList(this.listQuery).then(response => {
+				console.log('get_news_list return:',response);
 				this.listLoading = false;
-				let news_list = res.result;
-				this.total = res.total;
+				let news_list = response.result;
+				this.total = response.total;
 				if(news_list){
 					for(let i=0;i<news_list.length;i++){
 						let duration = []
@@ -405,17 +416,21 @@
 						news_list[i]['duration'] = duration
 						news_list[i]['start_dt'] = start_dt
 						news_list[i]['end_dt'] = end_dt
+						news_list[i]['status'] = news_list[i]['news_status']=="1"?true:false
 					}
 					this.list = news_list
 				}else{
 					this.$message({
 					type: 'warning',
 						message: '暂无新闻'
-					});
+					})
 				}
 				
-				console.log('get_news_list return:',res);
+				//console.log('get_news_list return:',res);
 			})
+			.catch(err=>{
+				console.log('get_news_list err:',err)
+			});
 		},
 	  
 		delete_news_info(index,row){
@@ -443,16 +458,18 @@
 		},
 		
 		get_news_desc(ctx) {
-			this.addnewsInfo.console = ctx ;
+			this.addnewsInfo.content = ctx ;
 			//console.log('Rich Text:',ctx)
 		},
 		
 		add_news_info(){
-			this.$confirm(this.$t('commons.news_submit'), '提示', {
+			this.$confirm(this.$t('commons.news_submit'), '', {
 			confirmButtonText: this.$t('commons.confirm'),
 			cancelButtonText: this.$t('commons.cancel'),
 			type: 'warning'
 			}).then(() => {
+				let start_dt = parseInt(moment(this.addnewsInfo.duration[0]).unix())
+				let end_dt = parseInt(moment(this.addnewsInfo.duration[1]).unix())
 				let para = {
 				 	username:this.username,
 				 	access_token:this.access_token,
@@ -460,10 +477,12 @@
 				 	lang:this.lang,
 					title:this.addnewsInfo.title,
 					content:this.addnewsInfo.content,
-					status:this.addnewsInfo.status,
-					duration:this.addnewsInfo.duration,
-					type:this.addnewsInfo.type,
+					news_status:this.addnewsInfo.status?'1':'0',
+					start_dt:start_dt,
+					end_dt:end_dt,
+					news_type:this.addnewsInfo.type,
 					hot_flag:this.addnewsInfo.hot_flag,
+					id:this.addnewsInfo.id,
 				}
 				console.log('add_news_info para:',para)
 				addNewsAdvertise(para).then(response=>{
@@ -472,6 +491,12 @@
 					type: 'success',
 						message: 'Completed!'
 					});
+					//更新本地信息
+					this.list[this.addnewsInfo.rowindex]['content'] = this.this.addnewsInfo.content
+					this.list[this.addnewsInfo.rowindex]['title'] = this.this.addnewsInfo.title
+					this.list[this.addnewsInfo.rowindex]['duration'] = this.this.addnewsInfo.duration
+					this.list[this.addnewsInfo.rowindex]['news_status'] = this.this.addnewsInfo.news_status
+					this.list[this.addnewsInfo.rowindex]['status'] = this.this.addnewsInfo.status
 				})
 				.catch(err=>{
 					console.log('add_news_info err:',err)

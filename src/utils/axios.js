@@ -33,8 +33,9 @@ service.interceptors.response.use(
     * code:200,接口正常返回;
     */
     const res = response.data
+	//console.log('http response:',response.data)
 	if(res.status=='y'){
-		//console.log('http response:',response.data)
+		
 		if(res.all_rows){
 			let ret = {
 				'result':res.result,

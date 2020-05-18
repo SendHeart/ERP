@@ -300,7 +300,7 @@ export function deleteNewsAdvertise(reqData) { //新闻删除
 
 export function addNewsAdvertise(reqData) { //新闻删除
     return request({
-      url:'/api/web_client/add_news_info',
+      url:'/api/web_client/post_emall_news',
       method: 'post',
       data: reqData
     })

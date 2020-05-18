@@ -45,7 +45,7 @@ const items = [
   "removeformat",
   "|",
   "image",
-  "multiimage",
+  //"multiimage",
   // "flash",
   // "media",
   // "insertfile",
