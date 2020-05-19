@@ -76,7 +76,7 @@ service.interceptors.response.use(
     Message({
       message: error.info?error.info:error.message,
       type: 'error',
-      duration: 5 * 1000
+      duration: 2 * 1000
     })
 	console.log('http request error:',error.message)
     return Promise.reject(Message)

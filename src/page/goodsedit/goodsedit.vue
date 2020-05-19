@@ -152,7 +152,7 @@
 							<el-input v-model="item_attr.name" style="margin-left: 5px;width: 50%;" :placeholder=" $t('commons.input')"></el-input>
 							<el-button style="margin-left: 5px;" icon="el-icon-delete" type="primary" @click="delete_goods_attr(attr_index)"></el-button>
 							<div v-for="(item_attrv,attrv_index) in item_attr.value" :key="attrv_index" style="display: flex;flex-direction: row;justify-content: flex-start;margin-top:5px;width: 100%;">
-								<el-input v-model="goods_attr_list[attr_index]['value'][attrv_index]" style="margin-left: 5px;" :placeholder=" $t('commons.input')"></el-input>
+								<el-input v-model="goods_attr_list[attr_index]['value'][attrv_index][0]" style="margin-left: 5px;" :placeholder=" $t('commons.input')"></el-input>
 								<el-row type="flex" justify="center" style="margin-left: 2px;">
 									<el-button style="margin-left: 3px;" icon="el-icon-delete" type="primary" @click="delete_attr_value(attr_index,attrv_index)"></el-button>
 								</el-row>
@@ -1114,7 +1114,7 @@
 				var sku_title_list = []
 				sku_title_list.push(this.goods_skulist_title[0]) //保留前两个表头项
 				sku_title_list.push(this.goods_skulist_title[1])
-				
+				//console.log('sku_title_init:',this.goods_skulist_title)
 				for(var i=0;i<this.goods_sku_speclist.length;i++){
 					let width = this.goods_sku_speclist[i]['type']=='1'?200:230
 					let sku_title_inf = { 
@@ -1490,6 +1490,7 @@
 					goods_desc:this.goods_desc,
 					goods_attr_list:this.goods_attr_list,
 				}
+				console.log('save_goods_info para:',para);
 				saveGoodsInfo(para).then(res => {
 				    this.$message({
 				      message: 'Success',
