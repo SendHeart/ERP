@@ -96,6 +96,8 @@ const zh = {
 	  news_down:'Cancel',
 	  news_submit:'Submit',
 	  news_type:'News Type',
+	  news_pic_ins:'Insert Picture',
+	  news_pic_cls:'Clear',
 	  globalnews:'Global News',
 	  goodshot:'Hot Goods',
 	  latest:'Latest',

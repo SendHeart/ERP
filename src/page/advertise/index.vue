@@ -75,15 +75,8 @@
             <p>到期时间：{{scope.row.end_dt | formatTime}}</p>
           </template>
         </el-table-column>
-        <el-table-column label="上线/下线" width="120" align="center">
-          <template slot-scope="scope">
-            <el-switch
-				@change="handleUpdateStatus(scope.$index, scope.row)"
-				active-color="#13ce66"
-				inactive-color="#ff4949"
-				v-model="scope.row.status">
-            </el-switch>
-          </template>
+        <el-table-column :label="$t('commons.news_status')" width="120" align="center">
+          <template slot-scope="scope">{{scope.row.status?'上线':'下线'}}</template>
         </el-table-column>
 		<!--
 		<el-table-column label="点击次数" width="120" align="center">
@@ -168,7 +161,8 @@
 					<Kind-editor  ref="kindeditor" :content="addnewsInfo.content"  @input="get_news_desc"></Kind-editor>
 				</el-form-item>
 				<el-form-item>
-					<el-button type="primary" @click="add_news_info()">提交</el-button>
+					<el-button type="primary" @click="add_news_info()">{{$t('commons.submit')}}</el-button>
+					<el-button type="warning" @click="quit_news_edit()">{{$t('commons.goback')}}</el-button>
 				</el-form-item>
 			</el-form>
 		</el-card>
@@ -254,13 +248,13 @@
 			dialogVisible:false,
 			hot_flag:"0", //热点新闻
 			title:null,
-			content:null,
+			content:'',
 			duration: null,
 			type:null,
 			status:false,
 			news_status:"0",
 			id:0,
-			rowindex:0,
+			rowindex:null,
 		},
 		paginations: {
 			total: 0,        // 总数
@@ -378,7 +372,8 @@
 		},
 		update_news(index,row){
 			//this.$router.push({path: '/settings/updateAdvertise', query: {id: row.id}})
-			console.log('update_news row:',row.content)
+			//console.log('update_news row:',row.content)
+			this.addnewsInfo.dialogVisible = !this.addnewsInfo.dialogVisible
 			this.addnewsInfo.id=row.id 
 			this.addnewsInfo.title=row.title 
 			//this.addnewsInfo.content=row.content
@@ -387,12 +382,13 @@
 			this.addnewsInfo.status=row.status 
 			this.addnewsInfo.duration=row.duration 
 			this.addnewsInfo.rowindex = index
-			this.addnewsInfo.dialogVisible = !this.addnewsInfo.dialogVisible
-			console.log('update_news info:',this.addnewsInfo)
+			this.addnewsInfo.content=row.content
+			//console.log('update_news info:',this.addnewsInfo)
 			setTimeout(() => {
-				this.addnewsInfo.content=row.content
+				this.addnewsInfo.content=this.list[this.addnewsInfo.rowindex]['content']
+				//console.log('update_news content 300:',this.addnewsInfo.content)
 			}, 300);
-			
+			 
 		},
 	  
 		get_news_list() {
@@ -403,7 +399,7 @@
 			this.listQuery.access_token = this.access_token
 			this.listQuery.shop_type = this.shop_type
 			queryNewsList(this.listQuery).then(response => {
-				console.log('get_news_list return:',response);
+				//console.log('get_news_list return:',response);
 				this.listLoading = false;
 				let news_list = response.result;
 				this.total = response.total;
@@ -463,6 +459,10 @@
 			//console.log('Rich Text:',ctx)
 		},
 		
+		quit_news_edit() {
+			this.addnewsInfo.dialogVisible = false 
+		},
+		
 		add_news_info(){
 			this.$confirm(this.$t('commons.news_submit'), '', {
 			confirmButtonText: this.$t('commons.confirm'),
@@ -493,13 +493,14 @@
 						message: 'Completed!'
 					});
 					//更新本地信息
-					this.list[this.addnewsInfo.rowindex]['content'] = this.this.addnewsInfo.content
-					this.list[this.addnewsInfo.rowindex]['title'] = this.this.addnewsInfo.title
-					this.list[this.addnewsInfo.rowindex]['duration'] = this.this.addnewsInfo.duration
-					this.list[this.addnewsInfo.rowindex]['news_status'] = this.this.addnewsInfo.news_status
-					this.list[this.addnewsInfo.rowindex]['status'] = this.this.addnewsInfo.status
+					this.list[this.addnewsInfo.rowindex]['content'] = this.addnewsInfo.content
+					this.list[this.addnewsInfo.rowindex]['title'] = this.addnewsInfo.title
+					this.list[this.addnewsInfo.rowindex]['duration'] = this.addnewsInfo.duration
+					this.list[this.addnewsInfo.rowindex]['news_status'] = this.addnewsInfo.news_status
+					this.list[this.addnewsInfo.rowindex]['status'] = this.addnewsInfo.status
 				})
 				.catch(err=>{
+					console.log('add_news_info err:',err)
 					console.log('add_news_info err:',err)
 				});
 			})

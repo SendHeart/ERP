@@ -47,7 +47,7 @@ const items = [
   "image",
   //"multiimage",
   // "flash",
-   "media",
+  // "media",
   // "insertfile",
   // "table",
   "hr",

@@ -29,6 +29,8 @@ const zh = {
 	  news_type:'新闻类型',
 	  news_add:'添加新闻',
 	  news_submit:'提交',
+	  news_pic_ins:'插入图片',
+	  news_pic_cls:'清除',
 	  date:'日期',
 	  note:'描述',
 	  search:'搜索',
