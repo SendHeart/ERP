@@ -32,34 +32,27 @@ router.beforeEach((to, from, next) => {
       next({ path: '/' })  
       NProgress.done() 
     } else {
-      // 用户登录成功之后，每次点击路由都进行了角色的判断;
-	  console.log('store.getters:',store.getters);
-      if (store.getters.roles.length === 0) {
-        let token = getToken('Token');
-        getUserInfo({"token":token}).then().then(res => { // 根据token拉取用户信息
-          let userList = res.userList;
-          store.commit("SET_ROLES",userList.roles);
-          store.commit("SET_NAME",userList.name);
-          store.commit("SET_AVATAR",userList.avatar);
-          store.dispatch('GenerateRoutes', { "roles":userList.roles }).then(() => { // 根据roles权限生成可访问的路由表
-            router.addRoutes(store.getters.addRouters) // 动态添加可访问权限路由表
-            next({ ...to, replace: true }) // hack方法 确保addRoutes已完成
-          })
-        }).catch((err) => {
-          store.dispatch('LogOut').then(() => {
-            Message.error(err || 'Verification failed, please login again')
-            next({ path: '/' })
-          })
-        })
-      } else {
+		// 用户登录成功之后，每次点击路由都进行了角色的判断;
+		console.log('store.getters:',store.getters);
+		if (store.getters.roles.length === 0) {
+			let user_roles = getToken('Roles') ;
+			store.commit("SET_ROLES",user_roles);
+			store.commit("SET_NAME",getToken('Username'));
+			store.commit("SET_AVATAR",getToken('Logo'));
+			console.log('GenerateRoutes roles:',user_roles) ;
+			store.dispatch('GenerateRoutes', { "roles":user_roles }).then(() => { // 根据roles权限生成可访问的路由表
+				router.addRoutes(store.getters.addRouters) // 动态添加可访问权限路由表
+				next({ ...to, replace: true }) // hack方法 确保addRoutes已完成
+			})
+		} else {
         // 没有动态改变权限的需求可直接next() 删除下方权限判断 ↓
-        if (hasPermission(store.getters.roles, to.meta.roles)) {
-          next()//
-        } else {
-          next({ path: '/401', replace: true, query: { noGoBack: true }})
-        }
-      }
-    }
+			if (hasPermission(store.getters.roles, to.meta.roles)) {
+				next()//
+			} else {
+				next({ path: '/401', replace: true, query: { noGoBack: true }})
+			}
+		}
+	}
   } else {
     if (whiteList.indexOf(to.path) !== -1) {
       // 点击退出时,会定位到这里

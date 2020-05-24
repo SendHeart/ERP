@@ -38,11 +38,13 @@ function addTopRouter(){
  */
 function hasPermission(roles, route) {
   // roles为权限身份数组
-  if (route.meta && route.meta.roles) {
-    return roles.some(role => route.meta.roles.indexOf(role) >= 0)
-  } else {
-    return true
-  }
+	if (route.meta && route.meta.roles) {
+		let role_list = roles.split(',') 
+		console.log('hasPermission roles.some:',roles,typeof(roles))
+		return role_list.some(role => route.meta.roles.indexOf(role) >= 0)
+	} else {
+		return true
+	}
 }
 
 /**
