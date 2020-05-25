@@ -44,6 +44,12 @@
 				      :default-time="['00:00:00', '23:59:59']">
 				</el-date-picker>
 			</el-form-item>
+			<el-form-item :label="$t('commons.goodsname')">
+			    <el-input v-model="listQuery.productname" size="mini" style="width: 380px;"></el-input>
+			</el-form-item>
+			<el-form-item :label="$t('commons.goodsid')">
+			   <el-input v-model="listQuery.productid"  size="mini" ></el-input>
+			</el-form-item>
         </el-form>
       </div>
     </el-card>
@@ -336,6 +342,8 @@
     verifyStatus: null,
     productSn: null,
     productCategoryId: null,
+	productname:null,
+	productid:null,
     brandId: null,
 	goodsSupplyId:null,
 	storage_in:null,
@@ -897,19 +905,26 @@
 			}
 		//console.log('get_goods_list para:',para);
 			getMyWarehouse(para).then(res => {
-				let hot_goods_list = []
-				for(var i=0;i<res.result.length;i++){
-					hot_goods_list.push(res.result[i])
-				} 
-				this.paginations.total = parseInt(res.total);
-				if(is_search == 2){
-					this.export_list = hot_goods_list ;
-					this.exportExcel()
-				}else{
-					this.list = hot_goods_list ;
-					
-				}
 				console.log('get_goods_list return:',res);
+				let hot_goods_list = []
+				if(res.total> 0){
+					for(var i=0;i<res.result.length;i++){
+						hot_goods_list.push(res.result[i])
+					} 
+					this.paginations.total = parseInt(res.total);
+					if(is_search == 2){
+						this.export_list = hot_goods_list ;
+						this.exportExcel()
+					}else{
+						this.list = hot_goods_list ;
+					}
+				}else{
+					this.$message({
+					   message: 'Nothing!',
+					   type: 'warning',
+					   duration: 1000
+					 });
+				}
 			})
 			.catch(err=>{
 				console.log('get_goods_list err:',err)
