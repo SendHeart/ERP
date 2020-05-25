@@ -1112,26 +1112,27 @@
         methods: {
 			sku_title_init(){
 				var sku_title_list = []
-				sku_title_list.push(this.goods_skulist_title[0]) //保留前两个表头项
-				sku_title_list.push(this.goods_skulist_title[1])
 				//console.log('sku_title_init:',this.goods_skulist_title)
-				for(var i=0;i<this.goods_sku_speclist.length;i++){
-					let width = this.goods_sku_speclist[i]['type']=='1'?200:230
-					let sku_title_inf = { 
-						title: this.goods_sku_speclist[i]['name'], 
-						attr: "spec", 
-						key: "",
-						spec_index:i,
-						type:this.goods_sku_speclist[i]['type'],
-						width:width ,
+				if(this.goods_sku_speclist && this.goods_sku_speclist.constructor === Array){
+					sku_title_list.push(this.goods_skulist_title[0]) //保留前两个表头项
+					sku_title_list.push(this.goods_skulist_title[1])
+					for(var i=0;i<this.goods_sku_speclist.length;i++){
+						let width = this.goods_sku_speclist[i]['type']=='1'?200:230
+						let sku_title_inf = { 
+							title: this.goods_sku_speclist[i]['name'], 
+							attr: "spec", 
+							key: "",
+							spec_index:i,
+							type:this.goods_sku_speclist[i]['type'],
+							width:width ,
+						}
+						sku_title_list.push(sku_title_inf)
 					}
-					sku_title_list.push(sku_title_inf)
+					for(var i=2;i<this.goods_skulist_title.length;i++){
+						sku_title_list.push(this.goods_skulist_title[i])
+					}
+					this.goods_skulist_title = sku_title_list
 				}
-				
-				for(var i=2;i<this.goods_skulist_title.length;i++){
-					sku_title_list.push(this.goods_skulist_title[i])
-				}
-				this.goods_skulist_title = sku_title_list
 			},
 			edit_goods_desc(){
 				this.is_goods_desc = !this.is_goods_desc
@@ -1451,7 +1452,7 @@
 			        });
 					*/
 					var result = res.result
-					if(result[0]['img'].constructor === Array){
+					if(result[0]['img'] && result[0]['img'].constructor === Array){
 						 this.goods_info['img']=[]
 						for(var k=0;k<result[0]['img'].length;k++){
 							this.goods_info['img'].push(result[0]['img'][k])
@@ -1463,16 +1464,18 @@
 					this.goods_info['name'] = result[0]['name']
 					this.goods_info['id'] = result[0]['id']
 					this.goods_info['sell_price'] = result[0]['sell_price']
-					this.goods_sku_list = result[0]['sku_list']
-					this.goods_sku_speclist = result[0]['sku_speclist']
-					this.goods_skulist_title = result[0]['skulist_title']
+					this.goods_sku_list = result[0]['sku_list']?result[0]['sku_list']:null
+					this.goods_sku_speclist = result[0]['sku_speclist']?result[0]['sku_speclist']:null
+					this.goods_skulist_title = result[0]['skulist_title']?result[0]['skulist_title']:null
 					setTimeout(() => {
-						this.goods_desc = result[0]['desc']
+						this.goods_desc = result[0]['desc']?result[0]['desc']:null
 					}, 1000);
 					
-					this.goods_attr_list = result[0]['attr_list']
+					this.goods_attr_list = result[0]['attr_list']?result[0]['attr_list']:null
 					console.log('getGoodsList return:',res,' goods_desc:',this.goods_desc);
-					this.sku_title_init()
+					if(this.goods_skulist_title){
+						this.sku_title_init()
+					}
 			    })
 				.catch(err=>{
 					console.log('getGoodsList err:',err)
