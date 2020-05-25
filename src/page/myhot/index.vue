@@ -13,7 +13,7 @@
         </el-button>
         <el-button
           style="float: right;margin-right: 15px"
-          @click="search()"
+          @click="handleResetSearch()"
           size="small">
           {{$t('commons.reset')}}
         </el-button>
