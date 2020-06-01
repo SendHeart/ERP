@@ -305,3 +305,11 @@ export function addNewsAdvertise(reqData) { //新闻删除
       data: reqData
     })
 }
+
+export function addGoodsShop(reqData) { //新闻删除
+    return request({
+      url:'/api/web_client/add_goods_shop',
+      method: 'post',
+      data: reqData
+    })
+}

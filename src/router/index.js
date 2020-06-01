@@ -201,6 +201,27 @@ export const asyncRouterMap = [
 	  */
 	},
 	{
+		path:'/myshop',
+		name: 'myshop',
+		component:Layout,
+		meta: {
+			title:'我的店铺',
+			icon: 'shop',
+		},
+		noDropdown:true,
+		children:[
+			{
+				path:'myshop', 
+				meta:{
+				  title:'我的店铺', 
+				  icon:'shop',
+				  routerType:'leftmenu'
+				},
+				component: () => import('@/page/myshop'),
+			},
+		]
+	},
+	{
 		path: '/settings',
 		name: 'settings',
 		meta: {

@@ -20,11 +20,11 @@
       </div>
       <div style="margin-top: 15px">
         <el-form :inline="true" :model="listQuery" size="small" label-width="120px">
-			<el-form-item :label="$t('commons.goodsorg')">
+			<el-form-item :label="$t('commons.emallplatform')">
 				<el-cascader
 				  clearable
 				  v-model="listQuery.goodsSupplyId"
-				  :options="goods_supply">
+				  :options="platform_list">
 				</el-cascader>
 			</el-form-item>
 			<el-form-item :label="$t('commons.goodscate')">
@@ -41,7 +41,7 @@
 				      type="daterange"
 				      :start-placeholder="$t('commons.startdate')"
 				      :end-placeholder="$t('commons.enddate')"
-				      :default-time="['00:00:00', '23:59:59']">
+				      :default-time="['00:00:00', '23:59:59']"> 
 				</el-date-picker>
 			</el-form-item>
 			<el-form-item :label="$t('commons.goodsname')">

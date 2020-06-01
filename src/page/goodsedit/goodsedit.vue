@@ -152,7 +152,7 @@
 							<el-input v-model="item_attr.name" style="margin-left: 5px;width: 50%;" :placeholder=" $t('commons.input')"></el-input>
 							<el-button style="margin-left: 5px;" icon="el-icon-delete" type="primary" @click="delete_goods_attr(attr_index)"></el-button>
 							<div v-for="(item_attrv,attrv_index) in item_attr.value" :key="attrv_index" style="display: flex;flex-direction: row;justify-content: flex-start;margin-top:5px;width: 100%;">
-								<el-input v-model="goods_attr_list[attr_index]['value'][attrv_index][0]" style="margin-left: 5px;" :placeholder=" $t('commons.input')"></el-input>
+								<el-input v-model="goods_attr_list[attr_index]['value'][attrv_index]" style="margin-left: 5px;width:100%;" :placeholder=" $t('commons.input')"></el-input>
 								<el-row type="flex" justify="center" style="margin-left: 2px;">
 									<el-button style="margin-left: 3px;" icon="el-icon-delete" type="primary" @click="delete_attr_value(attr_index,attrv_index)"></el-button>
 								</el-row>
@@ -1520,12 +1520,12 @@
 			},
 			
 			get_goods_desc(ctx) {
-				this.my_strategy_content = ctx ;
+				this.goods_desc = ctx?ctx:this.goods_desc ;
 				//console.log('Rich Text:',ctx)
 			},
 			
 			get_goods_desc_k(content) {
-				this.my_strategy_content = content ;
+				this.goods_desc = content?content:this.goods_desc ;
 				//console.log('Rich Text:',ctx)
 			},
 			
