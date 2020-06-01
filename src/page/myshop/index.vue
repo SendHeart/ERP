@@ -20,10 +20,10 @@
       </div>
       <div style="margin-top: 15px">
         <el-form :inline="true" :model="listQuery" size="small" label-width="120px">
-			<el-form-item :label="$t('commons.emallplatform')">
+			<el-form-item :label="$t('commons.myshop')">
 				<el-cascader
 				  clearable
-				  v-model="listQuery.goodsSupplyId"
+				  v-model="listQuery.emallId"
 				  :options="platform_list">
 				</el-cascader>
 			</el-form-item>
@@ -41,11 +41,11 @@
 				      type="daterange"
 				      :start-placeholder="$t('commons.startdate')"
 				      :end-placeholder="$t('commons.enddate')"
-				      :default-time="['00:00:00', '23:59:59']"> 
+				      :default-time="['00:00:00', '23:59:59']">
 				</el-date-picker>
 			</el-form-item>
 			<el-form-item :label="$t('commons.goodsname')">
-			    <el-input v-model="listQuery.productname" size="mini" style="width: 380px;"></el-input>
+			    <el-input v-model="listQuery.productName" size="mini" style="width: 380px;"></el-input>
 			</el-form-item>
 			<el-form-item :label="$t('commons.goodsid')">
 			   <el-input v-model="listQuery.productid"  size="mini" ></el-input>
@@ -312,6 +312,7 @@
 		goodsNewSet,
 		getEmallList,
 		addGoodsShop,
+		getMyShopGoodsList,
 	} from "@/api/user";
 	
 	import {
@@ -335,10 +336,10 @@
     verifyStatus: null,
     productSn: null,
     productCategoryId: null,
-	productname:null,
-	productid:null,
+	productName:null,
+	productId:null,
     brandId: null,
-	goodsSupplyId:null,
+	emallId:null,
 	storage_in:null,
 	storage_out:null,
   };
@@ -913,6 +914,7 @@
 				pagesize:this.paginations.pageSize,
 				page:this.paginations.pageIndex,
 				goods_id:this.goods_id,
+				emall_id:this.listQuery.emallId,
 				shop_type:this.shop_type,
 				lang:this.lang,
 			}
@@ -923,7 +925,7 @@
 				para['type'] = 1 //全部导出查询
 			}
 		//console.log('get_goods_list para:',para);
-			getMyWarehouse(para).then(res => {
+			getMyShopGoodsList(para).then(res => {
 				console.log('get_goods_list return:',res);
 				let hot_goods_list = []
 				if(res.total> 0){

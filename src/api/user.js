@@ -313,3 +313,27 @@ export function addGoodsShop(reqData) { //新闻删除
       data: reqData
     })
 }
+
+export function getMyShopGoodsList(reqData) {
+    return request({
+      url:'/api/web_client/get_myshop_goods_list',
+      method: 'post',
+      data: reqData
+    })
+}
+
+export function authorizeEmall(reqData) {
+    return request({
+      url:'/api/web_client/authorize_emall',
+      method: 'post',
+      data: reqData
+    })
+}
+
+export function getMyEmallList(reqData) {
+    return request({
+      url:'/api/web_client/get_myemall_list',
+      method: 'post',
+      data: reqData
+    })
+}

@@ -19,7 +19,7 @@
 				 		<p class="emall-detail-sub-title">{{emall_list[emall_query_index].region!=''?'范围:'+emall_list[emall_query_index].region:''}}</p>
 				 	</div>
 				 	<div style="display: flex;flex-direction: row;justify-content: flex-start;margin-top:15px;">
-				 		 <el-button icon="el-icon-circle-plus" type="primary">{{ $t('commons.emall_joining') }}</el-button>
+				 		 <el-button icon="el-icon-circle-plus" type="primary" @click="platform_auth()">{{ $t('commons.emall_joining') }}</el-button>
 				 		 <el-button icon="el-icon-edit" type="primary">{{ $t('commons.emall_joined') }}</el-button>
 				 	</div>
 				 </div>
@@ -285,6 +285,37 @@
 			</div>
 		</div>
 	</div>
+	<el-dialog
+		:title="$t('commons.emall_joining')"
+		:visible.sync="authorizeEmall.dialogVisible"
+		width="65%">
+		<el-form :model="authorizeEmall" status-icon :rules="rules" ref="authorizeEmall" label-width="160px">
+		  <el-form-item :label="label_marketplace_id" prop="marketplace_id" style="width: 30%;margin-left: 0px">
+		  	<el-cascader
+		  	clearable
+		  	v-model="authorizeEmall.marketplace_id"
+		  	:options="market_list"
+		  	filterable>
+		  	</el-cascader>
+		  </el-form-item>
+		  <el-form-item :label="$t('commons.shop_name')">
+		  	<el-input :placeholder="$t('commons.shop_name')" v-model="authorizeEmall.shop_name" size="small" style="width: 30%;margin-left: 0px"></el-input>
+		  </el-form-item>
+		  <el-form-item :label="label_shop_account">
+		  	<el-input :placeholder="shop_account_note" v-model="authorizeEmall.shop_account" size="small" style="width: 30%;margin-left: 0px"></el-input>
+		  </el-form-item>
+		  <el-form-item :label="$t('commons.merchant_id')" prop="merchant_id">
+		    <el-input v-model="authorizeEmall.merchant_id" style="width: 30%;margin-left: 0px" size="small"></el-input>
+		  </el-form-item>
+		  <el-form-item :label="$t('commons.MWSAuthToken')" prop="MWSAuthToken">
+		    <el-input v-model="authorizeEmall.MWSAuthToken" style="width: 50%;margin-left: 0px" size="small"></el-input>
+		  </el-form-item>
+		  <el-form-item>
+			<el-button @click="authorizeEmall.dialogVisible = false">取 消</el-button>
+		    <el-button type="primary" @click="submit_platform_auth('authorizeEmall')">提交</el-button>
+		  </el-form-item>
+		</el-form>
+	</el-dialog>
 </div>
 </template>
 
@@ -300,6 +331,7 @@
 		submitEmallScore,
 		submitComment,
 		submitStrategy,
+		authorizeEmall,
 	} from "@/api/user";
 	import Ueditor from "@/components/editor/editor.vue"; //富文本编辑器
 	import YanShare from "@/components/yanShare.vue"; //富文本编辑器
@@ -484,7 +516,108 @@
 				emall_detail_commentlist:null,
 				emall_detail_strategylist:null,
 				loading:true,
-              //需的信息
+				authorizeEmall:{
+					dialogVisible:false,
+					shop_account:'',
+					shop_name:'',
+					merchant_id:'',
+					MWSAuthToken:'',
+					marketplace_id:'',
+				},
+				rules: {
+				    shop_account: [
+						{ required: true, message: 'Shop Account',trigger: 'change' } //这里需要用到全局变量
+					],
+					shop_name: [
+						 { required: true, message: 'Shop Name', trigger: 'change' }
+					],
+					merchant_id: [
+						 { required: true, message: 'Merchant ID', trigger: 'change' }
+					],
+					MWSAuthToken: [
+						 { required: true, message: 'Authorization Token', trigger: 'change' }
+					],
+					marketplace_id: [
+						 { required: true, message: 'Marketplace ID', trigger: 'change' }
+					],
+				},
+				shop_account_note:'',
+				label_shop_name_note:'',
+				label_marketplace_id:'',
+				market_list:[
+					{
+						label:'美国',
+						value:'ATVPDKIKX0DER',
+					},
+					{
+						label:'加拿大',
+						value:'A2EUQ1WTGCTBG2',
+					},
+					{
+						label:'德国',
+						value:'A1PA6795UKMFR9',
+					},
+					{
+						label:'西班牙',
+						value:'A1RKKUPIHCS9HS',
+					},
+					{
+						label:'法国',
+						value:'A13V1IB3VIYZZH',
+					},
+					{
+						label:'英国',
+						value:'A1F83G8C2ARO7P',
+					},
+					{
+						label:'印度',
+						value:'A21TJRUUN4KGV',
+					},
+					{
+						label:'意大利',
+						value:'APJ6JRA9NG5V4',
+					},
+					{
+						label:'荷兰',
+						value:'A1805IZSGTT6HS',
+					},
+					{
+						label:'沙特',
+						value:'A17E79C6D8DWNP',
+					},
+					{
+						label:'巴西',
+						value:'A2Q3Y263D00KWC',
+					},
+					{
+						label:'澳大利亚',
+						value:'A39IBJ37TRP1C6',
+					},
+					{
+						label:'新加波',
+						value:'A19VAU5U5O7RUS',
+					},
+					{
+						label:'日本',
+						value:'A1VC38T7YXB528',
+					},
+					{
+						label:'墨西哥',
+						value:'A1AM78C64UM0Y8',
+					},
+					{
+						label:'阿联酋',
+						value:'A2VIGQ35RCS4UG',
+					},
+					{
+						label:'埃及',
+						value:'ARBP9OOSHTCHU',
+					},
+					{
+						label:'土耳其',
+						value:'A33AVAJ2PDY3EV',
+					}
+				],
                 paginations: {
                     total: 0,        // 总数
                     pageIndex: 1,  // 当前位于哪页
@@ -518,6 +651,11 @@
 				this.activeName=this.emall_query['type']?this.emall_query['type']:this.activeName ;
 				this.emall_query_id= this.emall_query['emall_id']
 				this.emall_query_name= this.emall_query['emall_name']
+				if(this.emall_query_id == 1){
+					this.shop_account_note = this.$t('commons.shop_account_amazon')
+					this.label_shop_account = this.$t('commons.'+this.emall_query_name)+this.$t('commons.shop_account')
+					this.label_marketplace_id = this.$t('commons.'+this.emall_query_name)+this.$t('commons.marketplace_id')
+				}
 				/*
 				for(var i=0;i<this.emall_list.length;i++){
 					if(this.emall_list[i]['name'] == this.emall_query['emall_name']){
@@ -537,7 +675,6 @@
             
         },
         methods: {
-			
 			//发布评论
 			publishComment(){
 				this.is_comment_submit = !this.is_comment_submit ;
@@ -1000,6 +1137,7 @@
                this.paginations.pageIndex = page;
                this.getUserList();
             },
+			
 			emall_detail_comment_select(selected=0) {
 				var k = parseInt(selected) ;
 				var comment_index_selected = this.comment_index_selected
@@ -1010,6 +1148,59 @@
 				}
 				this.comment_index_selected = selected ;
 				
+			},
+			
+			platform_auth(){
+				this.authorizeEmall.dialogVisible = !this.authorizeEmall.dialogVisible 
+			},
+			
+			submit_platform_auth(formName){
+				this.$refs[formName].validate((valid) => {
+				   if (valid) {
+					   if(this.authorizeEmall.marketplace_id=='' ||this.authorizeEmall.shop_account=='' ||this.authorizeEmall.shop_name=='' ||this.authorizeEmall.merchant_id=='' ||this.authorizeEmall.MWSAuthToken==''){
+							this.$message({
+							  message: '输入信息不完整!',
+							  type: 'warn',
+							  duration: 1000
+							});
+							console.log('submit_platform_auth 输入信息有误');
+							return false;
+						}else{
+							this.$confirm('是否要添加', '提示', {
+								confirmButtonText: '确定',
+								cancelButtonText: '取消',
+								type: 'warning'
+							}).then(()=>{
+								let author_info = {
+									marketplace_id:this.authorizeEmall.marketplace_id,
+									merchant_id:this.authorizeEmall.merchant_id,
+									MWSAuthToken:this.authorizeEmall.MWSAuthToken,
+								}
+								let para = {
+									emall_id: this.emall_query_id ,
+									username:this.username,
+									access_token:this.access_token,
+									shop_type:this.shop_type,
+									shop_name:this.authorizeEmall.shop_name,
+									shop_account:this.authorizeEmall.shop_account,
+									lang:this.lang,
+									para_info:JSON.stringify(author_info)
+								}
+										   
+								authorizeEmall(para).then(res => {
+									this.$message({
+										message: 'Completed',
+										type: 'success'
+									})
+									console.log('submit_platform_auth:',res)
+								})
+							});
+						}
+					} else {
+						console.log('submit_platform_auth 输入信息有误');
+						return false;
+					}
+				});
 			},
 			
 			go_back(){
