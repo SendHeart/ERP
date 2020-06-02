@@ -18,10 +18,12 @@
 				 		<p class="emall-detail-sub-title">{{emall_list[emall_query_index].type!=''?'类型:'+emall_list[emall_query_index].type:'' }}</p>
 				 		<p class="emall-detail-sub-title">{{emall_list[emall_query_index].region!=''?'范围:'+emall_list[emall_query_index].region:''}}</p>
 				 	</div>
+					<!--
 				 	<div style="display: flex;flex-direction: row;justify-content: flex-start;margin-top:15px;">
 				 		 <el-button icon="el-icon-circle-plus" type="primary" @click="platform_auth()">{{ $t('commons.emall_joining') }}</el-button>
 				 		 <el-button icon="el-icon-edit" type="primary">{{ $t('commons.emall_joined') }}</el-button>
 				 	</div>
+					-->
 				 </div>
 			</div>
 		</div>
@@ -650,7 +652,7 @@
 				this.emall_query= this.$route.query;
 				this.activeName=this.emall_query['type']?this.emall_query['type']:this.activeName ;
 				this.emall_query_id= this.emall_query['emall_id']
-				this.emall_query_name = this.emall_query['emall_name']
+				this.emall_query_name= this.emall_query['emall_name']
 				if(this.emall_query_id == 1){
 					this.shop_account_note = this.$t('commons.shop_account_amazon')
 					this.label_shop_account = this.$t('commons.'+this.emall_query_name)+this.$t('commons.shop_account')
