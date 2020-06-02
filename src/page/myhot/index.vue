@@ -75,7 +75,7 @@
                 v-loading="listLoading"
                 border>
         <el-table-column type="selection" width="60" align="center"></el-table-column>
-        <el-table-column label="商品图片" width="380" align="center">
+        <el-table-column :label="$t('commons.goodsname')" width="380" align="center">
 			<template slot-scope="scope">
 				<div style="display: flex;flex-direction: row;justify-content: flex-start;" >
 					<img style="height: 80px" :src="scope.row.img" @click="goods_detail(scope.$index)">
@@ -88,7 +88,7 @@
 				</div>
 			</template>
         </el-table-column>
-		<el-table-column label="商品ID" width="130" align="center">
+		<el-table-column :label="$t('commons.goodsid')" width="130" align="center">
 		  <template slot-scope="scope">{{scope.row.goods_id}}</template>
 		</el-table-column>
 		<!--
@@ -99,11 +99,11 @@
           </template>
         </el-table-column>
 		-->
-        <el-table-column label="原价" width="180" align="center">
-          <template slot-scope="scope">
-            <p>{{scope.row.sell_price}}</p>
-          </template>
-        </el-table-column>
+		<el-table-column :label="$t('commons.goods_sku_price')" width="180" align="center">
+			<template slot-scope="scope">
+				<p>{{scope.row.sell_price}}</p>
+			</template>
+		</el-table-column>
 		<!--
         <el-table-column label="标签" width="140" align="center">
           <template slot-scope="scope">
@@ -134,10 +134,10 @@
           </template>
         </el-table-column>
 		-->
-        <el-table-column label="类目" width="100" align="center">
+        <el-table-column :label="$t('commons.goods_info_categorylist')" width="100" align="center">
           <template slot-scope="scope">{{scope.row.category}}</template>
         </el-table-column>
-        <el-table-column label="库存" width="100" align="center">
+        <el-table-column :label="$t('commons.goods_sku_store')" width="100" align="center">
           <template slot-scope="scope">
 			 <p>{{scope.row.storenum}}</p>
 			 <!--
@@ -145,10 +145,10 @@
 			 -->
           </template>
         </el-table-column>
-        <el-table-column label="销量" width="100" align="center">
+        <el-table-column :label="$t('commons.goods_sale')" width="100" align="center">
           <template slot-scope="scope">{{scope.row.sale}}</template>
         </el-table-column>
-		<el-table-column label="入库时间" width="100" align="center">
+		<el-table-column :label="$t('commons.goods_addtime')" width="100" align="center">
 		  <template slot-scope="scope">{{scope.row.storage_time}}</template>
 		</el-table-column>
 		<!--
@@ -720,11 +720,13 @@
       }
     },
     created() {
-     this.get_goods_list()
      this.get_mywarehouse()
      this.get_goods_category()
 	 this.get_goods_supply()
 	 this.get_emall_list()
+	 setTimeout(() => {
+	 	this.get_goods_list()
+	 }, 300);
     },
     watch: {
       selectProductCateValue: function (newValue) {

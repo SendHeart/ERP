@@ -43,6 +43,7 @@ export const constantRouterMap = [
 	{ path: '/goodsedit', component: () => import('@/page/goodsedit/goodsedit'), hidden: true },
 	{ path: '/pay/recharge', component: () => import('@/page/pay/recharge'), hidden: true },
 	{ path: '/htmlview', component: () => import('@/page/myhot/htmlview'), hidden: true },
+	{ path: '/edit_shop_goods', component: () => import('@/page/myshop/update'), hidden: true },
 	{
 		path: '/index',
 		name: 'index',
@@ -130,6 +131,27 @@ export const asyncRouterMap = [
 		]
 	},
 	{
+		path:'/myshop',
+		name: 'myshop',
+		component:Layout,
+		meta: {
+			title:'我的店铺',
+			icon: 'shop',
+		},
+		noDropdown:true,
+		children:[
+			{
+				path:'myshop', 
+				meta:{
+				  title:'我的店铺', 
+				  icon:'shop',
+				  routerType:'leftmenu'
+				},
+				component: () => import('@/page/myshop'),
+			},
+		]
+	},
+	{
 		path:'/emallplatform',
 		name: 'emallplatform',
 		component:Layout,
@@ -200,27 +222,7 @@ export const asyncRouterMap = [
 	  ]
 	  */
 	},
-	{
-		path:'/myshop',
-		name: 'myshop',
-		component:Layout,
-		meta: {
-			title:'我的店铺',
-			icon: 'shop',
-		},
-		noDropdown:true,
-		children:[
-			{
-				path:'myshop', 
-				meta:{
-				  title:'我的店铺', 
-				  icon:'shop',
-				  routerType:'leftmenu'
-				},
-				component: () => import('@/page/myshop'),
-			},
-		]
-	},
+	
 	{
 		path: '/settings',
 		name: 'settings',

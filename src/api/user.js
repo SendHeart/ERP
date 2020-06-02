@@ -298,7 +298,7 @@ export function deleteNewsAdvertise(reqData) { //新闻删除
     })
 }
 
-export function addNewsAdvertise(reqData) { //新闻删除
+export function addNewsAdvertise(reqData) { // 
     return request({
       url:'/api/web_client/post_emall_news',
       method: 'post',
@@ -306,9 +306,17 @@ export function addNewsAdvertise(reqData) { //新闻删除
     })
 }
 
-export function addGoodsShop(reqData) { //新闻删除
+export function addGoodsShop(reqData) { // 
     return request({
       url:'/api/web_client/add_goods_shop',
+      method: 'post',
+      data: reqData
+    })
+}
+
+export function publishGoodsShop(reqData) { // 
+    return request({
+      url:'/api/web_client/publish_goods_shop',
       method: 'post',
       data: reqData
     })
@@ -317,6 +325,22 @@ export function addGoodsShop(reqData) { //新闻删除
 export function getMyShopGoodsList(reqData) {
     return request({
       url:'/api/web_client/get_myshop_goods_list',
+      method: 'post',
+      data: reqData
+    })
+}
+
+export function saveMyShopGoodsInfo(reqData) {
+    return request({
+      url:'/api/web_client/save_myshop_goods_info',
+      method: 'post',
+      data: reqData
+    })
+}
+
+export function deleteMyShopGoods(reqData) {
+    return request({
+      url:'/api/web_client/delete_myshop_goods',
       method: 'post',
       data: reqData
     })

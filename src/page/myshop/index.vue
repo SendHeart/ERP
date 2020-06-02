@@ -20,11 +20,18 @@
       </div>
       <div style="margin-top: 15px">
         <el-form :inline="true" :model="listQuery" size="small" label-width="120px">
-			<el-form-item :label="$t('commons.myshop')">
+			<el-form-item :label="$t('commons.emallplatform')">
 				<el-cascader
 				  clearable
 				  v-model="listQuery.emallId"
 				  :options="platform_list">
+				</el-cascader>
+			</el-form-item>
+			<el-form-item :label="$t('commons.myshop')">
+				<el-cascader
+				  clearable
+				  v-model="listQuery.shopAccount"
+				  :options="myshop_list">
 				</el-cascader>
 			</el-form-item>
 			<el-form-item :label="$t('commons.goodscate')">
@@ -45,24 +52,13 @@
 				</el-date-picker>
 			</el-form-item>
 			<el-form-item :label="$t('commons.goodsname')">
-			    <el-input v-model="listQuery.productName" size="mini" style="width: 380px;"></el-input>
+			    <el-input v-model="listQuery.productName" size="small" style="width: 380px;"></el-input>
 			</el-form-item>
 			<el-form-item :label="$t('commons.goodsid')">
-			   <el-input v-model="listQuery.productid"  size="mini" ></el-input>
+			   <el-input v-model="listQuery.productid"  size="small" ></el-input>
 			</el-form-item>
         </el-form>
       </div>
-    </el-card>
-	 
-    <el-card class="operate-container" shadow="never">
-      <el-button
-        class="btn-add"
-        @click="add_hot_goods()"
-		type="primary"
-        size="mini">
-         {{$t('commons.addbyself')}}
-      </el-button>
-	  <el-button type="primary" class="btn-add"  size="mini" @click="get_goods_list(2)"> {{$t('commons.exportexcel')}}</el-button>
     </el-card>
     <div class="table-container">
 	<el-table ref="productTable"
@@ -72,23 +68,22 @@
 				:row-style="tableRowStyle"
 				:header-cell-style="tableHeaderColor"
                 @selection-change="handleSelectionChange"
-                v-loading="listLoading"
                 border>
         <el-table-column type="selection" width="60" align="center"></el-table-column>
-        <el-table-column label="商品图片" width="380" align="center">
+        <el-table-column :label="$t('commons.goodsname')" width="380" align="center">
 			<template slot-scope="scope">
 				<div style="display: flex;flex-direction: row;justify-content: flex-start;" >
-					<img style="height: 80px" :src="scope.row.img" @click="goods_detail(scope.$index)">
+					<img style="height: 80px" :src="scope.row.img[0].url">
 					<div style="margin-left:5px; display: flex;flex-direction: column;justify-content: flex-start;">
 						<p style="text-align: left;">{{scope.row.name}}</p>
 						<p style="text-align: left;" >
-							<el-button type="primary" size="mini" @click="html_view(scope.$index)">源链</el-button>
+							<el-button type="primary" size="mini" @click="update_goods(scope.$index)">{{$t('commons.goodsedit')}}</el-button>
 						</p>
 					</div>
 				</div>
 			</template>
         </el-table-column>
-		<el-table-column label="商品ID" width="130" align="center">
+		<el-table-column :label="$t('commons.goodsid')" width="130" align="center">
 		  <template slot-scope="scope">{{scope.row.goods_id}}</template>
 		</el-table-column>
 		<!--
@@ -99,7 +94,7 @@
           </template>
         </el-table-column>
 		-->
-        <el-table-column label="原价" width="180" align="center">
+        <el-table-column :label="$t('commons.goods_sku_price')" width="180" align="center">
           <template slot-scope="scope">
             <p>{{scope.row.sell_price}}</p>
           </template>
@@ -134,10 +129,10 @@
           </template>
         </el-table-column>
 		-->
-        <el-table-column label="类目" width="100" align="center">
+        <el-table-column :label="$t('commons.goods_info_categorylist')" width="100" align="center">
           <template slot-scope="scope">{{scope.row.category}}</template>
         </el-table-column>
-        <el-table-column label="库存" width="100" align="center">
+        <el-table-column :label="$t('commons.goods_sku_store')" width="100" align="center">
           <template slot-scope="scope">
 			 <p>{{scope.row.storenum}}</p>
 			 <!--
@@ -145,10 +140,10 @@
 			 -->
           </template>
         </el-table-column>
-        <el-table-column label="销量" width="100" align="center">
+        <el-table-column :label="$t('commons.goods_sale')" width="100" align="center">
           <template slot-scope="scope">{{scope.row.sale}}</template>
         </el-table-column>
-		<el-table-column label="入库时间" width="100" align="center">
+		<el-table-column :label="$t('commons.goods_addtime')" width="100" align="center">
 		  <template slot-scope="scope">{{scope.row.storage_time}}</template>
 		</el-table-column>
 		<!--
@@ -164,18 +159,18 @@
           </template>
         </el-table-column>
 		-->
-        <el-table-column label="操作" width="260" align="center">
+        <el-table-column :label="$t('commons.operation')" width="260" align="center">
           <template slot-scope="scope">
             <p>
              <el-button
                size="mini"
                type="primary"
-               @click="add_myshop(scope.$index, scope.row)">{{$t('commons.addshop')}}
+               @click="publish_shop_confirm(scope.$index, scope.row)">{{$t('commons.publish')}}
              </el-button>
 			 <el-button
 			   size="mini"
 			   type="danger"
-			   @click="delete_mywarehouse(scope.$index, scope.row)">{{$t('commons.deleted')}}
+			   @click="delete_myshopgoods(scope.$index, scope.row)">{{$t('commons.deleted')}}
 			 </el-button>
             </p>			 
           </template>
@@ -201,6 +196,7 @@
         size="small">
         {{$t('commons.confirm')}}
       </el-button>
+	  <!--
 	  <el-select
 	    size="small"
 	    v-model="emall_id" :placeholder="$t('commons.emallplatform')">
@@ -211,52 +207,13 @@
 	      :value="item.id">
 	    </el-option>
 	  </el-select>
+	  -->
     </div>
 	
-    <el-dialog
-		:title="$t('commons.hot_goods_add')"
-		:visible.sync="addhotgoodsInfo.dialogVisible"
-		width="65%">
-		<el-form :model="addhotgoodsInfo" status-icon :rules="rules" ref="addhotgoodsInfo" label-width="100px">
-		  <el-form-item :label="$t('commons.goods_info_from')" prop="goodsFromId" style="width: 30%;margin-left: 0px">
-		  	<el-cascader
-		  	clearable
-		  	v-model="addhotgoodsInfo.goodsFromId"
-		  	:options="hot_supply"
-		  	filterable>
-		  	</el-cascader>
-		  </el-form-item>
-		  <el-form-item :label="$t('commons.hot_goods_sku')">
-		  	<el-input :placeholder="$t('commons.hot_goods_sku')" v-model="addhotgoodsInfo.productId" size="small" style="width: 30%;margin-left: 0px"></el-input>
-		  </el-form-item>
-		  <el-form-item :label="$t('commons.hot_goods_name')">
-		  	<el-input :placeholder="$t('commons.hot_goods_name')" v-model="addhotgoodsInfo.productName" size="small" style="width: 50%;margin-left: 0px"></el-input>
-		  </el-form-item>
-		  <el-form-item :label="$t('commons.hot_goods_link')" prop="productLink">
-		    <el-input v-model="addhotgoodsInfo.productLink"></el-input>
-		  </el-form-item>
-		  <el-form-item>
-			<el-button @click="addhotgoodsInfo.dialogVisible = false">取 消</el-button>
-		    <el-button type="primary" @click="add_hot_confirm('addhotgoodsInfo')">提交</el-button>
-		  </el-form-item>
-		</el-form>
-	</el-dialog>
 	<el-dialog
 		:title="$t('commons.addshop')"
 		:visible.sync="addshopgoodsInfo.dialogVisible"
 		width="65%">
-		<!--
-		<el-form :model="addshopgoodsInfo" status-icon :rules="rules" ref="addshopgoodsInfo" label-width="100px">
-		  <el-form-item :label="$t('commons.emallplatform')" prop="shopFromId" style="width: 30%;margin-left: 0px">
-		  	<el-cascader
-		  	clearable
-		  	v-model="addshopgoodsInfo.platform_id"
-		  	:options="platform_list"
-		  	filterable>
-		  	</el-cascader>
-		  </el-form-item>
-		</el-form>
-		-->
 		<el-checkbox :indeterminate="isIndeterminate" v-model="checkShopAll" @change="checkShopAllChange">全选</el-checkbox>
 		
 		<el-checkbox-group v-model="addshopgoodsInfo.platform_ids" @change="checkedShopChange" style="margin: 15px 0;">
@@ -302,17 +259,13 @@
   //import {fetchListWithChildren} from '@/api/productCate'
 	
 	import {
-		getMyWarehouse,
-		deleteGoodsWarehouse,
-		getGoodsCategory,
-		getGoodsSupply,
-		addMyWarehouse,
+		getMyShopList,
 		goodsUpDown,
 		goodsRecommSet,
 		goodsNewSet,
-		getEmallList,
-		addGoodsShop,
+		getMyEmallList,
 		getMyShopGoodsList,
+		deleteMyShopGoodsList
 	} from "@/api/user";
 	
 	import {
@@ -340,6 +293,7 @@
 	productId:null,
     brandId: null,
 	emallId:null,
+	shopAccount:null,
 	storage_in:null,
 	storage_out:null,
   };
@@ -364,6 +318,8 @@
 			lang:getToken('lang')||'zh',
 			access_token:getToken('Token')||'zh',
 			username:getToken('Username')||'',
+			emall_id:getToken('Platform_id_shop')||"0",
+			shop_account:getToken('Platform_shop_account')||"",
 			goods_id:0,
 			scrollTop:0,
 			exportList:[],
@@ -577,17 +533,6 @@
 				'taoschema_extend'
 			],
 			emall_list:[],
-			
-			addhotgoodsInfo:{
-				dialogVisible:false,
-				productId:'',
-				productLink:'',
-				productName:'',
-				goodsCategoryId:0,
-				goodsFromId:0,
-				productAttr:[],
-				keyword:''
-			},
 			checkShopAll: false,
 			addshopgoodsInfo:{
 				dialogVisible:false,
@@ -600,69 +545,58 @@
 				productAttr:[],
 				keyword:''
 			},
-		rules: {
-		    productLink: [
-				{ required: true, trigger: 'blur', validator: validUrl } //这里需要用到全局变量
-			],
-			goodsFromId: [
-				 { required: true, message: '请选择来源', trigger: 'change' }
-			],
-			productName: [
-				 { required: true, message: 'Name', trigger: 'change' }
-			],
-			productId: [
-				 { required: true, message: 'SKU', trigger: 'change' }
-			],
-		},
+			rules: {
+				productLink: [
+					{ required: true, trigger: 'blur', validator: validUrl } //这里需要用到全局变量
+				],
+				goodsFromId: [
+					{ required: true, message: '请选择来源', trigger: 'change' }
+				],
+				productName: [
+					{ required: true, message: 'Name', trigger: 'change' }
+				],
+				productId: [
+					{ required: true, message: 'SKU', trigger: 'change' }
+				],
+			},
 		 
-        operates: [
-          {
-            label: "商品上架",
-            value: "publishOn"
-          },
-          {
-            label: "商品下架",
-            value: "publishOff"
-          },
-          {
-            label: "设为推荐",
-            value: "recommendOn"
-          },
-          {
-            label: "取消推荐",
-            value: "recommendOff"
-          },
-          {
-            label: "设为新品",
-            value: "newOn"
-          },
-          {
-            label: "取消新品",
-            value: "newOff"
-          },
-		  /*
-          {
-            label: "转移到分类",
-            value: "transferCategory"
-          },
-		 
-          {
-            label: "移入回收站",
-            value: "recycle"
-          }
-		  */
-        ],
-        operateType: null,
-		emall_id:null,
-        listQuery: Object.assign({}, defaultListQuery),
-        list: null,
-        total: null,
-        listLoading: true,
-        selectProductCateValue: null,
-		selectGoodsSupplyValue: null,
-        multipleSelection: [],
-        productCateOptions: [],
-        brandOptions: [
+			operates: [
+			{
+				label: "商品上架",
+				value: "publishOn"
+			},
+			{
+				label: "商品下架",
+				value: "publishOff"
+			},
+			{
+				label: "设为推荐",
+				value: "recommendOn"
+			},
+			{
+				label: "取消推荐",
+				value: "recommendOff"
+			},
+			{
+				label: "设为新品",
+				value: "newOn"
+			},
+			{
+				label: "取消新品",
+				value: "newOff"
+			},
+			],
+			operateType: null,
+			
+			listQuery: Object.assign({}, defaultListQuery),
+			list: null,
+			total: null,
+			listLoading: true,
+			selectProductCateValue: null,
+			selectGoodsSupplyValue: null,
+			multipleSelection: [],
+			productCateOptions: [],
+			brandOptions: [
 			{
 				label:'宁波',
 				value:'10001'
@@ -671,8 +605,8 @@
 				label:'绍兴',
 				value:'10002'
 			}
-		],
-		hot_supply:[
+			],
+			hot_supply:[
 			{
 				label:'1688',
 				value:'1',
@@ -689,61 +623,65 @@
 				label:'京东联盟',
 				value:'4',
 			}
-		],
+			],
 		
-		goods_supply:[],
-		platform_list:[],
-		isIndeterminate: true,
-        publishStatusOptions: [{
-          value: 1,
-          label: '上架'
-        }, {
-          value: 0,
-          label: '下架'
-        }],
+			goods_supply:[],
+			platform_list:[],
+			myshop_list:[],
+			isIndeterminate: true,
+			publishStatusOptions: [{
+				value: 1,
+				label: '上架'
+			}, {
+				value: 0,
+				label: '下架'
+			}],
 		
-		verifyStatusOptions: [{
-          value: 1,
-          label: '审核通过'
-		}, {
-          value: 0,
-          label: '未审核'
-		}],
+			verifyStatusOptions: [{
+				value: 1,
+				label: '审核通过'
+			}, {
+				value: 0,
+				label: '未审核'
+			}],
 		
-		paginations: {
-		    total: 0,        // 总数
-		    pageIndex: 1,  // 当前位于哪页
-		    pageSize: 20,   // 1页显示多少条
-		    pageSizes: [5, 10, 15, 20, 30],  //每页显示多少条
-		    layout: "total, sizes, prev, pager, next, jumper"   // 翻页属性
-		},
-		goods_category:[],
-      }
+			paginations: {
+				total: 0,        // 总数
+				pageIndex: 1,  // 当前位于哪页
+				pageSize: 20,   // 1页显示多少条
+				pageSizes: [5, 10, 15, 20, 30],  //每页显示多少条
+				layout: "total, sizes, prev, pager, next, jumper"   // 翻页属性
+			},
+			goods_category:[],
+		}
     },
     created() {
-     this.get_goods_list()
-     this.get_mywarehouse()
-     this.get_goods_category()
-	 this.get_goods_supply()
-	 this.get_emall_list()
+		if(this.emall_id!="0") this.listQuery.emallId = Array(this.emall_id)
+		if(this.shop_account!="") this.listQuery.shopAccount = Array(this.shop_account)
+		this.get_emall_list()
     },
+	mounted(){
+		setTimeout(() => {
+			this.get_goods_list()
+		}, 300);
+	},
     watch: {
-      selectProductCateValue: function (newValue) {
-        if (newValue != null && newValue.length == 2) {
-          this.listQuery.productCategoryId = newValue[1];
-        } else {
-          this.listQuery.productCategoryId = null;
-        }
-      }
+		selectProductCateValue: function (newValue) {
+			if (newValue != null && newValue.length == 2) {
+			this.listQuery.productCategoryId = newValue[1];
+			} else {
+				this.listQuery.productCategoryId = null;
+			}
+		}
     },
     filters: {
-      verifyStatusFilter(value) {
-        if (value === 1) {
-          return '审核通过';
-        } else {
-          return '未审核';
-        }
-      }
+		verifyStatusFilter(value) {
+			if (value === 1) {
+				return '审核通过';
+			} else {
+				return '未审核';
+			}
+		}
     },
     methods: {
 		//本地数据导出的Excel方法
@@ -844,7 +782,7 @@
 				type:1, //
 			}
 			//console.log('get_emall_list para:',para);
-			getEmallList(para).then(res => {
+			getMyEmallList(para).then(res => {
 				/*
 				this.$message({
 			     message: 'Completed!',
@@ -852,8 +790,10 @@
 			     duration: 1000
 			   });
 			   */
+				console.log('get_emall_list return:',res);
 				let emall_list = res 
 				let platform_list = []
+				let myshop_list = []
 				for(let i=0;i<emall_list.length;i++){
 					let platform_info ={
 						label:emall_list[i]['title'],
@@ -861,52 +801,52 @@
 						name:emall_list[i]['name'],
 					}
 					platform_list.push(platform_info)
+					if(emall_list[i]['shop_info'] && emall_list[i]['shop_info'].constructor === Array){
+						for(let k=0;k<emall_list[i]['shop_info'].length;k++){
+							let myshop_info = {
+								label:emall_list[i]['shop_info'][k]['shop_name'],
+								value:emall_list[i]['shop_info'][k]['shop_account'],
+							}
+							myshop_list.push(myshop_info)
+						}
+					}
 				} 
 				this.emall_list = emall_list 
 				this.platform_list = platform_list 
-				console.log('get_emall_list return:',emall_list,platform_list);
+				this.myshop_list = myshop_list
+				
 			})
 			.catch(err=>{
 				console.log('get_emall_list err:',err)
 			});
 		},
 		
-		goods_detail(goods_index=0){
-			//this.$router.push({path:'/myhot/goodsedit',query:{goods_name:goods_name,goods_id:goods_id,goods_from:goods_from}});
+		update_goods(goods_index=0) {
 			let goods_para = JSON.stringify(this.list[goods_index])
+			let shop_name = ''
+			for(let i=0;i<this.myshop_list.length;i++){
+				if(this.myshop_list[i]['value'] == this.shop_account){
+					shop_name = this.myshop_list[i]['label']
+				}
+				//console.log('update_goods i:',this.myshop_list[i],' shop_name:',shop_name)
+			}
+			 
 			let routeUrl = this.$router.resolve({
-			    path: "/goodsedit",
+			    path: "/edit_shop_goods",
 			    query: {
 					goods_para:goods_para,
+					platform_id:this.emall_id,
+					shop_name:shop_name,
+					shop_account:this.shop_account,
 				}
 			  });
-			  console.log('goods_detail goods_para:',goods_para)
+			  console.log('update_goods shop_account:',this.shop_account,' emall_id:',this.emall_id)
 			  window.open(routeUrl.href, '_self'); //_self _blank
-		},
-		
-		goto_materialurl(goods_index=0){
-			let url = this.list[goods_index].materialUrl
-			window.open(url, '_blank');
-		},
-     
-		html_view(goods_index=0) {
-			let url = this.list[goods_index].materialUrl
-			let name  = this.list[goods_index].name
-		
-			let routeUrl = this.$router.resolve({
-			    path: "/htmlview",
-			    query: {
-					url:url,
-					name:name,
-				}
-			});
-			  
-			window.open(routeUrl.href, '_self'); //_self _blank
 		},
 		
 		get_goods_list(is_search=0) {
 			this.listLoading = true;
-			let pagenum = getToken('Pagenum_hot')
+			let pagenum = getToken('Pagenum_shop')
 			this.paginations.pageIndex = pagenum?parseInt(pagenum):this.paginations.pageIndex
 			let para = {
 				username:this.username,
@@ -914,19 +854,25 @@
 				pagesize:this.paginations.pageSize,
 				page:this.paginations.pageIndex,
 				goods_id:this.goods_id,
-				emall_id:this.listQuery.emallId,
+				emall_id:this.emall_id,
+				shop_account:this.shop_account,
 				shop_type:this.shop_type,
 				lang:this.lang,
 			}
+			
 			if(is_search == 1){
 				para['page'] = this.listQuery.pageNum
 				para['query_info'] = this.listQuery
+				para['emall_id'] = this.listQuery.emallId[0]
+				para['shop_account'] = this.listQuery.shopAccount[0]
+				setToken("Platform_id_shop",this.listQuery.emallId[0])
+				setToken("Platform_shop_account",this.listQuery.shopAccount[0])
+				
 			}else if(is_search == 2){
 				para['type'] = 1 //全部导出查询
 			}
-		//console.log('get_goods_list para:',para);
+			console.log('get_goods_list para:',para)
 			getMyShopGoodsList(para).then(res => {
-				console.log('get_goods_list return:',res);
 				let hot_goods_list = []
 				if(res.total> 0){
 					for(var i=0;i<res.result.length;i++){
@@ -953,94 +899,22 @@
 			this.listLoading = false;
 		},
 	  
-	  getProductSkuSp(row, index) {
-	    let spData = JSON.parse(row.spData);
-	    if(spData!=null&&index<spData.length){
-	      return spData[index].value;
-	    }else{
-	      return null;
-	    }
-	  },
-	  
-      getBrandList() {
-        fetchBrandList({pageNum: 1, pageSize: 100}).then(response => {
-          this.brandOptions = [];
-          let brandList = response.data.list;
-          for (let i = 0; i < brandList.length; i++) {
-            this.brandOptions.push({label: brandList[i].name, value: brandList[i].id});
-          }
-        });
-      },
-	  
-      get_goods_category() {
-		  let para = {
-		  	username:this.username,
-		  	access_token:this.access_token,
-		  	shop_type:this.shop_type,
-		  	lang:this.lang,
-			type:0, //多级类目
-		  }
-		  //this.productCateOptions = this.goods_category ;
-		  //console.log('get_goods_category para:',para);
-		  getGoodsCategory(para).then(res => {
-			/*
-		  	this.$message({
-		       message: 'Completed!',
-		       type: 'success',
-		       duration: 1000
-		     });
-			*/
-		    let goods_category = res
-		    for(var i=0;i<goods_category.length;i++){
-		    	this.goods_category.push(goods_category[i])
-		    } 
-		     console.log('get_goods_category return:',res);
-		  })
-		  .catch(err=>{
-		  	console.log('get_goods_category err:',err)
-		  });
-		/*
-        fetchListWithChildren().then(response => {
-          let list = response.data;
-          this.productCateOptions = [];
-          for (let i = 0; i < list.length; i++) {
-            let children = [];
-            if (list[i].children != null && list[i].children.length > 0) {
-              for (let j = 0; j < list[i].children.length; j++) {
-                children.push({label: list[i].children[j].name, value: list[i].children[j].id});
-              }
-            }
-            this.productCateOptions.push({label: list[i].name, value: list[i].id, children: children});
-          }
-        });
-		*/
-		},
-		get_goods_supply() {
-			let para = {
-				username:this.username,
-				access_token:this.access_token,
-				shop_type:this.shop_type,
-				lang:this.lang,
-				type:0, //
+		getProductSkuSp(row, index) {
+			let spData = JSON.parse(row.spData);
+			if(spData!=null&&index<spData.length){
+				return spData[index].value;
+			}else{
+				return null;
 			}
-			this.productCateOptions = this.goods_category ;
-			//console.log('get_goods_category para:',para);
-			getGoodsSupply(para).then(res => {
-	  			/*
-	  		  	this.$message({
-	  		       message: 'Completed!',
-	  		       type: 'success',
-	  		       duration: 1000
-	  		     });
-	  			*/
-				let goods_supply = res
-				for(var i=0;i<goods_supply.length;i++){
-					this.goods_supply.push(goods_supply[i])
-				} 
-				console.log('get_goods_supply return:',res);
-			})
-			.catch(err=>{
-				console.log('get_goods_supply err:',err)
+		},
+	  
+		getBrandList() {
+			fetchBrandList({pageNum: 1, pageSize: 100}).then(response => {
+				this.brandOptions = [];
+				let brandList = response.data.list;
+				for (let i = 0; i < brandList.length; i++) {
+					this.brandOptions.push({label: brandList[i].name, value: brandList[i].id});
+				}
 			});
 		},
 	  
@@ -1066,99 +940,23 @@
 			});
 		},
 		
-		add_hot_confirm(formName) {
-	         this.$refs[formName].validate((valid) => {
-	           if (valid) {
-				   if(this.addhotgoodsInfo.goodsFromId==0 ||this.addhotgoodsInfo.productName=='' ||this.addhotgoodsInfo.productId=='' ||!this.addhotgoodsInfo.productLink ){
-						this.$message({
-						  message: '输入信息不完整!',
-						  type: 'warn',
-						  duration: 1000
-						});
-						console.log('add_hot_confirm 输入信息有误');
-						return false;
-					}else{
-						this.$confirm('是否要添加', '提示', {
-							confirmButtonText: '确定',
-							cancelButtonText: '取消',
-							type: 'warning'
-							}).then(()=>{
-							let para = {
-								username:this.username,
-								access_token:this.access_token,
-								type:1, //
-								goods_org:2, //第三方商品
-							    goods_from_id:this.addhotgoodsInfo.goodsFromId[0],
-								goods_from_sku:this.addhotgoodsInfo.productId,
-								goods_from_link:this.addhotgoodsInfo.productLink,
-								goods_name:this.addhotgoodsInfo.productName,
-								shop_type:this.shop_type,
-								lang:this.lang,
-							}
-							console.log('add_hot_confirm para:',para);
-							addMyWarehouse(para).then(res => {
-								this.$message({
-									message: 'Completed!',
-									type: 'success',
-									duration: 1000
-								});
-								this.addhotgoodsInfo.dialogVisible=false;
-								console.log('add_hot_confirm return:',res);
-								this.get_goods_list();
-							})
-							.catch(err=>{
-								console.log('add_hot_confirm err:',err)
-							});
-						});
-					}
-				} else {
-					console.log('add_hot_confirm 输入信息有误');
-					return false;
-				}
-			});
-		},
-      
-	
 		search() {
 			this.listQuery.pageNum = 1;
+			//console.log('search:',this.listQuery)
 			this.get_goods_list(1);
+			setTimeout(() => {
+				
+			}, 300);
+			
 		},
 	
-		add_hot_goods() {
-			this.addhotgoodsInfo.dialogVisible = !this.addhotgoodsInfo.dialogVisible
-		},
-	
-		add_myshop(index,row){
+		publish_shop(index,row){
 			this.addshopgoodsInfo.dialogVisible = !this.addshopgoodsInfo.dialogVisible
-			let sell_price = parseFloat(row.price)*100
-			for(let i=0;i<this.addshopgoodsInfo.product_list.length;i++){
-				if(this.addshopgoodsInfo.product_list[i]['goods_id'] == row.goods_id){
-					this.$message({
-						message: 'Has been Added!',
-						type: 'warning',
-						duration: 2000
-					});
-					return 
-				}
-			}
-			let goods_info = {
-				goods_id:row.id,
-				sku:row.goods_id,
-				sell_price:sell_price,
-				sell_price_currency:'',
-				goods_from:0,
-				goods_name:row.name,
-				goods_attr:'',
-				goods_desc:'',
-				goods_images:[],
-			}
-			goods_info['goods_images'].push(row.img)
-			this.addshopgoodsInfo.product_list.push(goods_info)
-			console.log('add_myshop:',this.addshopgoodsInfo.product_list)
+			this.addshopgoodsInfo.platform_ids = this.listQuery.emallId
 		},
 		
-		add_shop_confirm(){
-			this.$confirm(this.$t('commons.add_shop_submit'), '提示', {
+		publish_shop_confirm(){
+			this.$confirm(this.$t('commons.publish_shop_submit'), '提示', {
 				confirmButtonText: this.$t('commons.confirm'),
 				cancelButtonText: this.$t('commons.cancel'),
 				type: 'warning'
@@ -1172,7 +970,7 @@
 					platform_ids:this.addshopgoodsInfo.platform_ids,
 				}
 				console.log('add_shop_confirm para:',para);
-				addGoodsShop(para).then(res => {
+				publishGoodsShop(para).then(res => {
 					this.$message({
 						message: 'Completed!',
 						type: 'success',
@@ -1239,77 +1037,77 @@
 				type: 'warning'
 			}).then(() => {
 				let ids=[];
-			for(let i=0;i<this.multipleSelection.length;i++){
-				ids.push(this.multipleSelection[i].id);
-			}
-			switch (this.operateType) {
-            case this.operates[0].value:
-              this.goods_up_down(1,ids);
-              break;
-            case this.operates[1].value:
-              this.goods_up_down(0,ids);
-              break;
-            case this.operates[2].value:
-              this.goods_recomm_set(1,ids);
-              break;
-            case this.operates[3].value:
-              this.goods_recomm_set(0,ids);
-              break;
-            case this.operates[4].value:
-              this.goods_new_set(1,ids);
-              break;
-            case this.operates[5].value:
-              this.goods_new_set(0,ids);
-              break;
-            case this.operates[6].value:
-              this.goods_cancel_set(1,ids);
-              break;
-            default:
-              break;
-			}
-			this.get_goods_list();
-		});
-	},
+				for(let i=0;i<this.multipleSelection.length;i++){
+					ids.push(this.multipleSelection[i].id);
+				}
+				switch (this.operateType) {
+				case this.operates[0].value:
+					this.goods_up_down(1,ids);
+					break;
+				case this.operates[1].value:
+					this.goods_up_down(0,ids);
+					break;
+				case this.operates[2].value:
+					this.goods_recomm_set(1,ids);
+					break;
+				case this.operates[3].value:
+					this.goods_recomm_set(0,ids);
+					break;
+				case this.operates[4].value:
+					this.goods_new_set(1,ids);
+					break;
+				case this.operates[5].value:
+					this.goods_new_set(0,ids);
+					break;
+				case this.operates[6].value:
+					this.goods_cancel_set(1,ids);
+					break;
+				default:
+					break;
+				}
+				this.get_goods_list();
+			});
+		},
 	  
-	// 每页多少条切换
-	handleSizeChange(pageSize) {
-	   this.paginations.pageSize = pageSize;
-	   this.get_goods_list();
-	},
-	// 上下分页
-	handleCurrentChange(page) {
-	   this.paginations.pageIndex = page;
-	   setToken("Pagenum_hot",this.paginations.pageIndex)
-	   this.get_goods_list();
-	},
+		// 每页多少条切换
+		handleSizeChange(pageSize) {
+			this.paginations.pageSize = pageSize;
+			this.get_goods_list();
+		},
+		// 上下分页
+		handleCurrentChange(page) {
+			this.paginations.pageIndex = page;
+			setToken("Pagenum_shop",this.paginations.pageIndex)
+			this.get_goods_list();
+		},
 	
-	handleSelectionChange(val) {
-		this.multipleSelection = val;
-	},
+		handleSelectionChange(val) {
+			this.multipleSelection = val;
+		},
     
-	handlePublishStatusChange(index, row) {
-		let ids = [];
-        ids.push(row.id);
-        this.updatePublishStatus(row.publishStatus, ids);
-	},
+		handlePublishStatusChange(index, row) {
+			let ids = [];
+			ids.push(row.id);
+			this.updatePublishStatus(row.publishStatus, ids);
+		},
 	
-	handleNewStatusChange(index, row) {
-        let ids = [];
-        ids.push(row.id);
-        this.updateNewStatus(row.newStatus, ids);
-	},
+		handleNewStatusChange(index, row) {
+			let ids = [];
+			ids.push(row.id);
+			this.updateNewStatus(row.newStatus, ids);
+		},
 	
-	handleRecommendStatusChange(index, row) {
-        let ids = [];
-        ids.push(row.id);
-        this.updateRecommendStatus(row.recommandStatus, ids);
-	},
+		handleRecommendStatusChange(index, row) {
+			let ids = [];
+			ids.push(row.id);
+			this.updateRecommendStatus(row.recommandStatus, ids);
+		},
     
-	handleResetSearch() {
-        this.selectProductCateValue = [];
-		this.selectGoodsSupplyValue = [];
-        this.listQuery = Object.assign({}, defaultListQuery);
-	},
+		handleResetSearch() {
+			this.selectProductCateValue = [];
+			this.selectGoodsSupplyValue = [];
+			this.listQuery = Object.assign({}, defaultListQuery);
+		},
     
 		handleDelete(index, row){
 			this.$confirm('是否要进行删除操作?', '提示', {
@@ -1441,7 +1239,7 @@
 		},
 		*/
 	   
-		delete_mywarehouse(index, row){
+		delete_myshopgoods(index, row){
 			let para = {
 				username:this.username,
 				access_token:this.access_token,
@@ -1454,7 +1252,7 @@
 			  cancelButtonText: '取消',
 			  type: 'warning'
 			}).then(()=>{
-			  deleteGoodsWarehouse(para).then(res => {
+			deleteMyShopGoods(para).then(res => {
 			  	this.$message({
 			  		message: 'Success!',
 			  		type: 'success',
@@ -1462,45 +1260,28 @@
 			  	});
 			  	this.list = [] ;
 			  	this.get_goods_list();
-			  	console.log('deleteGoodsWarehouse return:',res);
+			  	console.log('delete_myshopgoods return:',res);
 			  })
 			  .catch(err=>{
-			  	console.log('deleteGoodsWarehouse err:',err)
+			  	console.log('delete_myshopgoods err:',err)
 			  });
 			})
 		},
-	  
-		get_mywarehouse(){
-			let para = {
-				username:this.username,
-				access_token:this.access_token,
-				shop_type:this.shop_type,
-				lang:this.lang,
-			}
-			console.log('get_mywarehouse para:',para);
-			getMyWarehouse(para).then(res => {
-	  		/*
-			this.$message({
-	  	     message: 'Completed!',
-	  	     type: 'success',
-	  	     duration: 1000
-	  	   });
-		   */
-			console.log('getMyWarehouse return:',res);
-			})
-			.catch(err=>{
-				console.log('getMyWarehouse err:',err)
-			});
-		},
-	  
+		
 		//设置表格行的样式
 		tableRowStyle({row,rowIndex}){
-			return 'background-color:#FFF;font-size:14px;borderColor: #F2F2F2';
+			return 'background-color:#FFF;font-size:12px;borderColor: #F2F2F2';
 		},
+		
 		//设置表头行的样式
 		tableHeaderColor({row,column,rowIndex,columnIndex}){
-			return 'background:#BBBBBB;color:#333;borderColor: #FFFFFF;font-size:16px;' ;
+			return 'background:#BBBBBB;color:#333;borderColor: #FFFFFF;font-size:14px;' ;
 		},
+		
+		tableSelectionChange(val) {
+			this.multipleSelection = val;
+		},
+		 
     }
   }
 </script>

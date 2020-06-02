@@ -2,30 +2,12 @@
 	<div class="container" style="display: flex;flex-direction: column;justify-content: center;">
 		<div class="emall-detail">
 			<el-row :gutter="1" type="flex" class="row-bg el-row-two" justify="start">
-				<el-col :span="8">
+				<el-col :span="12">
 					<div style="display: flex;flex-direction: column;justify-content: flex-start;">
 						<div style="text-align: left;">
-							<p class="emall-detail-title" style="font-size: 18px;font-weight: bolder;">{{ $t('commons.base_info') }}</p>
-						</div>
-						<div style="display: flex;flex-direction: row;justify-content: flex-start;">
-							<div class="emall-detail-sub-title" style="width: 15%;">{{ $t('commons.goods_info_from') }}</div>
-							<div class="emall-detail-sub-title" style="width: 80%;">{{goods_info.info_from}}</div>
-						</div>
-						<div style="display: flex;flex-direction: row;justify-content: flex-start;">
-							<p class="emall-detail-sub-title" style="width: 15%;">{{ $t('commons.goods_info_category') }}</p>
-							<p class="emall-detail-sub-title" style="width: 80%;">{{goods_info['category']['value']}}</p>
-						</div>
-						<div style="display: flex;flex-direction: row;justify-content: flex-start;">
-							<p class="emall-detail-sub-title" style="width: 15%;">{{ $t('commons.goods_info_deliverytype') }}</p>
-							<p class="emall-detail-sub-title" style="width: 80%;">{{goods_info.attr}}</p>
-						</div>
-						<div style="display: flex;flex-direction: row;justify-content: flex-start;margin-top:15px;">
-							<el-button icon="el-icon-circle-plus" type="primary" @click="goods_linkorg(goods_info.materialUrl)">{{ $t('commons.linkorg') }}</el-button>
-							<el-button icon="el-icon-circle-plus" type="primary" @click="add_mywarehouse()">{{ $t('commons.hot_goods_add') }}</el-button>
+							<p class="emall-detail-title" style="font-size: 18px;font-weight: bolder;">{{$t('commons.shop_name')}}:{{shop_name }}</p>
 						</div>
 					</div>
-				</el-col>
-				<el-col :span="16">
 					<div style="display: flex;flex-direction: column;justify-content: flex-start;">
 						<div style="text-align: left;">
 							<p class="emall-detail-title" style="font-size: 18px;font-weight: bolder;"><br></p>
@@ -41,11 +23,12 @@
 						    </el-cascader>
 						  </el-form-item>
 						  <el-form-item :label="$t('commons.goods_info_title')">
-						    <el-input v-model="goodsQuery.goodsTitle"></el-input>
+						    <el-input v-model="goodsQuery.goodsTitle" size="small"></el-input>
 						  </el-form-item>
 						</el-form>
 					</div>
 				</el-col>
+				 
 			</el-row>
 		</div>
 		
@@ -103,8 +86,8 @@
 						<el-table-column type="selection" width="60" align="center"></el-table-column>
 						<el-table-column v-for="(item_title,title_index) in goods_skulist_title" :key="title_index" :label="item_title.title" :prop="item_title.key" align="center" :width="item_title.width" @click="add_sku_spec(2,item_title)">
 							<template slot-scope="scope">
-								<div v-if="item_title.attr!=='spec' " >
-									<el-input v-model="scope.row[item_title.key]"></el-input>
+								<div v-if="item_title.attr!=='spec'" >
+									<el-input v-model="scope.row[item_title.key]" ></el-input>
 								</div>
 								<div v-if="item_title.attr=='spec'"  style="margin-left:5px; margin-right: 5px; display: flex;flex-direction: row;justify-content: flex-start;">
 									<img v-if="item_title.type=='2'" style="width:40px;height: 30px" :src="scope.row.value[item_title.spec_index]['value']">
@@ -134,7 +117,7 @@
 				</div>
 			</el-row>
 		</div>
-		
+		<!--
 		<div class="goods-attr">
 			<el-row :gutter="1" type="flex" class="row-bg el-row-two" justify="start">
 				<el-col :span="24">
@@ -163,7 +146,7 @@
 				</el-col>
 			</el-row>
 		</div>
-		
+		-->
 		<div class="goods-desc">
 			<el-row :gutter="1" type="flex" class="row-bg el-row-two" justify="start">
 				<el-col :span="24">
@@ -249,8 +232,8 @@
 <script>
     import { 
 		getEmallInfo,
-		getGoodsList,
-		saveGoodsInfo,
+		getMyShopGoodsList,
+		saveMyShopGoodsInfo,
 		addMyWarehouse,
 	} from "@/api/user";
 	import ueditor from "@/components/editor/editor.vue"; //富文本编辑器
@@ -304,7 +287,10 @@
 				is_goods_desc:false,
 				labelPosition: 'left',
 				scrollTop:0,
+				emall_id:0,
 				goods_id:0,
+				shop_name:null,
+				shop_account:null,
 				goodsQuery: Object.assign({}, defaultGoodsQuery),
 				selectProductCateValue: null,
 				productCateOptions: [],
@@ -944,52 +930,30 @@
 				],
 				goods_info:{},
 				goods_init_info:{
-						id:'1',
-						name:'惠田牌饮水机下置式水桶装立式家用冰温热全自动茶吧机制冷管线机',
-						title:'',
-						sub_title:'',
-						img:[],
-						attr:'',
-						deliverytype:'一件代发',
-						linkorg:'https://www.1688.com/',
-						category:{
-							id:'1_1_2',
-							value:'服饰_男装_青年服饰_体恤',
-						},
-						type:'',
-						goods_org:'宁波惠人环保科技有限公司',
-						info_from:'1688.com',
-						desc:'<span style="font-size:28px;font-weight:bolder;">宁波惠人环保科技有限公司</span>',
-						sales_desc:'成交37900元',
-						sales:'',
-						market_price:'',
-						sell_price:'￥249.50 - ￥379.00',
+					id:'1',
+					name:'',
+					title:'',
+					sub_title:'',
+					img:[],
+					attr:'',
+					deliverytype:'一件代发',
+					linkorg:'https://www.1688.com/',
+					category:{
+						id:'1_1_2',
+						value:'',
+					},
+					type:'',
+					goods_org:'',
+					info_from:'1688.com',
+					desc:'',
+					sales_desc:'',
+					sales:'',
+					market_price:'',
+					sell_price:'',
 				},
 				goods_desc:'',
 				goods_query_info:
-					{
-						id:'1',
-						name:'惠田牌饮水机下置式水桶装立式家用冰温热全自动茶吧机制冷管线机',
-						title:'',
-						sub_title:'',
-						img:[],
-						attr:'',
-						deliverytype:'一件代发',
-						linkorg:'https://www.1688.com/',
-						category:{
-							id:'1_1_2',
-							value:'服饰_男装_青年服饰_体恤',
-						},
-						type:'',
-						goods_org:'宁波惠人环保科技有限公司',
-						info_from:'1688.com',
-						desc:'',
-						sales_desc:'成交37900元',
-						sales:'',
-						market_price:'',
-						sell_price:'￥249.50 - ￥379.00',
-					},
-			
+					{},
 				loading:true,
 				goods_sku_list:[],
 				goods_sku_speclist:[],
@@ -1061,30 +1025,31 @@
 				var goods_para = JSON.parse(goods_query.goods_para)?JSON.parse(goods_query.goods_para):null
 				
 				var goods_init_info = this.goods_init_info
-				console.log('goods query goods_init_info:',goods_init_info)
+				//console.log('goods query goods_para:',goods_para)
 				if(goods_para){
-					let img_info = {
-						url:goods_para.img,
-						type:'1'
-					}
+					 
 					goods_init_info['name'] = goods_para['name']
-					goods_init_info['info_from'] = goods_para['info_from']
-					goods_init_info['goods_org'] = goods_para['goods_org']
-					goods_init_info['attr'] = goods_para['attr']
-					goods_init_info['goods_org'] = goods_para['goods_org']
-					//goods_init_info['desc'] = goods_para['desc']
-					goods_init_info['sales_desc'] = goods_para['sales_desc']
+					goods_init_info['info_from'] = goods_para['info_from']? goods_para['info_from']:''
+				 	
+					goods_init_info['attr'] = goods_para['attr']?goods_para['attr']:[]
+					goods_init_info['goods_org'] = goods_para['goods_org']?goods_para['goods_org']:0
+					goods_init_info['desc'] = goods_para['desc']?goods_para['desc']:''
+					goods_init_info['sales_desc'] = goods_para['sales_desc']?goods_para['sales_desc']:''
 					goods_init_info['sales'] = goods_para['sales']
-					goods_init_info['market_price'] = goods_para['market_price']
-					goods_init_info['sell_price'] = goods_para['sell_price']
-					goods_init_info['materialUrl'] = goods_para['materialUrl']
+					goods_init_info['market_price'] = goods_para['market_price']?goods_para['market_price']:''
+					goods_init_info['sell_price'] = goods_para['sell_price']?goods_para['sell_price']:0
+					goods_init_info['materialUrl'] = goods_para['materialUrl']?goods_para['materialUrl']:''
 					goods_init_info['id'] = goods_para['id']
-					goods_init_info['goods_id'] = goods_para['goods_id']
-					goods_init_info['img'].push(img_info)
-					
+					goods_init_info['goods_id'] = goods_para['goods_id']?goods_para['goods_id']:0
+					goods_init_info['img'] =  goods_para['img']
+					//console.log('goods query goods_init_info:',goods_init_info)
 					this.goodsQuery['goodsTitle'] = goods_para['name']
 					this.goods_id = goods_para['id']
+					this.shop_name = goods_query['shop_name']
+					this.shop_account = goods_query['shop_account']
+					this.emall_id = goods_query['platform_id']
 				}
+				console.log('goods query shop_account:',this.shop_account,' platform_id:',this.emall_id)
 				//this.goods_sku_list = this.goods_sku_query
 				
 			}
@@ -1440,10 +1405,12 @@
 					shop_type:this.shop_type,
 					lang:this.lang,
 					goods_id:this.goods_id,
+					shop_account:this.shop_account,
+					shop_name:this.shop_name,
+					type:1,
 			    }
-				
-				//let.seller=Object.assign({},this.seller,new.data)
-			    getGoodsList(para).then(res => {
+				console.log('getMyShopGoodsList para:',para); 
+			    getMyShopGoodsList(para).then(res => {
 					/*
 			        this.$message({
 			          message: '保存成功',
@@ -1457,7 +1424,6 @@
 						for(var k=0;k<result[0]['img'].length;k++){
 							this.goods_info['img'].push(result[0]['img'][k])
 						} 
-						 
 					}
 					this.goods_info['category'] = result[0]['category']
 					this.goods_info['materialUrl'] = result[0]['materialUrl']
@@ -1472,16 +1438,18 @@
 					}, 1000);
 					
 					this.goods_attr_list = result[0]['attr_list']?result[0]['attr_list']:null
-					console.log('getGoodsList return:',res,' goods_desc:',this.goods_desc);
+					console.log('getMyShopGoodsList return:',res,' goods_desc:',this.goods_desc);
 					if(this.goods_skulist_title){
 						this.sku_title_init()
 					}
 			    })
 				.catch(err=>{
-					console.log('getGoodsList err:',err)
+					console.log('getMyShopGoodsList err:',err)
 				});
 			},
 			save_goods_info(){
+				this.goods_info['name'] = this.goodsQuery['goodsTitle']
+				
 				let para = {
 					username:this.username,
 					access_token:this.access_token,
@@ -1491,16 +1459,18 @@
 					goods_info:this.goods_info,
 					goods_sku_list:this.goods_sku_list,
 					goods_desc:this.goods_desc,
-					goods_attr_list:this.goods_attr_list,
+					//goods_attr_list:this.goods_attr_list,
+					shop_account:this.shop_account,
+					shop_name:this.shop_name,
+					emall_id:this.emall_id,
 				}
 				console.log('save_goods_info para:',para);
-				saveGoodsInfo(para).then(res => {
+				saveMyShopGoodsInfo(para).then(res => {
 				    this.$message({
 				      message: 'Success',
 				      type: 'success',
 				      duration: 1000
 				    });
-					
 					console.log('save_goods_info return:',res);
 				})
 				.catch(err=>{
