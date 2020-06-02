@@ -45,6 +45,7 @@ const zh = {
 	  myhot: 'My Hot',
 	  myshop: 'My Shop',
 	  addshop: 'Add Shop',
+	  shopadd: 'Shop Add',
 	  publish: 'Publish',
 	  goodsedit:'Goods Edit',
 	  emallplatform: 'EMall Platform',

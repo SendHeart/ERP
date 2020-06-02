@@ -60,6 +60,15 @@
         </el-form>
       </div>
     </el-card>
+	<el-card class="operate-container" shadow="never">
+	  <el-button
+	    class="btn-add"
+	    @click="platform_auth()"
+		type="primary"
+	    size="mini">
+	     {{$t('commons.shopadd')}}
+	  </el-button>
+	</el-card>
     <div class="table-container">
 	<el-table ref="productTable"
                 :data="list"
@@ -209,17 +218,54 @@
 	  </el-select>
 	  -->
     </div>
-	
+	<el-dialog
+		:title="$t('commons.emall_joining')"
+		:visible.sync="authorizeEmall.dialogVisible"
+		width="65%">
+		<el-form :model="authorizeEmall" status-icon :rules="rules" ref="authorizeEmall" label-width="160px">
+			<el-form-item :label="$t('commons.emallplatform')" prop="platform_id" style="width: 30%;margin-left: 0px">
+				<el-cascader
+					clearable
+					v-model="authorizeEmall.platform_id"
+					:options="platform_list"
+					@change="changePlatform"
+					filterable>
+				</el-cascader>
+			</el-form-item>
+			<el-form-item v-if="authorizeEmall.platform_id[0]>0" :label="label_marketplace_id" prop="marketplace_id" style="width: 30%;margin-left: 0px">
+				<el-cascader
+					clearable
+					v-model="authorizeEmall.marketplace_id"
+					:options="market_list"
+					filterable>
+				</el-cascader>
+			</el-form-item>
+			<el-form-item v-if="authorizeEmall.platform_id[0]>0" :label="$t('commons.shop_name')">
+				<el-input :placeholder="$t('commons.shop_name')" v-model="authorizeEmall.shop_name" size="small"  style="width: 30%;margin-left: 0px"></el-input>
+			</el-form-item>
+			<el-form-item v-if="authorizeEmall.platform_id[0]>0" :label="label_shop_account">
+				<el-input v-if="authorizeEmall.platform_id[0]>0" :placeholder="shop_account_note" v-model="authorizeEmall.shop_account" size="small" style="width: 30%;margin-left: 0px"></el-input>
+			</el-form-item>
+			<el-form-item v-if="authorizeEmall.platform_id[0]>0" :label="$t('commons.merchant_id')" prop="merchant_id">
+				<el-input v-model="authorizeEmall.merchant_id" style="width: 30%;margin-left: 0px" size="small" ></el-input>
+			</el-form-item>
+			<el-form-item v-if="authorizeEmall.platform_id[0]>0" :label="$t('commons.MWSAuthToken')" prop="MWSAuthToken">
+				<el-input v-model="authorizeEmall.MWSAuthToken" style="width: 50%;margin-left: 0px" size="small"></el-input>
+			</el-form-item>
+			<el-form-item v-if="shop_auth_info.MWSAuthToken" :label="$t('commons.MWSAuthToken')" prop="MWSAuthTokenOld">
+				<el-input v-model="authorizeEmall.MWSAuthToken" :disabled="true" style="width: 50%;margin-left: 0px" size="small"></el-input>
+			</el-form-item>
+			<el-form-item>
+				<el-button @click="authorizeEmall.dialogVisible = false">取 消</el-button>
+				<el-button v-if="!shop_auth_info.MWSAuthToken" type="primary" @click="query_platform_auth()">提交</el-button>
+				<el-button v-if="shop_auth_info.MWSAuthToken" type="primary" @click="submit_platform_auth('authorizeEmall')">更新</el-button>
+			</el-form-item>
+		</el-form>
+	</el-dialog>
 	<el-dialog
 		:title="$t('commons.addshop')"
 		:visible.sync="addshopgoodsInfo.dialogVisible"
 		width="65%">
-		<el-checkbox :indeterminate="isIndeterminate" v-model="checkShopAll" @change="checkShopAllChange">全选</el-checkbox>
-		
-		<el-checkbox-group v-model="addshopgoodsInfo.platform_ids" @change="checkedShopChange" style="margin: 15px 0;">
-			<el-checkbox v-for="platform in platform_list" :label="platform.value" :key="platform.value">{{platform.label}}</el-checkbox>
-		</el-checkbox-group>
-		 
 		<el-row style="margin: 15px 0;">
 		  <el-button type="info" @click="addshopgoodsInfo.dialogVisible = false">取 消</el-button>
 		  <el-button type="primary" @click="add_shop_confirm()">提交</el-button>
@@ -265,7 +311,9 @@
 		goodsNewSet,
 		getMyEmallList,
 		getMyShopGoodsList,
-		deleteMyShopGoodsList
+		deleteMyShopGoodsList,
+		authorizeEmall,
+		queryMyShopInfo,
 	} from "@/api/user";
 	
 	import {
@@ -545,7 +593,7 @@
 				productAttr:[],
 				keyword:''
 			},
-			rules: {
+			rules_shop: {
 				productLink: [
 					{ required: true, trigger: 'blur', validator: validUrl } //这里需要用到全局变量
 				],
@@ -560,6 +608,110 @@
 				],
 			},
 		 
+			authorizeEmall:{
+				dialogVisible:false,
+				shop_account:'',
+				shop_name:'',
+				merchant_id:'',
+				MWSAuthToken:'',
+				marketplace_id:'',
+				platform_id:0,
+			},
+			rules: {
+			    shop_account: [
+					{ required: true, message: 'Shop Account',trigger: 'change' } //这里需要用到全局变量
+				],
+				shop_name: [
+					 { required: true, message: 'Shop Name', trigger: 'change' }
+				],
+				merchant_id: [
+					 { required: true, message: 'Merchant ID', trigger: 'change' }
+				],
+				MWSAuthToken: [
+					 { required: true, message: 'Authorization Token', trigger: 'change' }
+				],
+				marketplace_id: [
+					 { required: true, message: 'Marketplace ID', trigger: 'change' }
+				],
+			},
+			shop_account_note:'',
+			label_shop_name_note:'',
+			label_marketplace_id:'',
+			market_list:[
+				{
+					label:'美国',
+					value:'ATVPDKIKX0DER',
+				},
+				{
+					label:'加拿大',
+					value:'A2EUQ1WTGCTBG2',
+				},
+				{
+					label:'德国',
+					value:'A1PA6795UKMFR9',
+				},
+				{
+					label:'西班牙',
+					value:'A1RKKUPIHCS9HS',
+				},
+				{
+					label:'法国',
+					value:'A13V1IB3VIYZZH',
+				},
+				{
+					label:'英国',
+					value:'A1F83G8C2ARO7P',
+				},
+				{
+					label:'印度',
+					value:'A21TJRUUN4KGV',
+				},
+				{
+					label:'意大利',
+					value:'APJ6JRA9NG5V4',
+				},
+				{
+					label:'荷兰',
+					value:'A1805IZSGTT6HS',
+				},
+				{
+					label:'沙特',
+					value:'A17E79C6D8DWNP',
+				},
+				{
+					label:'巴西',
+					value:'A2Q3Y263D00KWC',
+				},
+				{
+					label:'澳大利亚',
+					value:'A39IBJ37TRP1C6',
+				},
+				{
+					label:'新加波',
+					value:'A19VAU5U5O7RUS',
+				},
+				{
+					label:'日本',
+					value:'A1VC38T7YXB528',
+				},
+				{
+					label:'墨西哥',
+					value:'A1AM78C64UM0Y8',
+				},
+				{
+					label:'阿联酋',
+					value:'A2VIGQ35RCS4UG',
+				},
+				{
+					label:'埃及',
+					value:'ARBP9OOSHTCHU',
+				},
+				{
+					label:'土耳其',
+					value:'A33AVAJ2PDY3EV',
+				}
+			],
+			
 			operates: [
 			{
 				label: "商品上架",
@@ -627,6 +779,7 @@
 		
 			goods_supply:[],
 			platform_list:[],
+			shop_auth_info:[],
 			myshop_list:[],
 			isIndeterminate: true,
 			publishStatusOptions: [{
@@ -918,6 +1071,19 @@
 			});
 		},
 	  
+		changePlatform() {
+			for(let k=0;k<this.platform_list.length;k++){
+				if(this.platform_list[k]['value'] == this.authorizeEmall.platform_id){
+					this.emall_query_name = this.platform_list[k]['name']
+				}
+			}
+			if(this.authorizeEmall.platform_id == 1){
+				this.shop_account_note = this.$t('commons.shop_account_amazon')
+			}
+			this.label_shop_account = this.$t('commons.'+this.emall_query_name)+this.$t('commons.shop_account')
+			this.label_marketplace_id = this.$t('commons.'+this.emall_query_name)+this.$t('commons.marketplace_id')
+		},
+		
 		handleShowSkuEditDialog(index,row){
 			this.editSkuInfo.dialogVisible=true;
 			this.editSkuInfo.productId=row.id;
@@ -947,7 +1113,6 @@
 			setTimeout(() => {
 				
 			}, 300);
-			
 		},
 	
 		publish_shop(index,row){
@@ -1268,6 +1433,88 @@
 			})
 		},
 		
+		platform_auth(){
+			this.authorizeEmall.dialogVisible = !this.authorizeEmall.dialogVisible 
+		},
+		
+		query_platform_auth(){
+			 if(this.authorizeEmall.marketplace_id[0]!='' && this.authorizeEmall.shop_account!='' && this.authorizeEmall.shop_name!='' && this.authorizeEmall.merchant_id!=''){
+			 	let para = {
+			 		username:this.username,
+			 		access_token:this.access_token,
+			 		shop_type:this.shop_type,
+			 		lang:this.lang,
+			 		platform_id:this.authorizeEmall.platform_id[0],
+					shop_account:this.authorizeEmall.shop_account,
+					shop_name:this.authorizeEmall.shop_name,
+					merchant_id:this.authorizeEmall.merchant_id,
+			 	}
+				queryMyShopInfo(para).then(res => {
+				  	console.log('query_platform_auth return:',res);
+					let shop_info = res
+					if(shop_info && shop_info['para_info']){
+						this.shop_auth_info = JSON.parse(shop_info['para_info'])
+					}else{
+						this.submit_platform_auth('authorizeEmall')
+					}
+				  })
+				  .catch(err=>{
+				  	console.log('query_platform_auth err:',err)
+				  });			
+			}else{
+				console.log('query_platform_auth :',this.authorizeEmall);
+			}
+		},
+		
+		submit_platform_auth(formName){
+			this.$refs[formName].validate((valid) => {
+			   if (valid) {
+				   if(this.authorizeEmall.marketplace_id=='' ||this.authorizeEmall.shop_account=='' ||this.authorizeEmall.shop_name=='' ||this.authorizeEmall.merchant_id=='' ||this.authorizeEmall.MWSAuthToken==''){
+						this.$message({
+						  message: '输入信息不完整!',
+						  type: 'warn',
+						  duration: 1000
+						});
+						console.log('submit_platform_auth 输入信息有误');
+						return false;
+					}else{
+						this.$confirm('是否要添加', '提示', {
+							confirmButtonText: '确定',
+							cancelButtonText: '取消',
+							type: 'warning'
+						}).then(()=>{
+							let author_info = {
+								marketplace_id:this.authorizeEmall.marketplace_id,
+								merchant_id:this.authorizeEmall.merchant_id,
+								MWSAuthToken:this.authorizeEmall.MWSAuthToken,
+							}
+							let para = {
+								emall_id: this.authorizeEmall.platform_id[0] ,
+								username:this.username,
+								access_token:this.access_token,
+								shop_type:this.shop_type,
+								shop_name:this.authorizeEmall.shop_name,
+								shop_account:this.authorizeEmall.shop_account,
+								lang:this.lang,
+								para_info:JSON.stringify(author_info)
+							}
+									   
+							authorizeEmall(para).then(res => {
+								this.$message({
+									message: 'Completed',
+									type: 'success'
+								})
+								console.log('submit_platform_auth:',res)
+							})
+						});
+					}
+				} else {
+					console.log('submit_platform_auth 输入信息有误');
+					return false;
+				}
+			});
+		},
+		
 		//设置表格行的样式
 		tableRowStyle({row,rowIndex}){
 			return 'background-color:#FFF;font-size:12px;borderColor: #F2F2F2';
@@ -1281,7 +1528,8 @@
 		tableSelectionChange(val) {
 			this.multipleSelection = val;
 		},
-		 
+		
+		
     }
   }
 </script>

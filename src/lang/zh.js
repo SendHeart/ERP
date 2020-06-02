@@ -59,6 +59,7 @@ const zh = {
 	  myhot: '我的爆款库',
 	  myshop: '我的店铺',
 	  addshop: '加入店铺',
+	  shopadd: '添加店铺',
 	  publish: '发布',
 	  goodsedit:'商品编辑',
 	  emallplatform: '电商平台',

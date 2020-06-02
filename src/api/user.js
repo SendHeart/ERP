@@ -361,3 +361,11 @@ export function getMyEmallList(reqData) {
       data: reqData
     })
 }
+
+export function queryMyShopInfo(reqData) {
+    return request({
+      url:'/api/web_client/query_myshop_info',
+      method: 'post',
+      data: reqData
+    })
+}

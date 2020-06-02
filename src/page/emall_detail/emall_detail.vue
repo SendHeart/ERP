@@ -650,7 +650,7 @@
 				this.emall_query= this.$route.query;
 				this.activeName=this.emall_query['type']?this.emall_query['type']:this.activeName ;
 				this.emall_query_id= this.emall_query['emall_id']
-				this.emall_query_name= this.emall_query['emall_name']
+				this.emall_query_name = this.emall_query['emall_name']
 				if(this.emall_query_id == 1){
 					this.shop_account_note = this.$t('commons.shop_account_amazon')
 					this.label_shop_account = this.$t('commons.'+this.emall_query_name)+this.$t('commons.shop_account')
