@@ -17,7 +17,7 @@
 						    <el-cascader
 								clearable
 								v-model="selectProductCateValue" 
-								:options="goods_category"
+								:options="productCateOptions"
 								filterable
 							>
 						    </el-cascader>
@@ -234,7 +234,7 @@
 		getEmallInfo,
 		getMyShopGoodsList,
 		saveMyShopGoodsInfo,
-		addMyWarehouse,
+		getGoodsCategory,
 	} from "@/api/user";
 	import ueditor from "@/components/editor/editor.vue"; //富文本编辑器
 	import KindEditor from "@/components/Kindeditor"; //富文本编辑器 
@@ -309,625 +309,7 @@
 						label: '图片'
 					}, 
 				],
-				goods_category:[
-					{
-						label:'女装',
-						value:'1',
-						children:[
-							{
-								label:'裙装',
-								value:'1_1',
-								children:[
-									{
-										label:'连衣裙',
-										value:'1_1_1',
-										children:'',
-									},
-									{
-										label:'A字裙',
-										value:'1_1_2',
-										children:'',
-									},
-									{
-										label:'半身裙',
-										value:'1_1_3',
-										children:'',
-									},
-									{
-										label:'针织裙',
-										value:'1_1_4',
-										children:'',
-									},
-									{
-										label:'背带裙',
-										value:'1_1_5',
-										children:'',
-									},
-									{
-										label:'鱼尾裙',
-										value:'1_1_6',
-										children:'',
-									},
-								]
-							},
-							{
-								label:'外套',
-								value:'1_2',
-								children:[
-									{
-										label:'西装',
-										value:'1_2_1',
-										children:'',
-									},
-									{
-										label:'外套新品',
-										value:'1_2_2',
-										children:'',
-									},
-									{
-										label:'棒球服',
-										value:'1_2_3',
-										children:'',
-									},
-								]
-							},
-							{
-								label:'裤装',
-								value:'1_3',
-								children:[
-									{
-										label:'牛仔裤',
-										value:'1_3_1',
-										children:'',
-									},
-									{
-										label:'休闲裤',
-										value:'1_3_2',
-										children:'',
-									},
-									{
-										label:'打底裤',
-										value:'1_3_3',
-										children:'',
-									},
-									{
-										label:'运动裤',
-										value:'1_3_4',
-										children:'',
-									},
-									{
-										label:'背带裤',
-										value:'1_3_5',
-										children:'',
-									},
-									{
-										label:'阔腿裤',
-										value:'1_3_6',
-										children:'',
-									},
-								]
-							},
-							{
-								label:'特色女装',
-								value:'1_4',
-								children:[
-									{
-										label:'大码女装',
-										value:'1_4_1',
-										children:'',
-									},
-									{
-										label:'中老年女装',
-										value:'1_4_2',
-										children:'',
-									},
-									{
-										label:'婚纱礼服',
-										value:'1_4_3',
-										children:'',
-									},
-									{
-										label:'中式旗袍',
-										value:'1_4_4',
-										children:'',
-									},
-									{
-										label:'汉服',
-										value:'1_4_5',
-										children:'',
-									},
-								]
-							},
-							{
-								label:'外套',
-								value:'1_5',
-								children:[
-									{
-										label:'针织开衫',
-										value:'1_5_1',
-										children:'',
-									},
-									{
-										label:'卫衣绒衫',
-										value:'1_5_2',
-										children:'',
-									},
-									{
-										label:'背心吊带',
-										value:'1_5_3',
-										children:'',
-									},
-									{
-										label:'雪纺纱',
-										value:'1_5_4',
-										children:'',
-									},
-									{
-										label:'内搭新品',
-										value:'1_5_5',
-										children:'',
-									},
-								]
-							},
-							{
-								label:'内搭',
-								value:'1_6',
-								children:[
-									{
-										label:'针织开衫',
-										value:'1_6_1',
-										children:'',
-									},
-									{
-										label:'卫衣绒衫',
-										value:'1_6_2',
-										children:'',
-									},
-									{
-										label:'背心吊带',
-										value:'1_6_3',
-										children:'',
-									},
-									{
-										label:'雪纺纱',
-										value:'1_6_4',
-										children:'',
-									},
-									{
-										label:'内搭新品',
-										value:'1_6_5',
-										children:'',
-									},
-								]
-							},
-						],
-						icon:''
-					},
-					{
-						label:'男装',
-						value:'2',
-						children:[
-							{
-								label:'套装',
-								value:'2_1',
-								children:[
-									{
-										label:'西服套装',
-										value:'2_1_1',
-										children:'',
-									},
-									{
-										label:'休闲套装',
-										value:'2_1_2',
-										children:'',
-									},
-									{
-										label:'运动套装',
-										value:'2_1_3',
-										children:'',
-									},
-								]
-							},
-							{
-								label:'内搭',
-								value:'2_2',
-								children:[
-									{
-										label:'T恤',
-										value:'2_2_1',
-										children:'',
-									},
-									{
-										label:'polo衫',
-										value:'2_2_2',
-										children:'',
-									},
-									{
-										label:'衬衫',
-										value:'2_2_3',
-										children:'',
-									},
-									{
-										label:'毛衣',
-										value:'2_2_4',
-										children:'',
-									},
-									{
-										label:'针织衫',
-										value:'2_2_5',
-										children:'',
-									},
-								]
-							},
-							{
-								label:'外套',
-								value:'2_3',
-								children:[
-									{
-										label:'西装',
-										value:'2_3_1',
-										children:'',
-									},
-									{
-										label:'外套背心',
-										value:'2_3_2',
-										children:'',
-									},
-									{
-										label:'防晒衣',
-										value:'2_3_3',
-										children:'',
-									},
-									{
-										label:'套头外衣',
-										value:'2_3_4',
-										children:'',
-									},
-									{
-										label:'马甲',
-										value:'2_3_4',
-										children:'',
-									},
-									{
-										label:'风衣',
-										value:'2_3_5',
-										children:'',
-									},
-									{
-										label:'春夏夹克',
-										value:'2_3_6',
-										children:'',
-									},
-									{
-										label:'PU皮衣',
-										value:'2_3_7',
-										children:'',
-									},
-									{
-										label:'棒球服',
-										value:'2_3_8',
-										children:'',
-									},
-								]
-							},
-							{
-								label:'裤装',
-								value:'2_4',
-								children:[
-									{
-										label:'牛仔长裤',
-										value:'2_4_1',
-										children:'',
-									},
-									{
-										label:'七分裤',
-										value:'2_4_2',
-										children:'',
-									},
-									{
-										label:'沙滩裤',
-										value:'2_4_3',
-										children:'',
-									},
-									{
-										label:'西裤',
-										value:'2_4_4',
-										children:'',
-									},
-									{
-										label:'小脚裤',
-										value:'2_4_5',
-										children:'',
-									},
-								]
-							},
-							 
-						],
-						icon:''
-					},
-					{
-						label:'内衣',
-						value:'3',
-						children:[
-							{
-								label:'男子内衣',
-								value:'3_1',
-								children:[
-									{
-										label:'男士内裤',
-										value:'3_1_1',
-										children:'',
-									},
-									{
-										label:'男士棉袜',
-										value:'3_1_2',
-										children:'',
-									},
-									{
-										label:'男士船袜',
-										value:'3_1_2',
-										children:'',
-									},
-									{
-										label:'商务袜',
-										value:'3_1_3',
-										children:'',
-									},
-									{
-										label:'男士睡衣',
-										value:'3_1_4',
-										children:'',
-									},
-								]
-							},
-							{
-								label:'女子内衣',
-								value:'3_2',
-								children:[
-									{
-										label:'女士内裤',
-										value:'3_2_1',
-										children:'',
-									},
-									{
-										label:'女士棉袜',
-										value:'3_2_2',
-										children:'',
-									},
-									{
-										label:'女士船袜',
-										value:'3_2_3',
-										children:'',
-									},
-									{
-										label:'美腿袜',
-										value:'3_2_4',
-										children:'',
-									},
-									{
-										label:'堆堆袜',
-										value:'3_2_4',
-										children:'',
-									},
-								]
-							},
-							{
-								label:'袜子',
-								value:'3_3',
-								children:[
-									{
-										label:'运动休闲',
-										value:'3_3_1',
-										children:'',
-									},
-									{
-										label:'打底袜',
-										value:'3_3_2',
-										children:'',
-									},
-									{
-										label:'地板袜',
-										value:'3_3_3',
-										children:'',
-									},
-									{
-										label:'美腿袜',
-										value:'3_3_4',
-										children:'',
-									},
-								]
-							},
-							{
-								label:'居家睡衣',
-								value:'3_4',
-								children:'',
-							},
-							{
-								label:'舒适馆',
-								value:'3_5',
-								children:'',
-							},
-							{
-								label:'内裤',
-								value:'3_6',
-								children:'',
-							},
-							{
-								label:'塑身情趣',
-								value:'3_7',
-								children:'',
-							},
-							{
-								label:'背心裹胸',
-								value:'3_8',
-								children:'',
-							},
-						],
-						icon:''
-					},
-					{
-						label:'运动服饰',
-						value:'4',
-						children:[
-							{
-								label:'男子鞋服',
-								value:'4_1',
-								children:'',
-							},
-							{
-								label:'女子鞋服',
-								value:'4_2',
-								children:'',
-							},
-							{
-								label:'骑行用品',
-								value:'4_3',
-								children:'',
-							},
-							{
-								label:'舞蹈',
-								value:'4_4',
-								children:'',
-							},
-							{
-								label:'瑜伽健身',
-								value:'4_5',
-								children:'',
-							},
-							{
-								label:'运动配件',
-								value:'4_6',
-								children:'',
-							},
-							{
-								label:'热销精品',
-								value:'4_7',
-								children:'',
-							},
-						],
-						icon:''
-					},
-					{
-						label:'3C数码',
-						value:'5',
-						children:[
-							{
-								label:'手机配件',
-								value:'5_1',
-								children:[
-									{
-										label:'手游装备',
-										value:'5_1_1',
-										children:'',
-									},
-									{
-										label:'手机膜',
-										value:'5_1_2',
-										children:'',
-									},
-									{
-										label:'数据线',
-										value:'5_1_3',
-										children:'',
-									},
-									{
-										label:'蓝牙耳机',
-										value:'5_1_4',
-										children:'',
-									},
-									{
-										label:'移动电源',
-										value:'5_1_5',
-										children:'',
-									},
-									{
-										label:'充电器',
-										value:'5_1_6',
-										children:'',
-									},
-								]
-							},
-							{
-								label:'智能设备',
-								value:'5_2',
-								children:[
-									{
-										label:'智能手表',
-										value:'5_2_1',
-										children:'',
-									},
-									{
-										label:'智能眼镜',
-										value:'5_2_2',
-										children:'',
-									},
-									{
-										label:'智能手环',
-										value:'5_2_3',
-										children:'',
-									},
-									{
-										label:'智能机器人',
-										value:'5_2_4',
-										children:'',
-									},
-									{
-										label:'智能手表带',
-										value:'5_2_5',
-										children:'',
-									},
-									{
-										label:'儿童智能手表',
-										value:'5_2_6',
-										children:'',
-									},
-								]
-							},
-							{
-								label:'电脑周边',
-								value:'5_3',
-								children:'',
-							},
-							{
-								label:'电脑',
-								value:'5_4',
-								children:'',
-							},
-							 
-						],
-						icon:''
-					},
-					{
-						name:'日用百货',
-						value:'6',
-						children:[],
-						icon:''
-					},
-					{
-						label:'家电',
-						value:'7',
-						children:[],
-						icon:''
-					},
-					{
-						label:'箱包',
-						value:'8',
-						children:[],
-						icon:''
-					},
-					{
-						label:'配饰',
-						value:'9',
-						children:[],
-						icon:''
-					},
-					{
-						label:'鞋靴',
-						value:'10',
-						children:[],
-						icon:''
-					}
-				],
+				goods_category:[],
 				goods_info:{},
 				goods_init_info:{
 					id:'1',
@@ -936,8 +318,8 @@
 					sub_title:'',
 					img:[],
 					attr:'',
-					deliverytype:'一件代发',
-					linkorg:'https://www.1688.com/',
+					deliverytype:' ',
+					linkorg:'',
 					category:{
 						id:'1_1_2',
 						value:'',
@@ -952,8 +334,7 @@
 					sell_price:'',
 				},
 				goods_desc:'',
-				goods_query_info:
-					{},
+				goods_query_info:{},
 				loading:true,
 				goods_sku_list:[],
 				goods_sku_speclist:[],
@@ -968,27 +349,7 @@
 					{ title: "属性描述", attr: "title", key: "value",width:150 },
 				],
 				goods_attr_list:[],
-				goods_attr_list_init:[
-					{
-						name:'材质',
-						value:[
-							'棉麻','化纤','涤纶','晴纶','塑料','纯棉','帆布'
-						],
-					},
-					{
-						name:'安全',
-						value:[
-							'耐高温','阻燃','防爆','耐腐蚀'
-						],
-					},
-					{
-						name:'环保',
-						value:[
-							'可降解','无辐射','无异味'
-						],
-					},
-					
-				],
+				goods_attr_list_init:[],
 			  //需的信息
                 paginations: {
                     total: 0,        // 总数
@@ -1023,14 +384,13 @@
 			if(this.$route.query){
 				let goods_query= this.$route.query;
 				var goods_para = JSON.parse(goods_query.goods_para)?JSON.parse(goods_query.goods_para):null
-				
+				var category_para = JSON.parse(goods_query.category_para)?JSON.parse(goods_query.category_para):null
 				var goods_init_info = this.goods_init_info
-				//console.log('goods query goods_para:',goods_para)
+				this.goods_category = category_para?category_para:this.this.goods_category 
+				//console.log('goods query category_para:',this.goods_category)
 				if(goods_para){
-					 
 					goods_init_info['name'] = goods_para['name']
 					goods_init_info['info_from'] = goods_para['info_from']? goods_para['info_from']:''
-				 	
 					goods_init_info['attr'] = goods_para['attr']?goods_para['attr']:[]
 					goods_init_info['goods_org'] = goods_para['goods_org']?goods_para['goods_org']:0
 					goods_init_info['desc'] = goods_para['desc']?goods_para['desc']:''
@@ -1049,13 +409,13 @@
 					this.shop_account = goods_query['shop_account']
 					this.emall_id = goods_query['platform_id']
 				}
-				console.log('goods query shop_account:',this.shop_account,' platform_id:',this.emall_id)
+				//console.log('goods query shop_account:',this.shop_account,' platform_id:',this.emall_id)
 				//this.goods_sku_list = this.goods_sku_query
-				
 			}
 			
 			this.goods_info=goods_init_info
-			this.query_goods_info();
+			this.query_goods_info()
+			this.category_list_init()
 			/*
 			if(this.goods_query_info){
 				for(var i=0;i<this.goods_query_info['img'].length;i++){
@@ -1072,7 +432,8 @@
 			*/
         },
         mounted(){
-			this.productCateOptions = this.goods_category ;
+			//this.productCateOptions = this.goods_category ;
+			
         },
         methods: {
 			sku_title_init(){
@@ -1099,6 +460,50 @@
 					this.goods_skulist_title = sku_title_list
 				}
 			},
+			
+			category_list_init(){
+				var category_list=[]
+				//console.log('myshop update category_list_init goods_category:',this.goods_category)
+				var label = ''
+				var ch_label = ''
+				var category_info = {} 
+				var ch_category_info = {}
+				for(let i=0;i<this.goods_category.length;i++){
+					if(this.lang=='zh'){
+						label =this.goods_category[i]['name']
+					} else {
+						label = this.goods_category[i]['name_en']
+					}
+					
+					category_info = {
+						label:label,
+						value:this.goods_category[i]['id'],
+						children:[]
+					 } 
+					
+					 if(this.goods_category[i]['down'] && this.goods_category[i]['down'].constructor===Array){
+						 
+						 for(let k=0;k<this.goods_category[i]['down'].length;k++){
+							if(this.lang=='zh'){
+								ch_label = this.goods_category[i]['down'][k]['name']
+							} else {
+							 	ch_label = this.goods_category[i]['down'][k]['name_en']
+							}
+							ch_category_info = {
+								label:ch_label,
+								value:this.goods_category[i]['down'][k]['id'],
+								//children:[]
+							}
+							category_info['children'].push(ch_category_info)
+							//console.log('myshop update category_list_init category_info ch_label:',this.goods_category[i]['down'][k]['id'])
+						 }
+					 }
+					 
+					category_list.push(category_info)
+				}
+				this.productCateOptions = category_list 
+			},
+			
 			edit_goods_desc(){
 				this.is_goods_desc = !this.is_goods_desc
 			},
@@ -1447,6 +852,7 @@
 					console.log('getMyShopGoodsList err:',err)
 				});
 			},
+			
 			save_goods_info(){
 				this.goods_info['name'] = this.goodsQuery['goodsTitle']
 				
@@ -1499,31 +905,6 @@
 				//console.log('Rich Text:',ctx)
 			},
 			
-			add_mywarehouse(){
-				let para = {
-					username:this.username,
-					access_token:this.access_token,
-				    goods_id:this.goods_info['goods_id']?this.goods_info['goods_id']:this.goods_info['id'],
-					goods_name:this.goods_info['name'],
-					goods_org:1, //1688商品
-					goods_from_id:1,
-					type:1, //
-					shop_type:this.shop_type,
-					lang:this.lang,
-				}
-				console.log('addMyWarehouse para:',para);
-				addMyWarehouse(para).then(res => {
-					this.$message({
-				     message: 'Completed!',
-				     type: 'success',
-				     duration: 1000
-				   });
-				   console.log('addMyWarehouse return:',res);
-				})
-				.catch(err=>{
-					console.log('addMyWarehouse err:',err)
-				});
-			},
 			//设置表格行的样式
 			 tableRowStyle({row,rowIndex}){
 			    return 'background-color:#FFF;font-size:12px;borderColor: #F2F2F2';

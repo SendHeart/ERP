@@ -18,12 +18,11 @@
 				 		<p class="emall-detail-sub-title">{{emall_list[emall_query_index].type!=''?'类型:'+emall_list[emall_query_index].type:'' }}</p>
 				 		<p class="emall-detail-sub-title">{{emall_list[emall_query_index].region!=''?'范围:'+emall_list[emall_query_index].region:''}}</p>
 				 	</div>
-					<!--
+					 
 				 	<div style="display: flex;flex-direction: row;justify-content: flex-start;margin-top:15px;">
 				 		 <el-button icon="el-icon-circle-plus" type="primary" @click="platform_auth()">{{ $t('commons.emall_joining') }}</el-button>
-				 		 <el-button icon="el-icon-edit" type="primary">{{ $t('commons.emall_joined') }}</el-button>
 				 	</div>
-					-->
+					 
 				 </div>
 			</div>
 		</div>
@@ -287,37 +286,6 @@
 			</div>
 		</div>
 	</div>
-	<el-dialog
-		:title="$t('commons.emall_joining')"
-		:visible.sync="authorizeEmall.dialogVisible"
-		width="65%">
-		<el-form :model="authorizeEmall" status-icon :rules="rules" ref="authorizeEmall" label-width="160px">
-		  <el-form-item :label="label_marketplace_id" prop="marketplace_id" style="width: 30%;margin-left: 0px">
-		  	<el-cascader
-		  	clearable
-		  	v-model="authorizeEmall.marketplace_id"
-		  	:options="market_list"
-		  	filterable>
-		  	</el-cascader>
-		  </el-form-item>
-		  <el-form-item :label="$t('commons.shop_name')">
-		  	<el-input :placeholder="$t('commons.shop_name')" v-model="authorizeEmall.shop_name" size="small" style="width: 30%;margin-left: 0px"></el-input>
-		  </el-form-item>
-		  <el-form-item :label="label_shop_account">
-		  	<el-input :placeholder="shop_account_note" v-model="authorizeEmall.shop_account" size="small" style="width: 30%;margin-left: 0px"></el-input>
-		  </el-form-item>
-		  <el-form-item :label="$t('commons.merchant_id')" prop="merchant_id">
-		    <el-input v-model="authorizeEmall.merchant_id" style="width: 30%;margin-left: 0px" size="small"></el-input>
-		  </el-form-item>
-		  <el-form-item :label="$t('commons.MWSAuthToken')" prop="MWSAuthToken">
-		    <el-input v-model="authorizeEmall.MWSAuthToken" style="width: 50%;margin-left: 0px" size="small"></el-input>
-		  </el-form-item>
-		  <el-form-item>
-			<el-button @click="authorizeEmall.dialogVisible = false">取 消</el-button>
-		    <el-button type="primary" @click="submit_platform_auth('authorizeEmall')">提交</el-button>
-		  </el-form-item>
-		</el-form>
-	</el-dialog>
 </div>
 </template>
 
@@ -658,15 +626,6 @@
 					this.label_shop_account = this.$t('commons.'+this.emall_query_name)+this.$t('commons.shop_account')
 					this.label_marketplace_id = this.$t('commons.'+this.emall_query_name)+this.$t('commons.marketplace_id')
 				}
-				/*
-				for(var i=0;i<this.emall_list.length;i++){
-					if(this.emall_list[i]['name'] == this.emall_query['emall_name']){
-						this.emall_query_index = i ;
-						this.emall_query_id= this.emall_list[i]['id'] ;
-						break;
-					}
-				}
-				*/
 			}
 			//this.emall_detail_commentlist = this.emall_commentlist[this.emall_query_id]?this.emall_commentlist[this.emall_query_id]:this.emall_commentlist['1'] ;
 			//this.emall_detail_strategylist = this.emall_strategylist[this.emall_query_id]?this.emall_strategylist[this.emall_query_id]:this.emall_strategylist['1'] ;
@@ -1153,56 +1112,15 @@
 			},
 			
 			platform_auth(){
-				this.authorizeEmall.dialogVisible = !this.authorizeEmall.dialogVisible 
-			},
-			
-			submit_platform_auth(formName){
-				this.$refs[formName].validate((valid) => {
-				   if (valid) {
-					   if(this.authorizeEmall.marketplace_id=='' ||this.authorizeEmall.shop_account=='' ||this.authorizeEmall.shop_name=='' ||this.authorizeEmall.merchant_id=='' ||this.authorizeEmall.MWSAuthToken==''){
-							this.$message({
-							  message: '输入信息不完整!',
-							  type: 'warn',
-							  duration: 1000
-							});
-							console.log('submit_platform_auth 输入信息有误');
-							return false;
-						}else{
-							this.$confirm('是否要添加', '提示', {
-								confirmButtonText: '确定',
-								cancelButtonText: '取消',
-								type: 'warning'
-							}).then(()=>{
-								let author_info = {
-									marketplace_id:this.authorizeEmall.marketplace_id,
-									merchant_id:this.authorizeEmall.merchant_id,
-									MWSAuthToken:this.authorizeEmall.MWSAuthToken,
-								}
-								let para = {
-									emall_id: this.emall_query_id ,
-									username:this.username,
-									access_token:this.access_token,
-									shop_type:this.shop_type,
-									shop_name:this.authorizeEmall.shop_name,
-									shop_account:this.authorizeEmall.shop_account,
-									lang:this.lang,
-									para_info:JSON.stringify(author_info)
-								}
-										   
-								authorizeEmall(para).then(res => {
-									this.$message({
-										message: 'Completed',
-										type: 'success'
-									})
-									console.log('submit_platform_auth:',res)
-								})
-							});
-						}
-					} else {
-						console.log('submit_platform_auth 输入信息有误');
-						return false;
+				 let routeUrl = this.$router.resolve({
+				     path: "/myshop/myshop",
+				     query: {
+				 		platform_id:this.emall_query_id,
+				 		is_auth:1,
 					}
 				});
+				console.log('platform_auth platform_id:',this.emall_query_id)
+				window.open(routeUrl.href, '_self'); //_self _blank
 			},
 			
 			go_back(){

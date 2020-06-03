@@ -47,6 +47,7 @@ const zh = {
 	  addshop: 'Add Shop',
 	  shopadd: 'Shop Add',
 	  publish: 'Publish',
+	  developerid:'DeveloperID',
 	  goodsedit:'Goods Edit',
 	  emallplatform: 'EMall Platform',
 	  emallplatform_detail:'EMall Details',

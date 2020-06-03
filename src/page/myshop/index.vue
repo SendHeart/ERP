@@ -222,34 +222,40 @@
 		:title="$t('commons.emall_joining')"
 		:visible.sync="authorizeEmall.dialogVisible"
 		width="65%">
-		<el-form :model="authorizeEmall" status-icon :rules="rules" ref="authorizeEmall" label-width="160px">
-			<el-form-item :label="$t('commons.emallplatform')" prop="platform_id" style="width: 30%;margin-left: 0px">
+		<el-form :model="authorizeEmall" status-icon :rules="rules" ref="authorizeEmall" label-width="180px">
+			<el-form-item :label="$t('commons.emallplatform')" prop="platform_id" style="width: 100%;margin-left: 0px">
 				<el-cascader
 					clearable
 					v-model="authorizeEmall.platform_id"
 					:options="platform_list"
-					@change="changePlatform"
+					size="medium"
+					@change="changePlatform()"
 					filterable>
 				</el-cascader>
 			</el-form-item>
-			<el-form-item v-if="authorizeEmall.platform_id[0]>0" :label="label_marketplace_id" prop="marketplace_id" style="width: 30%;margin-left: 0px">
+			<el-form-item v-if="authorizeEmall.platform_id[0]>0" :label="label_marketplace_id" prop="marketplace_id" style="width: 100%;margin-left: 0px">
 				<el-cascader
 					clearable
 					v-model="authorizeEmall.marketplace_id"
 					:options="market_list"
+					@change="market_devid"
+					size="medium"
 					filterable>
 				</el-cascader>
 			</el-form-item>
-			<el-form-item v-if="authorizeEmall.platform_id[0]>0" :label="$t('commons.shop_name')">
-				<el-input :placeholder="$t('commons.shop_name')" v-model="authorizeEmall.shop_name" size="small"  style="width: 30%;margin-left: 0px"></el-input>
+			<el-form-item v-if="authorizeEmall.platform_id[0]>0 && authorizeEmall.marketplace_id[0]" :label="$t('commons.developerid')" prop="developerid">
+				<el-input v-model="cur_devid" :clearable="false" style="width: 50%;margin-left: 0px;color:#E60000;font-size: 18px;" size="small"></el-input>
 			</el-form-item>
-			<el-form-item v-if="authorizeEmall.platform_id[0]>0" :label="label_shop_account">
-				<el-input v-if="authorizeEmall.platform_id[0]>0" :placeholder="shop_account_note" v-model="authorizeEmall.shop_account" size="small" style="width: 30%;margin-left: 0px"></el-input>
+			<el-form-item v-if="authorizeEmall.platform_id[0]>0 && authorizeEmall.marketplace_id[0]" :label="$t('commons.shop_name')">
+				<el-input :placeholder="$t('commons.shop_name')" v-model="authorizeEmall.shop_name" size="small"  style="width: 50%;margin-left: 0px"></el-input>
 			</el-form-item>
-			<el-form-item v-if="authorizeEmall.platform_id[0]>0" :label="$t('commons.merchant_id')" prop="merchant_id">
-				<el-input v-model="authorizeEmall.merchant_id" style="width: 30%;margin-left: 0px" size="small" ></el-input>
+			<el-form-item v-if="authorizeEmall.platform_id[0]>0 && authorizeEmall.marketplace_id[0]" :label="label_shop_account">
+				<el-input v-if="authorizeEmall.marketplace_id[0]" :placeholder="shop_account_note" v-model="authorizeEmall.shop_account" size="small" style="width: 50%;margin-left: 0px"></el-input>
 			</el-form-item>
-			<el-form-item v-if="authorizeEmall.platform_id[0]>0" :label="$t('commons.MWSAuthToken')" prop="MWSAuthToken">
+			<el-form-item v-if="authorizeEmall.platform_id[0]>0 && authorizeEmall.marketplace_id[0]" :label="$t('commons.merchant_id')" prop="merchant_id">
+				<el-input v-model="authorizeEmall.merchant_id" style="width: 50%;margin-left: 0px" size="small" ></el-input>
+			</el-form-item>
+			<el-form-item v-if="authorizeEmall.platform_id[0]>0 && authorizeEmall.marketplace_id[0]" :label="$t('commons.MWSAuthToken')" prop="MWSAuthToken">
 				<el-input v-model="authorizeEmall.MWSAuthToken" style="width: 50%;margin-left: 0px" size="small"></el-input>
 			</el-form-item>
 			<el-form-item v-if="shop_auth_info.MWSAuthToken" :label="$t('commons.MWSAuthToken')" prop="MWSAuthTokenOld">
@@ -314,6 +320,8 @@
 		deleteMyShopGoodsList,
 		authorizeEmall,
 		queryMyShopInfo,
+		getMarketList,
+		getGoodsCategory,
 	} from "@/api/user";
 	
 	import {
@@ -637,80 +645,9 @@
 			shop_account_note:'',
 			label_shop_name_note:'',
 			label_marketplace_id:'',
-			market_list:[
-				{
-					label:'美国',
-					value:'ATVPDKIKX0DER',
-				},
-				{
-					label:'加拿大',
-					value:'A2EUQ1WTGCTBG2',
-				},
-				{
-					label:'德国',
-					value:'A1PA6795UKMFR9',
-				},
-				{
-					label:'西班牙',
-					value:'A1RKKUPIHCS9HS',
-				},
-				{
-					label:'法国',
-					value:'A13V1IB3VIYZZH',
-				},
-				{
-					label:'英国',
-					value:'A1F83G8C2ARO7P',
-				},
-				{
-					label:'印度',
-					value:'A21TJRUUN4KGV',
-				},
-				{
-					label:'意大利',
-					value:'APJ6JRA9NG5V4',
-				},
-				{
-					label:'荷兰',
-					value:'A1805IZSGTT6HS',
-				},
-				{
-					label:'沙特',
-					value:'A17E79C6D8DWNP',
-				},
-				{
-					label:'巴西',
-					value:'A2Q3Y263D00KWC',
-				},
-				{
-					label:'澳大利亚',
-					value:'A39IBJ37TRP1C6',
-				},
-				{
-					label:'新加波',
-					value:'A19VAU5U5O7RUS',
-				},
-				{
-					label:'日本',
-					value:'A1VC38T7YXB528',
-				},
-				{
-					label:'墨西哥',
-					value:'A1AM78C64UM0Y8',
-				},
-				{
-					label:'阿联酋',
-					value:'A2VIGQ35RCS4UG',
-				},
-				{
-					label:'埃及',
-					value:'ARBP9OOSHTCHU',
-				},
-				{
-					label:'土耳其',
-					value:'A33AVAJ2PDY3EV',
-				}
-			],
+			cur_devid:'',
+			market_list:[],
+			market_init_list:[],
 			
 			operates: [
 			{
@@ -809,13 +746,25 @@
 		}
     },
     created() {
-		if(this.emall_id!="0") this.listQuery.emallId = Array(this.emall_id)
+		if(this.$route.query){
+			this.emall_query= this.$route.query;
+			this.emall_id= this.emall_query['platform_id']?this.emall_query['platform_id']:this.emall_id
+		} 
+		if(this.emall_id!="0") {
+			this.listQuery.emallId = Array(this.emall_id)
+		}
 		if(this.shop_account!="") this.listQuery.shopAccount = Array(this.shop_account)
+		console.log('myshop created emall_id:',this.emall_id)
 		this.get_emall_list()
     },
 	mounted(){
 		setTimeout(() => {
 			this.get_goods_list()
+			if(this.emall_query['is_auth']) {
+				this.authorizeEmall.dialogVisible = true
+				this.changePlatform(this.emall_id)
+			}
+			
 		}, 300);
 	},
     watch: {
@@ -926,6 +875,91 @@
 		  return jsonData.map(v => filterVal.map(j => v[j]))
 		},
 		
+		market_devid(){
+			let cur_value = this.authorizeEmall.marketplace_id[0]
+			console.log('market devid:',cur_value)
+			for(let i=0;i<this.market_list.length;i++){
+				if(this.market_list[i]['value']==cur_value){
+					this.cur_devid = this.market_list[i]['devid']
+				}
+			}
+		},
+		
+		market_list_init(){
+			let market_list=[]
+			for(let i=0;i<this.market_init_list.length;i++){
+				
+				if(this.market_init_list[i]['devid']!=''){
+					//console.log('myshop created market list:',this.market_list)
+					let market_info = {}
+					if(this.lang=='zh'){
+						let label = `${this.market_init_list[i].label}`
+						market_info = {
+							label:label,
+							value:this.market_init_list[i]['value'],
+							devid:this.market_init_list[i]['devid'],
+						 }
+					} else {
+						let label_en = `${this.market_init_list[i].label_en}`
+						market_info = {
+							label:label_en,
+							value:this.market_init_list[i]['value'],
+							devid:this.market_init_list[i]['devid'],
+						 }
+					}
+					market_list.push(market_info)
+				}
+			}
+			this.market_list = market_list 
+			//console.log('myshop created market list:',market_list)
+		},
+		
+		get_goods_category(platform_id=0) {
+			let para = {
+				username:this.username,
+				access_token:this.access_token,
+				shop_type:this.shop_type,
+				lang:this.lang,
+				platform_id:platform_id,
+				type:2,  //ERP 第三方电商平台类目 
+			}
+			//this.productCateOptions = this.goods_category ;
+			console.log('myshop get_goods_category para:',para);
+			getGoodsCategory(para).then(res => {
+				let goods_category = res
+				for(var i=0;i<goods_category.length;i++){
+					this.goods_category.push(goods_category[i])
+				} 
+				console.log('myshop get_goods_category return:',res);
+			})
+			.catch(err=>{
+				console.log('myshop get_goods_category err:',err)
+			});
+		},
+			
+		get_market_list(platform_id=0) {
+			console.log('myshop get_market_list:',platform_id)
+			
+			let para = {
+				username:this.username,
+				access_token:this.access_token,
+				shop_type:this.shop_type,
+				lang:this.lang,
+				platform_id:platform_id,
+				type:0,
+			}
+			//this.productCateOptions = this.goods_category ;
+			console.log('get_market_list para:',para);
+			getMarketList(para).then(res => {
+				this.market_init_list = res
+				console.log('get_market_list return:',res);
+				this.market_list_init()
+			})
+			.catch(err=>{
+				console.log('get_market_list err:',err)
+			});
+		},
+				
 		get_emall_list(){
 			let para = {
 				username:this.username,
@@ -976,6 +1010,7 @@
 		
 		update_goods(goods_index=0) {
 			let goods_para = JSON.stringify(this.list[goods_index])
+			let category_para = JSON.stringify(this.goods_category)
 			let shop_name = ''
 			for(let i=0;i<this.myshop_list.length;i++){
 				if(this.myshop_list[i]['value'] == this.shop_account){
@@ -988,6 +1023,7 @@
 			    path: "/edit_shop_goods",
 			    query: {
 					goods_para:goods_para,
+					category_para:category_para,
 					platform_id:this.emall_id,
 					shop_name:shop_name,
 					shop_account:this.shop_account,
@@ -1020,11 +1056,11 @@
 				para['shop_account'] = this.listQuery.shopAccount[0]
 				setToken("Platform_id_shop",this.listQuery.emallId[0])
 				setToken("Platform_shop_account",this.listQuery.shopAccount[0])
-				
+				console.log('get_goods_list para Platform_id_shop:',this.listQuery)
 			}else if(is_search == 2){
 				para['type'] = 1 //全部导出查询
 			}
-			console.log('get_goods_list para:',para)
+			
 			getMyShopGoodsList(para).then(res => {
 				let hot_goods_list = []
 				if(res.total> 0){
@@ -1038,6 +1074,7 @@
 					}else{
 						this.list = hot_goods_list ;
 					}
+					this.get_goods_category(this.listQuery.emallId[0])
 				}else{
 					this.$message({
 					   message: 'Nothing!',
@@ -1071,17 +1108,24 @@
 			});
 		},
 	  
-		changePlatform() {
+		changePlatform(platform_id=0) {
+			if(platform_id!=0){
+				this.authorizeEmall.platform_id = platform_id
+			}
 			for(let k=0;k<this.platform_list.length;k++){
 				if(this.platform_list[k]['value'] == this.authorizeEmall.platform_id){
 					this.emall_query_name = this.platform_list[k]['name']
 				}
 			}
+			
 			if(this.authorizeEmall.platform_id == 1){
 				this.shop_account_note = this.$t('commons.shop_account_amazon')
 			}
-			this.label_shop_account = this.$t('commons.'+this.emall_query_name)+this.$t('commons.shop_account')
-			this.label_marketplace_id = this.$t('commons.'+this.emall_query_name)+this.$t('commons.marketplace_id')
+			
+			this.label_shop_account = this.$t('commons.'+this.emall_query_name) + this.$t('commons.shop_account')
+			this.label_marketplace_id = this.$t('commons.'+this.emall_query_name) + this.$t('commons.marketplace_id')
+			
+			this.get_market_list(this.authorizeEmall.platform_id[0])
 		},
 		
 		handleShowSkuEditDialog(index,row){

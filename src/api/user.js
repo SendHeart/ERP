@@ -218,6 +218,14 @@ export function getGoodsCategory(reqData) {
     })
 }
 
+export function getMarketList(reqData) {
+    return request({
+      url:'/api/web_client/query_market_list',
+      method: 'post',
+      data: reqData
+    })
+}
+
 export function goodsUpDown(reqData) { //上架
     return request({
       url:'/api/web_client/goods_up_down',
