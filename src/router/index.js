@@ -141,7 +141,8 @@ export const asyncRouterMap = [
 		noDropdown:true,
 		children:[
 			{
-				path:'myshop', 
+				path:'myshop',
+				name:'myshop_goods',
 				meta:{
 				  title:'我的店铺', 
 				  icon:'shop',

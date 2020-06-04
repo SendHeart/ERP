@@ -1112,6 +1112,7 @@
 			},
 			
 			platform_auth(){
+				/*
 				 let routeUrl = this.$router.resolve({
 				     path: "/myshop/myshop",
 				     query: {
@@ -1121,6 +1122,14 @@
 				});
 				console.log('platform_auth platform_id:',this.emall_query_id)
 				window.open(routeUrl.href, '_self'); //_self _blank
+				*/
+				this.$router.push({
+					name: `myshop_goods`,
+					params: {
+						platform_id: this.emall_query_id, 
+						is_auth: 1
+					}
+				})
 			},
 			
 			go_back(){

@@ -168,7 +168,7 @@
           </template>
         </el-table-column>
 		-->
-        <el-table-column :label="$t('commons.operation')" width="260" align="center">
+        <el-table-column :label="$t('commons.operation')" :render-header="tableAction" width="260" align="center">
           <template slot-scope="scope">
             <p>
              <el-button
@@ -220,51 +220,51 @@
     </div>
 	<el-dialog
 		:title="$t('commons.emall_joining')"
-		:visible.sync="authorizeEmall.dialogVisible"
+		:visible.sync="authEmall.dialogVisible"
 		width="65%">
-		<el-form :model="authorizeEmall" status-icon :rules="rules" ref="authorizeEmall" label-width="180px">
+		<el-form :model="authEmall" status-icon :rules="rules" ref="authEmall" label-width="180px">
 			<el-form-item :label="$t('commons.emallplatform')" prop="platform_id" style="width: 100%;margin-left: 0px">
 				<el-cascader
 					clearable
-					v-model="authorizeEmall.platform_id"
+					v-model="authEmall.platform_id"
 					:options="platform_list"
 					size="medium"
 					@change="changePlatform()"
 					filterable>
 				</el-cascader>
 			</el-form-item>
-			<el-form-item v-if="authorizeEmall.platform_id[0]>0" :label="label_marketplace_id" prop="marketplace_id" style="width: 100%;margin-left: 0px">
+			<el-form-item v-if="authEmall.platform_id[0]>0" :label="label_marketplace_id" prop="marketplace_id" style="width: 100%;margin-left: 0px">
 				<el-cascader
 					clearable
-					v-model="authorizeEmall.marketplace_id"
+					v-model="authEmall.marketplace_id"
 					:options="market_list"
 					@change="market_devid"
 					size="medium"
 					filterable>
 				</el-cascader>
 			</el-form-item>
-			<el-form-item v-if="authorizeEmall.platform_id[0]>0 && authorizeEmall.marketplace_id[0]" :label="$t('commons.developerid')" prop="developerid">
+			<el-form-item v-if="authEmall.platform_id[0]>0 && authEmall.marketplace_id[0]" :label="$t('commons.developerid')" prop="developerid">
 				<el-input v-model="cur_devid" :clearable="false" style="width: 50%;margin-left: 0px;color:#E60000;font-size: 18px;" size="small"></el-input>
 			</el-form-item>
-			<el-form-item v-if="authorizeEmall.platform_id[0]>0 && authorizeEmall.marketplace_id[0]" :label="$t('commons.shop_name')">
-				<el-input :placeholder="$t('commons.shop_name')" v-model="authorizeEmall.shop_name" size="small"  style="width: 50%;margin-left: 0px"></el-input>
+			<el-form-item v-if="authEmall.platform_id[0]>0 && authEmall.marketplace_id[0]" :label="$t('commons.shop_name')">
+				<el-input :placeholder="$t('commons.shop_name')" v-model="authEmall.shop_name" size="small"  style="width: 50%;margin-left: 0px"></el-input>
 			</el-form-item>
-			<el-form-item v-if="authorizeEmall.platform_id[0]>0 && authorizeEmall.marketplace_id[0]" :label="label_shop_account">
-				<el-input v-if="authorizeEmall.marketplace_id[0]" :placeholder="shop_account_note" v-model="authorizeEmall.shop_account" size="small" style="width: 50%;margin-left: 0px"></el-input>
+			<el-form-item v-if="authEmall.platform_id[0]>0 && authEmall.marketplace_id[0]" :label="label_shop_account">
+				<el-input v-if="authEmall.marketplace_id[0]" :placeholder="shop_account_note" v-model="authEmall.shop_account" size="small" style="width: 50%;margin-left: 0px"></el-input>
 			</el-form-item>
-			<el-form-item v-if="authorizeEmall.platform_id[0]>0 && authorizeEmall.marketplace_id[0]" :label="$t('commons.merchant_id')" prop="merchant_id">
-				<el-input v-model="authorizeEmall.merchant_id" style="width: 50%;margin-left: 0px" size="small" ></el-input>
+			<el-form-item v-if="authEmall.platform_id[0]>0 && authEmall.marketplace_id[0]" :label="$t('commons.merchant_id')" prop="merchant_id">
+				<el-input v-model="authEmall.merchant_id" style="width: 50%;margin-left: 0px" size="small" ></el-input>
 			</el-form-item>
-			<el-form-item v-if="authorizeEmall.platform_id[0]>0 && authorizeEmall.marketplace_id[0]" :label="$t('commons.MWSAuthToken')" prop="MWSAuthToken">
-				<el-input v-model="authorizeEmall.MWSAuthToken" style="width: 50%;margin-left: 0px" size="small"></el-input>
+			<el-form-item v-if="authEmall.platform_id[0]>0 && authEmall.marketplace_id[0]" :label="$t('commons.MWSAuthToken')" prop="MWSAuthToken">
+				<el-input v-model="authEmall.MWSAuthToken" style="width: 50%;margin-left: 0px" size="small"></el-input>
 			</el-form-item>
 			<el-form-item v-if="shop_auth_info.MWSAuthToken" :label="$t('commons.MWSAuthToken')" prop="MWSAuthTokenOld">
-				<el-input v-model="authorizeEmall.MWSAuthToken" :disabled="true" style="width: 50%;margin-left: 0px" size="small"></el-input>
+				<el-input v-model="authEmall.MWSAuthToken" :disabled="true" style="width: 50%;margin-left: 0px" size="small"></el-input>
 			</el-form-item>
 			<el-form-item>
-				<el-button @click="authorizeEmall.dialogVisible = false">取 消</el-button>
+				<el-button @click="authEmall.dialogVisible = false">取 消</el-button>
 				<el-button v-if="!shop_auth_info.MWSAuthToken" type="primary" @click="query_platform_auth()">提交</el-button>
-				<el-button v-if="shop_auth_info.MWSAuthToken" type="primary" @click="submit_platform_auth('authorizeEmall')">更新</el-button>
+				<el-button v-if="shop_auth_info.MWSAuthToken" type="primary" @click="submit_platform_auth('authEmall')">更新</el-button>
 			</el-form-item>
 		</el-form>
 	</el-dialog>
@@ -309,7 +309,7 @@
   //import {fetchList as fetchProductAttrList} from '@/api/productAttr'
   //import {fetchList as fetchBrandList} from '@/api/brand'
   //import {fetchListWithChildren} from '@/api/productCate'
-	
+	import HelpHint from "@/components/Helphint/helpHint.vue"; //
 	import {
 		getMyShopList,
 		goodsUpDown,
@@ -616,14 +616,14 @@
 				],
 			},
 		 
-			authorizeEmall:{
+			authEmall:{
 				dialogVisible:false,
-				shop_account:'',
-				shop_name:'',
-				merchant_id:'',
-				MWSAuthToken:'',
-				marketplace_id:'',
-				platform_id:0,
+				shop_account:null,
+				shop_name:null,
+				merchant_id:null,
+				MWSAuthToken:null,
+				marketplace_id:[],
+				platform_id:[],
 			},
 			rules: {
 			    shop_account: [
@@ -745,27 +745,14 @@
 			goods_category:[],
 		}
     },
+	components:{
+		'HelpHint':HelpHint,
+	},
     created() {
-		if(this.$route.query){
-			this.emall_query= this.$route.query;
-			this.emall_id= this.emall_query['platform_id']?this.emall_query['platform_id']:this.emall_id
-		} 
-		if(this.emall_id!="0") {
-			this.listQuery.emallId = Array(this.emall_id)
-		}
-		if(this.shop_account!="") this.listQuery.shopAccount = Array(this.shop_account)
-		console.log('myshop created emall_id:',this.emall_id)
-		this.get_emall_list()
+		this.init()
     },
 	mounted(){
-		setTimeout(() => {
-			this.get_goods_list()
-			if(this.emall_query['is_auth']) {
-				this.authorizeEmall.dialogVisible = true
-				this.changePlatform(this.emall_id)
-			}
-			
-		}, 300);
+		
 	},
     watch: {
 		selectProductCateValue: function (newValue) {
@@ -786,6 +773,37 @@
 		}
     },
     methods: {
+		init(){
+			console.log('myshop created query init:',this.$route.query)
+			this.get_emall_list()
+			setTimeout(() => {
+				if(this.$route.params){
+					this.emall_query= this.$route.params;
+					this.emall_id= this.emall_query['platform_id']?this.emall_query['platform_id']:this.emall_id
+					if(this.emall_query['is_auth']==1) {
+						this.authEmall.dialogVisible = true
+					}
+				} 
+				
+				if(this.emall_id!="0") {
+					this.listQuery.emallId = Array(this.emall_id)
+					this.changePlatform(this.emall_id)	
+				}
+				if(this.shop_account!="") this.listQuery.shopAccount = Array(this.shop_account)
+				
+				this.get_goods_list()
+			}, 300);
+		},
+		
+		//表格操作提示
+		 tableAction() {
+		     return this.$createElement('HelpHint', {
+		         props: {
+		             content: '发布:上传商品信息到平台'
+		         }
+		     }, '操作');
+		 },
+		
 		//本地数据导出的Excel方法
 		exportExcel() {
 		  require.ensure([], () => {
@@ -876,7 +894,7 @@
 		},
 		
 		market_devid(){
-			let cur_value = this.authorizeEmall.marketplace_id[0]
+			let cur_value = this.authEmall.marketplace_id[0]
 			console.log('market devid:',cur_value)
 			for(let i=0;i<this.market_list.length;i++){
 				if(this.market_list[i]['value']==cur_value){
@@ -1110,22 +1128,24 @@
 	  
 		changePlatform(platform_id=0) {
 			if(platform_id!=0){
-				this.authorizeEmall.platform_id = platform_id
+				this.authEmall.platform_id = Array(platform_id)
 			}
-			for(let k=0;k<this.platform_list.length;k++){
-				if(this.platform_list[k]['value'] == this.authorizeEmall.platform_id){
-					this.emall_query_name = this.platform_list[k]['name']
+			if(this.authEmall.platform_id[0]){
+				for(let k=0;k<this.platform_list.length;k++){
+					if(this.platform_list[k]['value'] == this.authEmall.platform_id[0]){
+						this.emall_query_name = this.platform_list[k]['name']
+					}
 				}
+				if(this.authEmall.platform_id[0] == 1){
+					this.shop_account_note = this.$t('commons.shop_account_amazon')
+				}
+				if(this.emall_query_name){
+					this.label_shop_account = this.$t('commons.'+this.emall_query_name) + this.$t('commons.shop_account')
+					this.label_marketplace_id = this.$t('commons.'+this.emall_query_name) + this.$t('commons.marketplace_id')
+				}
+				this.get_market_list(this.authEmall.platform_id[0])
+				console.log('myshop index changePlatform()',this.authEmall,this.platform_list)
 			}
-			
-			if(this.authorizeEmall.platform_id == 1){
-				this.shop_account_note = this.$t('commons.shop_account_amazon')
-			}
-			
-			this.label_shop_account = this.$t('commons.'+this.emall_query_name) + this.$t('commons.shop_account')
-			this.label_marketplace_id = this.$t('commons.'+this.emall_query_name) + this.$t('commons.marketplace_id')
-			
-			this.get_market_list(this.authorizeEmall.platform_id[0])
 		},
 		
 		handleShowSkuEditDialog(index,row){
@@ -1478,20 +1498,20 @@
 		},
 		
 		platform_auth(){
-			this.authorizeEmall.dialogVisible = !this.authorizeEmall.dialogVisible 
+			this.authEmall.dialogVisible = !this.authEmall.dialogVisible 
 		},
 		
 		query_platform_auth(){
-			 if(this.authorizeEmall.marketplace_id[0]!='' && this.authorizeEmall.shop_account!='' && this.authorizeEmall.shop_name!='' && this.authorizeEmall.merchant_id!=''){
+			 if(this.authEmall.marketplace_id[0]!='' && this.authEmall.shop_account!='' && this.authEmall.shop_name!='' && this.authEmall.merchant_id!=''){
 			 	let para = {
 			 		username:this.username,
 			 		access_token:this.access_token,
 			 		shop_type:this.shop_type,
 			 		lang:this.lang,
-			 		platform_id:this.authorizeEmall.platform_id[0],
-					shop_account:this.authorizeEmall.shop_account,
-					shop_name:this.authorizeEmall.shop_name,
-					merchant_id:this.authorizeEmall.merchant_id,
+			 		platform_id:this.authEmall.platform_id[0],
+					shop_account:this.authEmall.shop_account,
+					shop_name:this.authEmall.shop_name,
+					merchant_id:this.authEmall.merchant_id,
 			 	}
 				queryMyShopInfo(para).then(res => {
 				  	console.log('query_platform_auth return:',res);
@@ -1499,21 +1519,21 @@
 					if(shop_info && shop_info['para_info']){
 						this.shop_auth_info = JSON.parse(shop_info['para_info'])
 					}else{
-						this.submit_platform_auth('authorizeEmall')
+						this.submit_platform_auth('authEmall')
 					}
 				  })
 				  .catch(err=>{
 				  	console.log('query_platform_auth err:',err)
 				  });			
 			}else{
-				console.log('query_platform_auth :',this.authorizeEmall);
+				console.log('query_platform_auth :',this.authEmall);
 			}
 		},
 		
 		submit_platform_auth(formName){
 			this.$refs[formName].validate((valid) => {
 			   if (valid) {
-				   if(this.authorizeEmall.marketplace_id=='' ||this.authorizeEmall.shop_account=='' ||this.authorizeEmall.shop_name=='' ||this.authorizeEmall.merchant_id=='' ||this.authorizeEmall.MWSAuthToken==''){
+				   if(this.authEmall.marketplace_id=='' ||this.authEmall.shop_account=='' ||this.authEmall.shop_name=='' ||this.authEmall.merchant_id=='' ||this.authEmall.MWSAuthToken==''){
 						this.$message({
 						  message: '输入信息不完整!',
 						  type: 'warn',
@@ -1528,17 +1548,17 @@
 							type: 'warning'
 						}).then(()=>{
 							let author_info = {
-								marketplace_id:this.authorizeEmall.marketplace_id,
-								merchant_id:this.authorizeEmall.merchant_id,
-								MWSAuthToken:this.authorizeEmall.MWSAuthToken,
+								marketplace_id:this.authEmall.marketplace_id,
+								merchant_id:this.authEmall.merchant_id,
+								MWSAuthToken:this.authEmall.MWSAuthToken,
 							}
 							let para = {
-								emall_id: this.authorizeEmall.platform_id[0] ,
+								emall_id: this.authEmall.platform_id[0] ,
 								username:this.username,
 								access_token:this.access_token,
 								shop_type:this.shop_type,
-								shop_name:this.authorizeEmall.shop_name,
-								shop_account:this.authorizeEmall.shop_account,
+								shop_name:this.authEmall.shop_name,
+								shop_account:this.authEmall.shop_account,
 								lang:this.lang,
 								para_info:JSON.stringify(author_info)
 							}

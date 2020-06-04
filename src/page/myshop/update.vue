@@ -18,6 +18,7 @@
 								clearable
 								v-model="selectProductCateValue" 
 								:options="productCateOptions"
+								@change="selectedCategory"
 								filterable
 							>
 						    </el-cascader>
@@ -238,8 +239,7 @@
 	} from "@/api/user";
 	import ueditor from "@/components/editor/editor.vue"; //富文本编辑器
 	import KindEditor from "@/components/Kindeditor"; //富文本编辑器 
-	import YanShare from "@/components/yanShare.vue"; //
-	import InfoShare from "@/components/infoShare.vue"; //
+	import HelpHint from "@/components/Helphint/helpHint.vue"; //
 	import AddShareDialog from "@/components/addShareDialog.vue"; //
 	import {
 		setToken,
@@ -372,12 +372,11 @@
             }
         },
 		components:{
-			'YanShare':YanShare,
-			'InfoShare':InfoShare,
 			'AddShareDialog':AddShareDialog,
 			'ueditor':ueditor,
 			'v-upload':upload,
 			'KindEditor':KindEditor,
+			'HelpHint':HelpHint,
 		},
         created(){
 			//传参初始化
@@ -781,26 +780,8 @@
 				}
 			},
 			
-            getUserList(){
-                let para = {
-                    pagesize:this.paginations.pageSize,
-                    page:this.paginations.pageIndex,
-					emall_id:'',
-					shop_type:this.shop_type,
-					lang:this.lang,
-                }
-				
-				//let.seller=Object.assign({},this.seller,new.data)
-                getEmallInfo(para).then(res => {
-                    this.loading = false;
-					console.log('getBizPara return:',res);
-                    this.paginations.total = parseInt(res.total);
-					
-                    //this.tableData = res.userList;
-                })
-				.catch(err=>{
-					console.log('getBizPara err:',err)
-				});
+            selectedCategory(){
+                console.log('selectedCategory:',this.selectProductCateValue)
             },
 			
 			query_goods_info(){
