@@ -19,6 +19,7 @@
 								v-model="selectProductCateValue" 
 								:options="productCateOptions"
 								@change="selectedCategory"
+								@visible-change="category_list_init"
 								filterable
 							>
 						    </el-cascader>
@@ -473,6 +474,9 @@
 			},
 			
 			category_list_init(){
+				if(this.productCateOptions.constructor == Array && this.productCateOptions.length> 0){
+					return 
+				}
 				var category_list=[]
 				//console.log('myshop update category_list_init goods_category:',this.goods_category)
 				var label = ''
