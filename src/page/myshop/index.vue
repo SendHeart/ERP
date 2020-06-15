@@ -1030,6 +1030,8 @@
 			let goods_para = JSON.stringify(this.list[goods_index])
 			let category_para = JSON.stringify(this.goods_category)
 			let shop_name = ''
+			let shop_account = getToken('Platform_shop_account')
+			let emall_id = getToken('Platform_id_shop')
 			for(let i=0;i<this.myshop_list.length;i++){
 				if(this.myshop_list[i]['value'] == this.shop_account){
 					shop_name = this.myshop_list[i]['label']
@@ -1042,9 +1044,9 @@
 			    query: {
 					goods_para:goods_para,
 					category_para:category_para,
-					platform_id:this.emall_id,
+					platform_id:this.emall_id>0?this.emall_id:emall_id,
 					shop_name:shop_name,
-					shop_account:this.shop_account,
+					shop_account:this.shop_account?this.shop_account:shop_account,
 				}
 			  });
 			  console.log('update_goods shop_account:',this.shop_account,' emall_id:',this.emall_id)
