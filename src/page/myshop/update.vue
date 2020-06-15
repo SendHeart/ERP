@@ -209,7 +209,18 @@
 			<el-table style="width: 100%;margin-top: 20px" :data="goods_sku_speclist" border>
 			<el-table-column :label="$t('commons.goods_sku_attr')" align="center" width="180">
 				<template slot-scope="scope">
+					<!--
 					<el-input v-model="scope.row.name" style="width: 150px"></el-input>
+					-->
+					<el-select v-model="scope.row.name" :placeholder="$t('commons.select')" @change="add_sku_spec(2,scope.row)" style="width: 100%;margin-left: 10px">
+						<el-option
+							v-for="item_attrlist in category_attr_list"
+							:key="item_attrlist.value"
+							:label="item_attrlist.label"
+							:value="item_attrlist.value"
+						>
+						</el-option>
+					</el-select>
 				</template>
 			</el-table-column>
 			<el-table-column :label="$t('commons.goods_sku_attrtype')" align="center" width="150">
@@ -450,7 +461,7 @@
         methods: {
 			sku_title_init(){
 				var sku_title_list = []
-				//console.log('sku_title_init:',this.goods_skulist_title)
+				console.log('sku_title_init:',this.goods_skulist_title)
 				if(this.goods_sku_speclist && this.goods_sku_speclist.constructor === Array){
 					sku_title_list.push(this.goods_skulist_title[0]) //保留前两个表头项
 					sku_title_list.push(this.goods_skulist_title[1])
@@ -467,7 +478,9 @@
 						sku_title_list.push(sku_title_inf)
 					}
 					for(var i=2;i<this.goods_skulist_title.length;i++){
-						sku_title_list.push(this.goods_skulist_title[i])
+						if(this.goods_skulist_title[i]['attr']!='spec'){
+							sku_title_list.push(this.goods_skulist_title[i])
+						}
 					}
 					this.goods_skulist_title = sku_title_list
 				}
@@ -584,6 +597,8 @@
 					this.setDialogData.sku_attr = sku_attr
 					this.setDialogData.sku_attr_type = sku_attr_type
 					console.log('add_sku_spec 商品属性修改 para:',para,' type:',type)
+					//更新表头
+					this.sku_title_init()
 				}
 			},
 			
@@ -633,9 +648,7 @@
 							}
 						}
 					}
-					
 				}
-			  
 			},
 			
 			sku_add(){
