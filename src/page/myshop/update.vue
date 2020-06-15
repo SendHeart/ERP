@@ -118,7 +118,7 @@
 				</div>
 			</el-row>
 		</div>
-		<!--
+	 
 		<div class="goods-attr">
 			<el-row :gutter="1" type="flex" class="row-bg el-row-two" justify="start">
 				<el-col :span="24">
@@ -147,7 +147,7 @@
 				</el-col>
 			</el-row>
 		</div>
-		-->
+		 
 		<div class="goods-desc">
 			<el-row :gutter="1" type="flex" class="row-bg el-row-two" justify="start">
 				<el-col :span="24">
@@ -185,7 +185,17 @@
 		</div>
 		<el-dialog :title="$t('commons.goods_sku_edit_attr')" :visible.sync="setDialogVisible" width="40%">
 			<span>{{$t('commons.goods_sku_attr')}}</span>
+			<!--
 			<el-input :placeholder="$t('commons.goods_sku_attrtype')" v-model="setDialogData.sku_attr" size="small" style="width: 30%;margin-left: 10px"></el-input>
+			-->
+			<el-select v-model="setDialogData.sku_attr" :placeholder="$t('commons.select')"  style="width: 20%;margin-left: 10px">
+				<el-option
+					v-for="item_attrlist in category_attr_list"
+					:key="item_attrlist.value"
+					:label="item_attrlist.label"
+					:value="item_attrlist.value">
+				</el-option>
+			</el-select>
 			<el-select v-model="setDialogData.sku_attr_type" :placeholder="$t('commons.select')"  style="width: 20%;margin-left: 10px">
 				<el-option
 					v-for="item_attrtype in sku_attrtype_options"
@@ -236,6 +246,7 @@
 		getMyShopGoodsList,
 		saveMyShopGoodsInfo,
 		getGoodsCategory,
+		getCategoryAttr,
 	} from "@/api/user";
 	import ueditor from "@/components/editor/editor.vue"; //富文本编辑器
 	import KindEditor from "@/components/Kindeditor"; //富文本编辑器 
@@ -350,6 +361,7 @@
 				],
 				goods_attr_list:[],
 				goods_attr_list_init:[],
+				category_attr_list:[],
 			  //需的信息
                 paginations: {
                     total: 0,        // 总数
@@ -477,11 +489,11 @@
 					category_info = {
 						label:label,
 						value:this.goods_category[i]['id'],
-						children:[]
+						//children:[]
 					 } 
 					
-					 if(this.goods_category[i]['down'] && this.goods_category[i]['down'].constructor===Array){
-						 
+					 if(this.goods_category[i]['down'] && this.goods_category[i]['down'].constructor===Array && this.goods_category[i]['down'].length>0){
+						 category_info['children'] = []
 						 for(let k=0;k<this.goods_category[i]['down'].length;k++){
 							if(this.lang=='zh'){
 								ch_label = this.goods_category[i]['down'][k]['name']
@@ -494,13 +506,13 @@
 								//children:[]
 							}
 							category_info['children'].push(ch_category_info)
-							//console.log('myshop update category_list_init category_info ch_label:',this.goods_category[i]['down'][k]['id'])
 						 }
 					 }
 					 
 					category_list.push(category_info)
 				}
 				this.productCateOptions = category_list 
+				console.log('myshop update category_list_init category_info productCateOptions:',this.productCateOptions)
 			},
 			
 			edit_goods_desc(){
@@ -544,11 +556,16 @@
 			
 			add_sku_spec(type=0,para={}){
 			  //this.setDialogVisible = !this.setDialogVisible;
+				console.log('add_sku_spec para:',para,' type:',type)
 				if(type == 1){ //商品属性添加
 					if(para.sku_attr_type == '1' && para.sku_attr){
+						console.log('add_sku_spec 文字 para:',para,' type:',type)
 						this.sku_add_attrc()
-					}else if(para.sku_attr_type == '2' && para.sku_attr_type){
+						
+					}else if(para.sku_attr_type == '2' && para.sku_attr ){
+						console.log('add_sku_spec 图片 para:',para,' type:',type)
 						this.sku_add_attrp()
+						
 					}else{
 						console.log('add_sku_spec para:',para)
 						this.$message({
@@ -556,13 +573,13 @@
 						  type: 'warning',
 						  duration: 1000
 						});
-						
 					}
 				} else if(type == 2){ //商品属性修改
 					let sku_attr = para.title
 					let sku_attr_type = para.type
 					this.setDialogData.sku_attr = sku_attr
 					this.setDialogData.sku_attr_type = sku_attr_type
+					console.log('add_sku_spec 商品属性修改 para:',para,' type:',type)
 				}
 			},
 			
@@ -694,7 +711,14 @@
 			},
 			
 			sku_add_attrp(){
-				var len = this.goods_sku_speclist.length
+				let len = 0 
+				if(this.goods_sku_speclist){
+					len = this.goods_sku_speclist.length
+				}else{
+					 this.goods_sku_speclist = []
+				}
+				
+				console.log('sku_add_attrc:',len,' sku speclist:',this.goods_sku_speclist)
 				let sku_spec_inf=
 				{
 					name:this.setDialogData.sku_attr,
@@ -702,6 +726,7 @@
 					value:"",
 					note:this.setDialogData.sku_attr+"说明",
 				}
+				
 				this.goods_sku_speclist.push(sku_spec_inf) 
 				console.log('sku_add_attrc:',this.goods_sku_speclist)
 				for(var i=0; i<this.goods_sku_list.length;i++){
@@ -781,7 +806,47 @@
 			},
 			
             selectedCategory(){
-                console.log('selectedCategory:',this.selectProductCateValue)
+                //console.log('selectedCategory:',this.selectProductCateValue)
+				 
+				let goods_category = 0
+				if(this.selectProductCateValue.constructor==Array){
+					goods_category = this.selectProductCateValue[this.selectProductCateValue.length - 1]
+				} 
+				if(goods_category!=0){
+					let para = {
+						username:this.username,
+						access_token:this.access_token,
+						shop_type:this.shop_type,
+						lang:this.lang,
+						goods_category:goods_category,
+						platform_id:this.emall_id,
+						type:0,
+					}
+					console.log('selectedCategory para:',para); 
+					getCategoryAttr(para).then(res => {
+						/*
+					    this.$message({
+					      message: '保存成功',
+					      type: 'success',
+					      duration: 1000
+					    });
+						*/
+						var result = res
+						let category_attr_list = []
+						for(let i=0;i<result.length;i++){
+							let category_attr_info = {
+								label:result[i],
+								value:result[i]
+							}
+							category_attr_list.push(category_attr_info)
+						}
+						this.category_attr_list = category_attr_list
+						console.log('selectedCategory category_attr_list:',this.category_attr_list); 
+					})
+					.catch(err=>{
+						console.log('selectedCategory err:',err)
+					})
+				}
             },
 			
 			query_goods_info(){
@@ -791,6 +856,7 @@
 					shop_type:this.shop_type,
 					lang:this.lang,
 					goods_id:this.goods_id,
+					emall_id:this.emall_id,
 					shop_account:this.shop_account,
 					shop_name:this.shop_name,
 					type:1,
@@ -811,22 +877,26 @@
 							this.goods_info['img'].push(result[0]['img'][k])
 						} 
 					}
-					this.goods_info['category'] = result[0]['category']
+					//this.goods_info['category'] = result[0]['category']
+					this.selectProductCateValue = result[0]['category']
 					this.goods_info['materialUrl'] = result[0]['materialUrl']
 					this.goods_info['name'] = result[0]['name']
 					this.goods_info['id'] = result[0]['id']
 					this.goods_info['sell_price'] = result[0]['sell_price']
 					this.goods_sku_list = result[0]['sku_list']?result[0]['sku_list']:null
+					this.goods_attr_list = result[0]['features']?result[0]['features']:null
 					this.goods_sku_speclist = result[0]['sku_speclist']?result[0]['sku_speclist']:null
 					this.goods_skulist_title = result[0]['skulist_title']?result[0]['skulist_title']:null
 					setTimeout(() => {
 						this.goods_desc = result[0]['desc']?result[0]['desc']:null
 					}, 1000);
 					
-					this.goods_attr_list = result[0]['attr_list']?result[0]['attr_list']:null
 					console.log('getMyShopGoodsList return:',res,' goods_desc:',this.goods_desc);
 					if(this.goods_skulist_title){
 						this.sku_title_init()
+					}
+					if(this.selectProductCateValue){
+						this.selectedCategory()
 					}
 			    })
 				.catch(err=>{
@@ -836,6 +906,10 @@
 			
 			save_goods_info(){
 				this.goods_info['name'] = this.goodsQuery['goodsTitle']
+				let goods_category = 0
+				if(this.selectProductCateValue.constructor==Array){
+					goods_category = this.selectProductCateValue[this.selectProductCateValue.length - 1]
+				} 
 				
 				let para = {
 					username:this.username,
@@ -844,9 +918,10 @@
 					lang:this.lang,
 					goods_id:this.goods_id,
 					goods_info:this.goods_info,
+					goods_category:goods_category,
 					goods_sku_list:this.goods_sku_list,
 					goods_desc:this.goods_desc,
-					//goods_attr_list:this.goods_attr_list,
+					goods_attr_list:this.goods_attr_list,
 					shop_account:this.shop_account,
 					shop_name:this.shop_name,
 					emall_id:this.emall_id,

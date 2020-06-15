@@ -181,6 +181,7 @@ const zh = {
 		emall_joining:'开通授权',
 		emall_joined:'我已开通',
 		base_info:'基本信息',
+		goods_info_update:'更新中',
 		goods_info_from:'商品来源',
 		goods_info_category:'原类目',
 		goods_info_deliverytype:'发货类型',

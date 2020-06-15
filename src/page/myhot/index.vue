@@ -82,7 +82,8 @@
 					<div style="margin-left:5px; display: flex;flex-direction: column;justify-content: flex-start;">
 						<p style="text-align: left;">{{scope.row.name}}</p>
 						<p style="text-align: left;" >
-							<el-button type="primary" size="mini" @click="html_view(scope.$index)">源链</el-button>
+							<el-button type="primary" size="mini" @click="html_view(scope.$index)">{{$t('commons.linkorg')}}</el-button>
+							<el-tag v-if="scope.row.status==2" type="warning">{{$t('commons.goods_info_update')}}</el-tag>
 						</p>
 					</div>
 				</div>

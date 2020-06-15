@@ -181,6 +181,7 @@ const zh = {
 	  emall_joining:'Authorizing',
 	  emall_joined:'Authorized',
 	  base_info:'Base Info',
+	  goods_info_update:'Updating',
 	  goods_info_from:'Info From ',
 	  goods_info_category:'Goods Category',
 	  goods_info_deliverytype:'Delivery Type',
