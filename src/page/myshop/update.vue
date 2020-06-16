@@ -592,11 +592,12 @@
 						});
 					}
 				} else if(type == 2){ //商品属性修改
-					let sku_attr = para.title
+					let sku_attr = para.title?para.title:para.name
 					let sku_attr_type = para.type
 					this.setDialogData.sku_attr = sku_attr
 					this.setDialogData.sku_attr_type = sku_attr_type
-					console.log('add_sku_spec 商品属性修改 para:',para,' type:',type)
+					
+					console.log('add_sku_spec 商品属性修改 para:',this.goods_sku_list)
 					//更新表头
 					this.sku_title_init()
 				}
@@ -648,6 +649,14 @@
 							}
 						}
 					}
+					//更新sku list 数据 value
+					for(let m=0;m<this.goods_sku_speclist.length;m++){
+						for(let n=0; n<this.goods_sku_list.length;n++){
+							this.goods_sku_list[n]['value'][m]['name'] = this.goods_sku_speclist[m]['name']
+							this.goods_sku_list[n]['value'][m]['type'] = this.goods_sku_speclist[m]['type']
+						}
+					}
+					console.log('edit_sku_spec 更新sku list 数据 value goods_sku_list:',this.goods_sku_list)
 				}
 			},
 			
