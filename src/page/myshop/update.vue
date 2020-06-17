@@ -409,7 +409,7 @@
 				var goods_para = JSON.parse(goods_query.goods_para)?JSON.parse(goods_query.goods_para):null
 				var category_para = JSON.parse(goods_query.category_para)?JSON.parse(goods_query.category_para):null
 				var goods_init_info = this.goods_init_info
-				this.goods_category = category_para?category_para:this.this.goods_category 
+				this.goods_category = category_para?category_para:this.goods_category 
 				//console.log('goods query category_para:',this.goods_category)
 				if(goods_para){
 					goods_init_info['name'] = goods_para['name']
