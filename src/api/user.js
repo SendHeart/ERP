@@ -226,6 +226,15 @@ export function getCategoryAttr(reqData) {
     })
 }
 
+export function getCategoryVariation(reqData) {
+    return request({
+      url:'/api/web_client/query_goods_variation',
+      method: 'post',
+      data: reqData
+    })
+}
+
+
 export function getMarketList(reqData) {
     return request({
       url:'/api/web_client/query_market_list',

@@ -19,50 +19,49 @@
         </el-button>
       </div>
       <div style="margin-top: 15px">
-        <el-form :inline="true" :model="listQuery" size="small" label-width="120px">
+		<el-form :inline="true" :model="listQuery" size="small" label-width="120px">
 			<el-form-item :label="$t('commons.goodsorg')">
 				<el-cascader
-				  clearable
-				  v-model="listQuery.goodsSupplyId"
-				  :options="goods_supply">
+				clearable
+				v-model="listQuery.goodsSupplyId"
+				:options="goods_supply">
 				</el-cascader>
 			</el-form-item>
 			<el-form-item :label="$t('commons.goodscate')">
-			  <el-cascader
-			    clearable
-			    v-model="listQuery.goodsCategoryId"
-			    :options="goods_category"
-				filterable>
-			  </el-cascader>
+			<el-cascader
+					clearable
+					v-model="listQuery.goodsCategoryId"
+					:options="goods_category"
+					filterable>
+				</el-cascader>
 			</el-form-item>
 			<el-form-item :label="$t('commons.storedate')">
 				<el-date-picker
-				      v-model="listQuery.storage_in"
-				      type="daterange"
-				      :start-placeholder="$t('commons.startdate')"
-				      :end-placeholder="$t('commons.enddate')"
-				      :default-time="['00:00:00', '23:59:59']">
+					v-model="listQuery.storage_in"
+					type="daterange"
+					:start-placeholder="$t('commons.startdate')"
+					:end-placeholder="$t('commons.enddate')"
+					:default-time="['00:00:00', '23:59:59']">
 				</el-date-picker>
 			</el-form-item>
 			<el-form-item :label="$t('commons.goodsname')">
-			    <el-input v-model="listQuery.productname" size="mini" style="width: 380px;"></el-input>
+				<el-input v-model="listQuery.productname" size="mini" style="width: 380px;"></el-input>
 			</el-form-item>
 			<el-form-item :label="$t('commons.goodsid')">
-			   <el-input v-model="listQuery.productid"  size="mini" ></el-input>
+				<el-input v-model="listQuery.productid"  size="mini" ></el-input>
 			</el-form-item>
         </el-form>
       </div>
     </el-card>
-	 
     <el-card class="operate-container" shadow="never">
       <el-button
-        class="btn-add"
-        @click="add_hot_goods()"
-		type="primary"
-        size="mini">
-         {{$t('commons.addbyself')}}
-      </el-button>
-	  <el-button type="primary" class="btn-add"  size="mini" @click="get_goods_list(2)"> {{$t('commons.exportexcel')}}</el-button>
+			class="btn-add"
+			@click="add_hot_goods()"
+			type="primary"
+			size="mini">
+			{{$t('commons.addbyself')}}
+		</el-button>
+		<el-button type="primary" class="btn-add"  size="mini" @click="get_goods_list(2)"> {{$t('commons.exportexcel')}}</el-button>
     </el-card>
     <div class="table-container">
 	<el-table ref="productTable"
@@ -90,7 +89,7 @@
 			</template>
         </el-table-column>
 		<el-table-column :label="$t('commons.goodsid')" width="130" align="center">
-		  <template slot-scope="scope">{{scope.row.goods_id}}</template>
+			<template slot-scope="scope">{{scope.row.goods_id}}</template>
 		</el-table-column>
 		<!--
         <el-table-column label="商品名称" align="center">
@@ -140,10 +139,10 @@
         </el-table-column>
         <el-table-column :label="$t('commons.goods_sku_store')" width="100" align="center">
           <template slot-scope="scope">
-			 <p>{{scope.row.storenum}}</p>
-			 <!--
-			 <el-button type="primary" icon="el-icon-edit" @click="handleShowSkuEditDialog(scope.$index, scope.row)" circle></el-button>
-			 -->
+			<p>{{scope.row.storenum}}</p>
+			<!--
+			<el-button type="primary" icon="el-icon-edit" @click="handleShowSkuEditDialog(scope.$index, scope.row)" circle></el-button>
+			-->
           </template>
         </el-table-column>
         <el-table-column :label="$t('commons.goods_sale')" width="100" align="center">
@@ -172,13 +171,13 @@
                size="mini"
                type="primary"
                @click="add_myshop(scope.$index, scope.row)">{{$t('commons.addshop')}}
-             </el-button>
-			 <el-button
-			   size="mini"
-			   type="danger"
-			   @click="delete_mywarehouse(scope.$index, scope.row)">{{$t('commons.deleted')}}
-			 </el-button>
-            </p>			 
+			</el-button>
+			<el-button
+				size="mini"
+				type="danger"
+				@click="delete_mywarehouse(scope.$index, scope.row)">{{$t('commons.deleted')}}
+				</el-button>
+			</p>			 
           </template>
         </el-table-column>
 	</el-table>
@@ -601,20 +600,20 @@
 				keyword:''
 			},
 		rules: {
-		    productLink: [
+			productLink: [
 				{ required: true, trigger: 'blur', validator: validUrl } //这里需要用到全局变量
 			],
 			goodsFromId: [
-				 { required: true, message: '请选择来源', trigger: 'change' }
+				{ required: true, message: '请选择来源', trigger: 'change' }
 			],
 			productName: [
-				 { required: true, message: 'Name', trigger: 'change' }
+				{ required: true, message: 'Name', trigger: 'change' }
 			],
 			productId: [
-				 { required: true, message: 'SKU', trigger: 'change' }
+				{ required: true, message: 'SKU', trigger: 'change' }
 			],
 		},
-		 
+				 
         operates: [
           {
             label: "商品上架",
@@ -1130,6 +1129,14 @@
 		},
 	
 		add_myshop(index,row){
+			if(row.status == 2){
+				this.$message({
+					message: 'Goods Info Updating!',
+					type: 'warning',
+					duration: 2000
+				});
+				return
+			}
 			this.addshopgoodsInfo.dialogVisible = !this.addshopgoodsInfo.dialogVisible
 			let sell_price = parseFloat(row.price)*100
 			for(let i=0;i<this.addshopgoodsInfo.product_list.length;i++){

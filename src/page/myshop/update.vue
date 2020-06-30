@@ -13,24 +13,82 @@
 							<p class="emall-detail-title" style="font-size: 18px;font-weight: bolder;"><br></p>
 						</div>
 						<el-form :label-position="labelPosition" label-width="80px" :model="goodsQuery">
-						  <el-form-item :label="$t('commons.goods_info_categorylist')">
-						    <el-cascader
-								clearable
-								v-model="selectProductCateValue" 
-								:options="productCateOptions"
-								@change="selectedCategory"
-								@visible-change="category_list_init"
-								filterable
-							>
-						    </el-cascader>
-						  </el-form-item>
-						  <el-form-item :label="$t('commons.goods_info_title')">
-						    <el-input v-model="goodsQuery.goodsTitle" size="small"></el-input>
-						  </el-form-item>
+							<div style="display: flex;flex-direction: row;justify-content: flex-start;">
+							<el-form-item :label="$t('commons.goods_info_brand')" style="margin-right: 30px;">
+								<el-input v-model="goodsQuery.goodsBrand" size="small"></el-input>
+							</el-form-item>
+							<el-form-item :label="$t('commons.goods_info_factory')">
+								<el-input v-model="goodsQuery.goodsFactory" size="small"></el-input>
+							</el-form-item>
+							</div>
+							<div style="display: flex;flex-direction: row;justify-content: flex-start;">
+							<el-form-item :label="$t('commons.goods_info_categorylist')" style="margin-right: 30px;">
+								<el-cascader
+									clearable
+									v-model="selectProductCateValue" 
+									:options="productCateOptions"
+									:props="{checkStrictly: true }"
+									@change="selectedCategory"
+									@visible-change="category_list_init"
+									filterable
+									>
+								</el-cascader>
+							</el-form-item>
+							<el-form-item :label="$t('commons.goods_info_itemtype')">
+								<el-input v-model="goodsQuery.goodsItemType" size="small"></el-input>
+							</el-form-item>
+							</div>
+							<div style="display: flex;flex-direction: row;justify-content: flex-start;">
+							<el-form-item :label="$t('commons.goods_info_goods_code')" style="margin-right: 30px;">
+								<el-input v-model="goodsQuery.goodsCodeValue" size="small"></el-input>
+							</el-form-item>
+							<el-form-item :label="$t('commons.goods_info_goods_codetype')" >
+								<el-cascader
+									clearable
+									v-model="selectProductCodeType" 
+									:options="productCodeTypeOptions"
+									:props="{checkStrictly: false }"
+									filterable
+									>
+								</el-cascader>
+							</el-form-item>
+							</div>
+							<el-form-item :label="$t('commons.goods_info_title')">
+								<el-input v-model="goodsQuery.goodsTitle" size="small"></el-input>
+							</el-form-item>
+							
+							<el-form-item :label="$t('commons.goods_info_bulletpoint')">
+								<div style="display: flex;flex-direction: row;justify-content: flex-start;">
+								<el-input
+									type="textarea"
+									:rows="5"
+									placeholder=""
+									v-model="goodsQuery.goodsBulletPoint"
+									style="width: 90%;">
+								</el-input>
+								<el-tooltip content="每行最多100字符,最多5行" placement="top" style="margin-left:10px;display: flex;flex-direction: row;justify-content: center;">
+									<el-button type="info" icon="el-icon-question" circle style="margin-left:10px;align-items: center;text-align: center;width: 30px;line-height: 30px;height: 30px;"></el-button>
+								</el-tooltip>
+								</div>
+							</el-form-item>
+							
+							<el-form-item :label="$t('commons.goods_info_searchterms')">
+								<div style="display: flex;flex-direction: row;justify-content: flex-start;">
+								<el-input
+									type="textarea"
+									:rows="2"
+									placeholder=""
+									v-model="goodsQuery.goodsSearchTerms"
+									style="width: 90%;">
+								</el-input>
+								<el-tooltip content="最多5个,分隔" placement="top" style="display: flex;flex-direction: row;justify-content: center;">
+									<el-button type="info" icon="el-icon-question" circle style="margin-left:10px;align-items: center;text-align: center;width: 30px; line-height: 30px;height: 30px;"></el-button>
+								</el-tooltip>
+								</div>
+							</el-form-item>
 						</el-form>
 					</div>
-				</el-col>
-				 
+				</el-col>		 
 			</el-row>
 		</div>
 		
@@ -77,14 +135,14 @@
 				</el-col>
 				<div class="table-container">
 					<el-table ref="productTable"
-				            :data="goods_sku_list"
-				            style="width: 100%;"
-							:stripe="true"
-							:row-style="tableRowStyle"
-							:header-cell-style="tableHeaderColor"
-				            @selection-change="tableSelectionChange"
-				            v-loading="listLoading"
-				            border>
+						:data="goods_sku_list"
+						style="width: 100%;"
+						:stripe="true"
+						:row-style="tableRowStyle"
+						:header-cell-style="tableHeaderColor"
+						@selection-change="tableSelectionChange"
+						v-loading="listLoading"
+						border>
 						<el-table-column type="selection" width="60" align="center"></el-table-column>
 						<el-table-column v-for="(item_title,title_index) in goods_skulist_title" :key="title_index" :label="item_title.title" :prop="item_title.key" align="center" :width="item_title.width" @click="add_sku_spec(2,item_title)">
 							<template slot-scope="scope">
@@ -112,14 +170,13 @@
 							<el-button size="mini" type="danger" @click="sku_delete(scope.$index, scope.row)">
 							{{$t('commons.deleted')}}
 							</el-button>
-				        </p>
+						</p>
 						</template>
 						</el-table-column>
 				</el-table>
 				</div>
 			</el-row>
 		</div>
-	 
 		<div class="goods-attr">
 			<el-row :gutter="1" type="flex" class="row-bg el-row-two" justify="start">
 				<el-col :span="24">
@@ -132,9 +189,20 @@
 						</el-row>					 
 					</div>
 					<el-row :gutter="20" class="el-row" type="flex">
-						<el-col :span="3" v-for="(item_attr,attr_index) in goods_attr_list" :key="attr_index" style="margin-top:25px;" class="el-col">
+						<el-col :span="4" v-for="(item_attr,attr_index) in goods_attr_list" :key="attr_index" style="margin-top:25px;" class="el-col">
 							<span style="margin-left: 10px;font-size: 12px;">属性:</span>
+							<!--
 							<el-input v-model="item_attr.name" style="margin-left: 5px;width: 50%;" :placeholder=" $t('commons.input')"></el-input>
+							-->
+							<el-select v-model="item_attr.name" :placeholder="$t('commons.select')"  style="width: 60%;margin-left: 10px;" @change="selectedAttr(item_attr.name)">
+								<el-option
+									v-for="(item_attrlist,item_attrlist_index ) in category_attr_list"
+									:key="item_attrlist_index"
+									:label="item_attrlist.label"
+									:value="item_attrlist.value"
+									>
+								</el-option>
+							</el-select>
 							<el-button style="margin-left: 5px;" icon="el-icon-delete" type="primary" @click="delete_goods_attr(attr_index)"></el-button>
 							<div v-for="(item_attrv,attrv_index) in item_attr.value" :key="attrv_index" style="display: flex;flex-direction: row;justify-content: flex-start;margin-top:5px;width: 100%;">
 								<el-input v-model="goods_attr_list[attr_index]['value'][attrv_index]" style="margin-left: 5px;width:100%;" :placeholder=" $t('commons.input')"></el-input>
@@ -147,8 +215,7 @@
 					</el-row>
 				</el-col>
 			</el-row>
-		</div>
-		 
+		</div>	 
 		<div class="goods-desc">
 			<el-row :gutter="1" type="flex" class="row-bg el-row-two" justify="start">
 				<el-col :span="24">
@@ -191,7 +258,7 @@
 			-->
 			<el-select v-model="setDialogData.sku_attr" :placeholder="$t('commons.select')"  style="width: 20%;margin-left: 10px">
 				<el-option
-					v-for="item_attrlist in category_attr_list"
+					v-for="item_attrlist in category_variation_list"
 					:key="item_attrlist.value"
 					:label="item_attrlist.label"
 					:value="item_attrlist.value">
@@ -214,7 +281,7 @@
 					-->
 					<el-select v-model="scope.row.name" :placeholder="$t('commons.select')" @change="add_sku_spec(2,scope.row)" style="width: 100%;margin-left: 10px">
 						<el-option
-							v-for="item_attrlist in category_attr_list"
+							v-for="item_attrlist in category_variation_list"
 							:key="item_attrlist.value"
 							:label="item_attrlist.label"
 							:value="item_attrlist.value"
@@ -243,29 +310,30 @@
 				</p>
 			</template>
 			</el-table-column>
-		  </el-table>
-		  <span slot="footer" class="dialog-footer">
-		    <el-button @click="setDialogVisible = false" size="small">取 消</el-button>
-		    <el-button type="primary" @click="edit_sku_spec(1,goods_sku_speclist)" size="small">确 定</el-button>
-		  </span>
+		</el-table>
+			<span slot="footer" class="dialog-footer">
+				<el-button @click="setDialogVisible = false" size="small">取 消</el-button>
+				<el-button type="primary" @click="edit_sku_spec(1,goods_sku_speclist)" size="small">确 定</el-button>
+			</span>
 		</el-dialog>
 	</div>
 </template>
 
 <script>
     import { 
-		getEmallInfo,
+		//getEmallInfo,
 		getMyShopGoodsList,
 		saveMyShopGoodsInfo,
-		getGoodsCategory,
+		//getGoodsCategory,
 		getCategoryAttr,
+		getCategoryVariation,
 	} from "@/api/user";
 	import ueditor from "@/components/editor/editor.vue"; //富文本编辑器
 	import KindEditor from "@/components/Kindeditor"; //富文本编辑器 
 	import HelpHint from "@/components/Helphint/helpHint.vue"; //
 	import AddShareDialog from "@/components/addShareDialog.vue"; //
 	import {
-		setToken,
+		//setToken,
 		getToken,
 	} from '@/utils/auth';
 	import { 
@@ -296,6 +364,13 @@
 		goodsSupplyId:null,
 		storage_in:null,
 		storage_out:null,
+		goodsBrand:null,
+		goodsFactory:null,
+		goodsBulletPoint:null,
+		goodsSearchTerms:null,
+		goodsItemType:null,
+		goodsCodeValue:null,
+		goodsCodeType:null,
 	};
 	
 	let moment = require("moment");
@@ -317,6 +392,29 @@
 				goodsQuery: Object.assign({}, defaultGoodsQuery),
 				selectProductCateValue: null,
 				productCateOptions: [],
+				selectProductCodeType: null,
+				productCodeTypeOptions:[
+					{
+						value: 'UPC',
+						label: 'UPC'
+					}, 
+					{
+						value: 'EAN',
+						label: 'EAN'
+					}, 
+					{
+						value: 'GTIN',
+						label: 'GTIN'
+					}, 
+					{
+						value: 'GCID',
+						label: 'GCID'
+					}, 
+					{
+						value: 'ASIN',
+						label: 'ASIN'
+					}, 
+				],
 				fileList: [],
 				listLoading: false,
 				multipleSelection: [],
@@ -374,7 +472,8 @@
 				goods_attr_list:[],
 				goods_attr_list_init:[],
 				category_attr_list:[],
-			  //需的信息
+				category_variation_list:[],
+				//需的信息
                 paginations: {
                     total: 0,        // 总数
                     pageIndex: 1,  // 当前位于哪页
@@ -465,7 +564,7 @@
 				if(this.goods_sku_speclist && this.goods_sku_speclist.constructor === Array){
 					sku_title_list.push(this.goods_skulist_title[0]) //保留前两个表头项
 					sku_title_list.push(this.goods_skulist_title[1])
-					for(var i=0;i<this.goods_sku_speclist.length;i++){
+					for(let i=0;i<this.goods_sku_speclist.length;i++){
 						let width = this.goods_sku_speclist[i]['type']=='1'?200:230
 						let sku_title_inf = { 
 							title: this.goods_sku_speclist[i]['name'], 
@@ -477,7 +576,7 @@
 						}
 						sku_title_list.push(sku_title_inf)
 					}
-					for(var i=2;i<this.goods_skulist_title.length;i++){
+					for(let i=2;i<this.goods_skulist_title.length;i++){
 						if(this.goods_skulist_title[i]['attr']!='spec'){
 							sku_title_list.push(this.goods_skulist_title[i])
 						}
@@ -507,15 +606,15 @@
 						label:label,
 						value:this.goods_category[i]['id'],
 						//children:[]
-					 } 
+					} 
 					
-					 if(this.goods_category[i]['down'] && this.goods_category[i]['down'].constructor===Array && this.goods_category[i]['down'].length>0){
-						 category_info['children'] = []
-						 for(let k=0;k<this.goods_category[i]['down'].length;k++){
+					if(this.goods_category[i]['down'] && this.goods_category[i]['down'].constructor===Array && this.goods_category[i]['down'].length>0){
+						category_info['children'] = []
+						for(let k=0;k<this.goods_category[i]['down'].length;k++){
 							if(this.lang=='zh'){
 								ch_label = this.goods_category[i]['down'][k]['name']
 							} else {
-							 	ch_label = this.goods_category[i]['down'][k]['name_en']
+								ch_label = this.goods_category[i]['down'][k]['name_en']
 							}
 							ch_category_info = {
 								label:ch_label,
@@ -523,9 +622,8 @@
 								//children:[]
 							}
 							category_info['children'].push(ch_category_info)
-						 }
-					 }
-					 
+						}
+					} 
 					category_list.push(category_info)
 				}
 				this.productCateOptions = category_list 
@@ -545,9 +643,9 @@
 			
 			delete_goods_attr(attr_index){
 				this.$confirm('是否要进行删除操作?', '提示', {
-				  confirmButtonText: '确定',
-				  cancelButtonText: '取消',
-				  type: 'warning'
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+					type: 'warning'
 				}).then(() => {
 					this.goods_attr_list.splice(attr_index,1)
 				});
@@ -555,9 +653,9 @@
 			
 			delete_attr_value(attr_index,attrv_index){
 				this.$confirm('是否要进行删除操作?', '提示', {
-				  confirmButtonText: '确定',
-				  cancelButtonText: '取消',
-				  type: 'warning'
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+					type: 'warning'
 				}).then(() => {
 					this.goods_attr_list[attr_index]['value'].splice(attrv_index,1)
 				});
@@ -572,7 +670,7 @@
 			},
 			
 			add_sku_spec(type=0,para={}){
-			  //this.setDialogVisible = !this.setDialogVisible;
+			//this.setDialogVisible = !this.setDialogVisible;
 				console.log('add_sku_spec para:',para,' type:',type)
 				if(type == 1){ //商品属性添加
 					if(para.sku_attr_type == '1' && para.sku_attr){
@@ -586,9 +684,9 @@
 					}else{
 						console.log('add_sku_spec para:',para)
 						this.$message({
-						  message: 'SKU属性更新失败',
-						  type: 'warning',
-						  duration: 1000
+							message: 'SKU属性更新失败',
+							type: 'warning',
+							duration: 1000
 						});
 					}
 				} else if(type == 2){ //商品属性修改
@@ -606,9 +704,9 @@
 			delete_sku_spec(sku_speclist_index){
 				//删除表头项
 				this.$confirm('是否要进行删除操作?', '提示', {
-				  confirmButtonText: '确定',
-				  cancelButtonText: '取消',
-				  type: 'warning'
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+					type: 'warning'
 				}).then(() => {
 					//删除数据项
 					for(let i=0; i<this.goods_sku_list.length;i++){
@@ -680,6 +778,7 @@
 				var current_sku_no = '' 
 				if(this.goods_sku_list[0]){
 					current_sku_no = this.goods_sku_list[0].sku_no+'_'+this.goods_sku_list.length
+					sku_inf['platform_skuno'] = this.goods_sku_list[0].platform_skuno
 					sku_inf['market_price'] = this.goods_sku_list[0].market_price
 					sku_inf['sell_price'] = this.goods_sku_list[0].sell_price
 					sku_inf['tax_rate'] = this.goods_sku_list[0].tax_rate
@@ -716,7 +815,7 @@
 				//添加SKU属性到表头
 				if(this.goods_sku_speclist){
 					var sku_title_list = []
-					for(var i=0;i<len+2;i++){
+					for(let i=0;i<len+2;i++){
 						sku_title_list.push(this.goods_skulist_title[i])
 					}
 					let sku_title_inf = {
@@ -728,7 +827,7 @@
 						width:200 ,
 					}
 					sku_title_list.push(sku_title_inf)
-					for(var i=len+2;i<this.goods_skulist_title.length;i++){
+					for(let i=len+2;i<this.goods_skulist_title.length;i++){
 						sku_title_list.push(this.goods_skulist_title[i])
 					}
 					this.goods_skulist_title = sku_title_list
@@ -741,7 +840,7 @@
 				if(this.goods_sku_speclist){
 					len = this.goods_sku_speclist.length
 				}else{
-					 this.goods_sku_speclist = []
+					this.goods_sku_speclist = []
 				}
 				
 				console.log('sku_add_attrc:',len,' sku speclist:',this.goods_sku_speclist)
@@ -787,20 +886,20 @@
 			},
 			
 			set_main_image(index){
-				 for(var i=0;i<this.goods_info['img'].length;i++){
-					 if(i==index){
-						 this.goods_info['img'][i]['type'] = '1'
-					 }else{
-						 this.goods_info['img'][i]['type'] = ''
-					 }
-				 } 
+				for(var i=0;i<this.goods_info['img'].length;i++){
+					if(i==index){
+						this.goods_info['img'][i]['type'] = '1'
+					}else{
+						this.goods_info['img'][i]['type'] = ''
+					}
+				} 
 			},
 			
 			delete_image(index){
 				this.$confirm('是否要进行删除操作?', '提示', {
-				  confirmButtonText: '确定',
-				  cancelButtonText: '取消',
-				  type: 'warning'
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+					type: 'warning'
 				}).then(() => {
 					if (this.goods_info['img'][index]) {
 						this.goods_info['img'].splice(index,1)
@@ -818,8 +917,7 @@
 					}
 					this.goods_info['img'].push(upload_img) 
 				}
-			},
-			  
+			},	  
 			upload_sku_image(file, fileList,para) {
 				this.fileList = fileList.slice(-1);
 				console.log('add_image file:',file,' fileList:',fileList,' para:',para)
@@ -833,7 +931,6 @@
 			
             selectedCategory(){
                 //console.log('selectedCategory:',this.selectProductCateValue)
-				 
 				let goods_category = 0
 				if(this.selectProductCateValue.constructor==Array){
 					goods_category = this.selectProductCateValue[this.selectProductCateValue.length - 1]
@@ -849,6 +946,33 @@
 						type:0,
 					}
 					console.log('selectedCategory para:',para); 
+					
+					//商品类目变体信息
+					getCategoryVariation(para).then(res => {
+						/*
+					    this.$message({
+					      message: '保存成功',
+					      type: 'success',
+					      duration: 1000
+					    });
+						*/
+						var result = res
+						let category_variation_list = []
+						for(let i=0;i<result.length;i++){
+							let category_var_info = {
+								label:result[i]['var_name']?result[i]['var_name']:result[i]['var_name_en'],
+								value:result[i]['var_name_en']
+							}
+							category_variation_list.push(category_var_info)
+						}
+						this.category_variation_list = category_variation_list
+						console.log('selectedCategory category_variation_list:',this.category_variation_list); 
+					})
+					.catch(err=>{
+						console.log('selectedCategory variation err:',err)
+					})
+					
+					//商品类目属性
 					getCategoryAttr(para).then(res => {
 						/*
 					    this.$message({
@@ -861,8 +985,9 @@
 						let category_attr_list = []
 						for(let i=0;i<result.length;i++){
 							let category_attr_info = {
-								label:result[i],
-								value:result[i]
+								label:result[i]['attr_name']?result[i]['attr_name']:result[i]['attr_en'],
+								value:result[i]['attr_en'],
+								is_selected:false,
 							}
 							category_attr_list.push(category_attr_info)
 						}
@@ -875,8 +1000,30 @@
 				}
             },
 			
+			selectedAttr(attr_name=''){
+				//console.log('selectedAttr:',this.category_attr_list)
+				if(attr_name!=''){
+					/*
+					for(let i=0;i<this.category_attr_list.length;i++){
+						if(this.category_attr_list[i]['value'] == attr_name){
+							if(this.category_attr_list[i]['is_selected'] == true){
+								this.$message({
+								  message: this.$t('commons.failed'),
+								  type: 'warning',
+								  duration: 2000
+								});
+							}else{
+								this.category_attr_list[i]['is_selected'] = true
+							}
+						}
+					}
+					*/
+					console.log('selectedAttr attr_name:',attr_name,' category_attr_list:',this.category_attr_list); 
+				}
+			},
+			
 			query_goods_info(){
-			    let para = {
+				let para = {
 					username:this.username,
 					access_token:this.access_token,
 					shop_type:this.shop_type,
@@ -886,9 +1033,9 @@
 					shop_account:this.shop_account,
 					shop_name:this.shop_name,
 					type:1,
-			    }
+				}
 				console.log('getMyShopGoodsList para:',para); 
-			    getMyShopGoodsList(para).then(res => {
+				getMyShopGoodsList(para).then(res => {
 					/*
 			        this.$message({
 			          message: '保存成功',
@@ -898,13 +1045,15 @@
 					*/
 					var result = res.result
 					if(result[0]['img'] && result[0]['img'].constructor === Array){
-						 this.goods_info['img']=[]
+						this.goods_info['img']=[]
 						for(var k=0;k<result[0]['img'].length;k++){
 							this.goods_info['img'].push(result[0]['img'][k])
 						} 
 					}
 					//this.goods_info['category'] = result[0]['category']
 					this.selectProductCateValue = result[0]['category']
+					this.selectProductCodeType = result[0]['goodsCodeType']
+					
 					this.goods_info['materialUrl'] = result[0]['materialUrl']
 					this.goods_info['name'] = result[0]['name']
 					this.goods_info['id'] = result[0]['id']
@@ -913,6 +1062,13 @@
 					this.goods_attr_list = result[0]['features']?result[0]['features']:null
 					this.goods_sku_speclist = result[0]['sku_speclist']?result[0]['sku_speclist']:null
 					this.goods_skulist_title = result[0]['skulist_title']?result[0]['skulist_title']:null
+					this.goodsQuery['goodsBrand'] = result[0]['goodsBrand']
+					this.goodsQuery['goodsFactory'] = result[0]['goodsFactory']
+					this.goodsQuery['goodsBulletPoint'] = result[0]['goodsBulletPoint']
+					this.goodsQuery['goodsSearchTerms'] = result[0]['goodsSearchTerms']
+					this.goodsQuery['goodsItemType'] = result[0]['goodsItemType']
+					this.goodsQuery['goodsCodeType'] = result[0]['goodsCodeType']
+					this.goodsQuery['goodsCodeValue'] = result[0]['goodsCodeValue']
 					setTimeout(() => {
 						this.goods_desc = result[0]['desc']?result[0]['desc']:null
 					}, 1000);
@@ -924,7 +1080,7 @@
 					if(this.selectProductCateValue){
 						this.selectedCategory()
 					}
-			    })
+				})
 				.catch(err=>{
 					console.log('getMyShopGoodsList err:',err)
 				});
@@ -933,8 +1089,13 @@
 			save_goods_info(){
 				this.goods_info['name'] = this.goodsQuery['goodsTitle']
 				let goods_category = 0
+				let goods_code_type = ''
+				console.log('save_goods_info selectProductCodeType:',this.selectProductCodeType)
 				if(this.selectProductCateValue.constructor==Array){
 					goods_category = this.selectProductCateValue[this.selectProductCateValue.length - 1]
+				} 
+				if(this.selectProductCodeType.constructor==Array){
+					goods_code_type = this.selectProductCodeType[this.selectProductCodeType.length - 1]
 				} 
 				
 				let para = {
@@ -947,6 +1108,13 @@
 					goods_category:goods_category,
 					goods_sku_list:this.goods_sku_list,
 					goods_desc:this.goods_desc,
+					goods_brand:this.goodsQuery['goodsBrand'],
+					goods_factory:this.goodsQuery['goodsFactory'],
+					goods_bullet_point:this.goodsQuery['goodsBulletPoint'],
+					goods_search_terms:this.goodsQuery['goodsSearchTerms'],
+					goods_item_type:this.goodsQuery['goodsItemType'],
+					goods_code_type:goods_code_type,
+					goods_code_value:this.goodsQuery['goodsCodeValue'],
 					goods_attr_list:this.goods_attr_list,
 					shop_account:this.shop_account,
 					shop_name:this.shop_name,
@@ -954,11 +1122,11 @@
 				}
 				console.log('save_goods_info para:',para);
 				saveMyShopGoodsInfo(para).then(res => {
-				    this.$message({
-				      message: 'Success',
-				      type: 'success',
-				      duration: 1000
-				    });
+					this.$message({
+						message: 'Success',
+						type: 'success',
+						duration: 1000
+					});
 					console.log('save_goods_info return:',res);
 				})
 				.catch(err=>{
@@ -966,10 +1134,10 @@
 				});
 			},
 			sku_delete(index, row){
-			  this.$confirm('是否要进行删除操作?', '提示', {
-			    confirmButtonText: '确定',
-			    cancelButtonText: '取消',
-			    type: 'warning'
+				this.$confirm('是否要进行删除操作?', '提示', {
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+					type: 'warning'
 				}).then(() => {
 					if (row) {
 						this.goods_sku_list.splice(index, 1)
@@ -988,15 +1156,15 @@
 			},
 			
 			//设置表格行的样式
-			 tableRowStyle({row,rowIndex}){
-			    return 'background-color:#FFF;font-size:12px;borderColor: #F2F2F2';
-			 },
+			tableRowStyle({row,rowIndex}){
+				return 'background-color:#FFF;font-size:12px;borderColor: #F2F2F2';
+			},
 			//设置表头行的样式
 			tableHeaderColor({row,column,rowIndex,columnIndex}){
 					return 'background:#BBBBBB;color:#333;borderColor: #FFFFFF;font-size:14px;' ;
 			},
 			tableSelectionChange(val) {
-			  this.multipleSelection = val;
+				this.multipleSelection = val;
 			},
 			
 			go_back(){
@@ -1037,9 +1205,9 @@
 		flex-wrap: wrap
 	}
 	.el-col {
-	    border-radius: 4px;
-	    align-items: stretch;
-	    margin-bottom: 10px;
+		border-radius: 4px;
+		align-items: stretch;
+		margin-bottom: 10px;
 	}
 	
    .emall-detail{

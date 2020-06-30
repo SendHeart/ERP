@@ -36,6 +36,7 @@
 								clearable
 								v-model="selectProductCateValue" 
 								:options="goods_category"
+								:props="{checkStrictly: true }"
 								filterable
 							>
 						    </el-cascader>

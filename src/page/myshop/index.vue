@@ -1,85 +1,85 @@
-<template> 
-  <div class="container">
-    <el-card class="filter-container" shadow="never">
-      <div>
-        <i class="el-icon-search"></i>
-        <span>{{$t('commons.search')}}</span>
-        <el-button
-          style="float: right"
-          @click="search()"
-          type="primary"
-          size="small">
-          {{$t('commons.findresult')}}
-        </el-button>
-        <el-button
-          style="float: right;margin-right: 15px"
-          @click="handleResetSearch()"
-          size="small">
-          {{$t('commons.reset')}}
-        </el-button>
+<template>
+	<div class="container">
+	<el-card class="filter-container" shadow="never">
+	<div>
+		<i class="el-icon-search"></i>
+		<span>{{$t('commons.search')}}</span>
+		<el-button
+			style="float: right"
+			@click="search()"
+			type="primary"
+			size="small">
+			{{$t('commons.findresult')}}
+		</el-button>
+		<el-button
+			style="float: right;margin-right: 15px"
+			@click="handleResetSearch()"
+			size="small">
+			{{$t('commons.reset')}}
+		</el-button>
       </div>
       <div style="margin-top: 15px">
         <el-form :inline="true" :model="listQuery" size="small" label-width="120px">
 			<el-form-item :label="$t('commons.emallplatform')">
 				<el-cascader
-				  clearable
-				  v-model="listQuery.emallId"
-				  :options="platform_list">
+					clearable
+					v-model="listQuery.emallId"
+					:options="platform_list">
 				</el-cascader>
 			</el-form-item>
 			<el-form-item :label="$t('commons.myshop')">
 				<el-cascader
-				  clearable
-				  v-model="listQuery.shopAccount"
-				  :options="myshop_list">
+					clearable
+					v-model="listQuery.shopAccount"
+					:options="myshop_list">
 				</el-cascader>
 			</el-form-item>
 			<el-form-item :label="$t('commons.goodscate')">
-			  <el-cascader
-			    clearable
-			    v-model="listQuery.goodsCategoryId"
-			    :options="goods_category"
+			<el-cascader
+				clearable
+				v-model="listQuery.goodsCategoryId"
+				:options="goods_category"
 				filterable>
-			  </el-cascader>
+			</el-cascader>
 			</el-form-item>
 			<el-form-item :label="$t('commons.storedate')">
 				<el-date-picker
-				      v-model="listQuery.storage_in"
-				      type="daterange"
-				      :start-placeholder="$t('commons.startdate')"
-				      :end-placeholder="$t('commons.enddate')"
-				      :default-time="['00:00:00', '23:59:59']">
+					v-model="listQuery.storage_in"
+					type="daterange"
+					:start-placeholder="$t('commons.startdate')"
+					:end-placeholder="$t('commons.enddate')"
+					:default-time="['00:00:00', '23:59:59']">
 				</el-date-picker>
 			</el-form-item>
 			<el-form-item :label="$t('commons.goodsname')">
-			    <el-input v-model="listQuery.productName" size="small" style="width: 380px;"></el-input>
+				<el-input v-model="listQuery.productName" size="small" style="width: 380px;"></el-input>
 			</el-form-item>
 			<el-form-item :label="$t('commons.goodsid')">
-			   <el-input v-model="listQuery.productid"  size="small" ></el-input>
+				<el-input v-model="listQuery.productid"  size="small" ></el-input>
 			</el-form-item>
         </el-form>
       </div>
     </el-card>
 	<el-card class="operate-container" shadow="never">
-	  <el-button
-	    class="btn-add"
-	    @click="platform_auth()"
-		type="primary"
-	    size="mini">
-	     {{$t('commons.shopadd')}}
-	  </el-button>
+		<el-button
+			class="btn-add"
+			@click="platform_auth()"
+			type="primary"
+			size="mini">
+			{{$t('commons.shopadd')}}
+		</el-button>
 	</el-card>
     <div class="table-container">
 	<el-table ref="productTable"
-                :data="list"
-                style="width: 100%;"
-				:stripe="true"
-				:row-style="tableRowStyle"
-				:header-cell-style="tableHeaderColor"
-                @selection-change="handleSelectionChange"
-                border>
-        <el-table-column type="selection" width="60" align="center"></el-table-column>
-        <el-table-column :label="$t('commons.goodsname')" width="380" align="center">
+			:data="list"
+			style="width: 100%;"
+			:stripe="true"
+			:row-style="tableRowStyle"
+			:header-cell-style="tableHeaderColor"
+			@selection-change="handleSelectionChange"
+			border>
+		<el-table-column type="selection" width="60" align="center"></el-table-column>
+		<el-table-column :label="$t('commons.goodsname')" width="380" align="center">
 			<template slot-scope="scope">
 				<div style="display: flex;flex-direction: row;justify-content: flex-start;" >
 					<img style="height: 80px" :src="scope.row.img[0].url">
@@ -93,7 +93,7 @@
 			</template>
         </el-table-column>
 		<el-table-column :label="$t('commons.goodsid')" width="130" align="center">
-		  <template slot-scope="scope">{{scope.row.goods_id}}</template>
+			<template slot-scope="scope">{{scope.row.goods_id}}</template>
 		</el-table-column>
 		<!--
         <el-table-column label="商品名称" align="center">
@@ -138,22 +138,22 @@
           </template>
         </el-table-column>
 		-->
-        <el-table-column :label="$t('commons.goods_info_categorylist')" width="100" align="center">
-          <template slot-scope="scope">{{scope.row.category}}</template>
+		<el-table-column :label="$t('commons.goods_info_categorylist')" width="100" align="center">
+			<template slot-scope="scope">{{scope.row.category}}</template>
+		</el-table-column>
+		<el-table-column :label="$t('commons.goods_sku_store')" width="100" align="center">
+			<template slot-scope="scope">
+			<p>{{scope.row.storenum}}</p>
+			<!--
+			<el-button type="primary" icon="el-icon-edit" @click="handleShowSkuEditDialog(scope.$index, scope.row)" circle></el-button>
+			-->
+			</template>
         </el-table-column>
-        <el-table-column :label="$t('commons.goods_sku_store')" width="100" align="center">
-          <template slot-scope="scope">
-			 <p>{{scope.row.storenum}}</p>
-			 <!--
-			 <el-button type="primary" icon="el-icon-edit" @click="handleShowSkuEditDialog(scope.$index, scope.row)" circle></el-button>
-			 -->
-          </template>
-        </el-table-column>
-        <el-table-column :label="$t('commons.goods_sale')" width="100" align="center">
-          <template slot-scope="scope">{{scope.row.sale}}</template>
-        </el-table-column>
+		<el-table-column :label="$t('commons.goods_sale')" width="100" align="center">
+			<template slot-scope="scope">{{scope.row.sale}}</template>
+		</el-table-column>
 		<el-table-column :label="$t('commons.goods_addtime')" width="100" align="center">
-		  <template slot-scope="scope">{{scope.row.storage_time}}</template>
+			<template slot-scope="scope">{{scope.row.storage_time}}</template>
 		</el-table-column>
 		<!--
         <el-table-column label="审核状态" width="100" align="center">
@@ -176,11 +176,11 @@
                type="primary"
                @click="publish_shop_confirm(scope.$index, scope.row)">{{$t('commons.publish')}}
              </el-button>
-			 <el-button
-			   size="mini"
-			   type="danger"
-			   @click="delete_myshopgoods(scope.$index, scope.row)">{{$t('commons.deleted')}}
-			 </el-button>
+			<el-button
+			size="mini"
+			type="danger"
+			@click="delete_myshopgoods(scope.$index, scope.row)">{{$t('commons.deleted')}}
+			</el-button>
             </p>			 
           </template>
         </el-table-column>
@@ -205,18 +205,18 @@
         size="small">
         {{$t('commons.confirm')}}
       </el-button>
-	  <!--
-	  <el-select
-	    size="small"
-	    v-model="emall_id" :placeholder="$t('commons.emallplatform')">
-	    <el-option
-	      v-for="item in emall_list"
-	      :key="item.id"
-	      :label="item.title"
-	      :value="item.id">
-	    </el-option>
-	  </el-select>
-	  -->
+	<!--
+	<el-select
+		size="small"
+		v-model="emall_id" :placeholder="$t('commons.emallplatform')">
+		<el-option
+		v-for="item in emall_list"
+		:key="item.id"
+		:label="item.title"
+		:value="item.id">
+		</el-option>
+	</el-select>
+	-->
     </div>
 	<el-dialog
 		:title="$t('commons.emall_joining')"
@@ -273,27 +273,27 @@
 		:visible.sync="addshopgoodsInfo.dialogVisible"
 		width="65%">
 		<el-row style="margin: 15px 0;">
-		  <el-button type="info" @click="addshopgoodsInfo.dialogVisible = false">取 消</el-button>
-		  <el-button type="primary" @click="add_shop_confirm()">提交</el-button>
+		<el-button type="info" @click="addshopgoodsInfo.dialogVisible = false">取 消</el-button>
+		<el-button type="primary" @click="add_shop_confirm()">提交</el-button>
 		</el-row>
 	</el-dialog>
 	<el-row>
-	     <el-col :span="24">
-	         <div class="pagination">
-	             <el-pagination
-	                 v-if="paginations.total > 0"
-	                 :page-sizes="paginations.pageSizes"
-	                 :page-size="paginations.pageSize"
-	                 :layout="paginations.layout"
-	                 :total="paginations.total"
-	                 :current-page="paginations.pageIndex"
-	                 @current-change="handleCurrentChange"
-	                 @size-change="handleSizeChange">
-	             </el-pagination>
-	         </div>
-	     </el-col>
-	 </el-row>
-  </div>
+		<el-col :span="24">
+			<div class="pagination">
+				<el-pagination
+					v-if="paginations.total > 0"
+					:page-sizes="paginations.pageSizes"
+					:page-size="paginations.pageSize"
+					:layout="paginations.layout"
+					:total="paginations.total"
+					:current-page="paginations.pageIndex"
+					@current-change="handleCurrentChange"
+					@size-change="handleSizeChange">
+				</el-pagination>
+			</div>
+		</el-col>
+	</el-row>
+</div>
 </template>
 <script>
 	/*
@@ -311,17 +311,19 @@
   //import {fetchListWithChildren} from '@/api/productCate'
 	import HelpHint from "@/components/Helphint/helpHint.vue"; //
 	import {
-		getMyShopList,
+		//getMyShopList,
 		goodsUpDown,
 		goodsRecommSet,
 		goodsNewSet,
 		getMyEmallList,
 		getMyShopGoodsList,
-		deleteMyShopGoodsList,
+		//deleteMyShopGoodsList,
+		deleteMyShopGoods,
 		authorizeEmall,
 		queryMyShopInfo,
 		getMarketList,
 		getGoodsCategory,
+		publishGoodsShop,
 	} from "@/api/user";
 	
 	import {
@@ -361,11 +363,11 @@
 				callback(new Error('请输入商品信息链接'))
 			}
 			setTimeout(() => {
-			  if (!validateURL(value)){
-			  	callback(new Error('请输入正确的商品信息链接'))
-			  }else {
-			  	callback()
-			  }
+				if (!validateURL(value)){
+					callback(new Error('请输入正确的商品信息链接'))
+				}else {
+					callback()
+				}
 			}, 1000);
 		}
 		
@@ -614,8 +616,7 @@
 				productId: [
 					{ required: true, message: 'SKU', trigger: 'change' }
 				],
-			},
-		 
+			},	 
 			authEmall:{
 				dialogVisible:false,
 				shop_account:null,
@@ -626,20 +627,20 @@
 				platform_id:[],
 			},
 			rules: {
-			    shop_account: [
+				shop_account: [
 					{ required: true, message: 'Shop Account',trigger: 'change' } //这里需要用到全局变量
 				],
 				shop_name: [
-					 { required: true, message: 'Shop Name', trigger: 'change' }
+					{ required: true, message: 'Shop Name', trigger: 'change' }
 				],
 				merchant_id: [
-					 { required: true, message: 'Merchant ID', trigger: 'change' }
+					{ required: true, message: 'Merchant ID', trigger: 'change' }
 				],
 				MWSAuthToken: [
-					 { required: true, message: 'Authorization Token', trigger: 'change' }
+					{ required: true, message: 'Authorization Token', trigger: 'change' }
 				],
 				marketplace_id: [
-					 { required: true, message: 'Marketplace ID', trigger: 'change' }
+					{ required: true, message: 'Marketplace ID', trigger: 'change' }
 				],
 			},
 			shop_account_note:'',
@@ -748,6 +749,7 @@
 	components:{
 		'HelpHint':HelpHint,
 	},
+	
     created() {
 		this.init()
     },
@@ -796,22 +798,22 @@
 		},
 		
 		//表格操作提示
-		 tableAction() {
-		     return this.$createElement('HelpHint', {
-		         props: {
-		             content: '发布:上传商品信息到平台'
-		         }
-		     }, '操作');
-		 },
+		tableAction() {
+			return this.$createElement('HelpHint', {
+				props: {
+					content: '发布:上传商品信息到平台'
+				}
+			}, '操作');
+		},
 		
 		//本地数据导出的Excel方法
 		exportExcel() {
-		  require.ensure([], () => {
-		    const { export_json_to_excel } = require('@/Excel/Export2Excel');//Export2Excel路径
-		    const tHeader = this.tableHeader;   // 上面设置Excel的表格第一行的标题
-		    const filterVal = this.tableTitle; // 上面的index、nickName、name是tableData里对象的属性key值
-			let hot_list = this.export_list
-			for(let j=0; j<hot_list.length;j++){
+			require.ensure([], () => {
+				const { export_json_to_excel } = require('@/Excel/Export2Excel');//Export2Excel路径
+				const tHeader = this.tableHeader;   // 上面设置Excel的表格第一行的标题
+				const filterVal = this.tableTitle; // 上面的index、nickName、name是tableData里对象的属性key值
+				let hot_list = this.export_list
+				for(let j=0; j<hot_list.length;j++){
 				let hot_goods = {
 					title:hot_list[j]['name']?hot_list[j]['name']:'(商品名称)',
 					cid:hot_list[j]['category1']?hot_list[j]['category1']:'',
@@ -883,14 +885,14 @@
 				}
 				this.tableData.push(hot_goods) ;
 			}
-		    const list = this.tableData;  //把要导出的数据tableData存到list
-		    const data = this.formatJson(filterVal, list);
-		    export_json_to_excel(tHeader, data, 'HotGoodsList');//最后一个是表名字
-		  })
+			const list = this.tableData;  //把要导出的数据tableData存到list
+			const data = this.formatJson(filterVal, list);
+				export_json_to_excel(tHeader, data, 'HotGoodsList');//最后一个是表名字
+			})
 		},
 		
 		formatJson(filterVal, jsonData) {
-		  return jsonData.map(v => filterVal.map(j => v[j]))
+			return jsonData.map(v => filterVal.map(j => v[j]))
 		},
 		
 		market_devid(){
@@ -916,14 +918,14 @@
 							label:label,
 							value:this.market_init_list[i]['value'],
 							devid:this.market_init_list[i]['devid'],
-						 }
+						}
 					} else {
 						let label_en = `${this.market_init_list[i].label_en}`
 						market_info = {
 							label:label_en,
 							value:this.market_init_list[i]['value'],
 							devid:this.market_init_list[i]['devid'],
-						 }
+						}
 					}
 					market_list.push(market_info)
 				}
@@ -1037,20 +1039,19 @@
 					shop_name = this.myshop_list[i]['label']
 				}
 				//console.log('update_goods i:',this.myshop_list[i],' shop_name:',shop_name)
-			}
-			 
+			}		 
 			let routeUrl = this.$router.resolve({
-			    path: "/edit_shop_goods",
-			    query: {
+				path: "/edit_shop_goods",
+				query: {
 					goods_para:goods_para,
 					category_para:category_para,
 					platform_id:this.emall_id>0?this.emall_id:emall_id,
 					shop_name:shop_name,
 					shop_account:this.shop_account?this.shop_account:shop_account,
 				}
-			  });
-			  console.log('update_goods shop_account:',this.shop_account,' emall_id:',this.emall_id)
-			  window.open(routeUrl.href, '_self'); //_self _blank
+			});
+			console.log('update_goods shop_account:',this.shop_account,' emall_id:',this.emall_id)
+			window.open(routeUrl.href, '_self'); //_self _blank
 		},
 		
 		get_goods_list(is_search=0) {
@@ -1097,10 +1098,10 @@
 					this.get_goods_category(this.listQuery.emallId[0])
 				}else{
 					this.$message({
-					   message: 'Nothing!',
-					   type: 'warning',
-					   duration: 1000
-					 });
+					message: 'Nothing!',
+					type: 'warning',
+					duration: 1000
+					});
 				}
 			})
 			.catch(err=>{
@@ -1108,7 +1109,8 @@
 			});
 			this.listLoading = false;
 		},
-	  
+	
+		/*
 		getProductSkuSp(row, index) {
 			let spData = JSON.parse(row.spData);
 			if(spData!=null&&index<spData.length){
@@ -1127,7 +1129,7 @@
 				}
 			});
 		},
-	  
+	  */
 		changePlatform(platform_id=0) {
 			if(platform_id!=0){
 				this.authEmall.platform_id = Array(platform_id)
@@ -1149,7 +1151,7 @@
 				console.log('myshop index changePlatform()',this.authEmall,this.platform_list)
 			}
 		},
-		
+		/*
 		handleShowSkuEditDialog(index,row){
 			this.editSkuInfo.dialogVisible=true;
 			this.editSkuInfo.productId=row.id;
@@ -1171,7 +1173,8 @@
 				this.editSkuInfo.stockList=response.data;
 			});
 		},
-		
+		*/
+   
 		search() {
 			this.listQuery.pageNum = 1;
 			//console.log('search:',this.listQuery)
@@ -1182,16 +1185,22 @@
 		},
 	
 		publish_shop(index,row){
+			let goods_id = row.id
 			this.addshopgoodsInfo.dialogVisible = !this.addshopgoodsInfo.dialogVisible
-			this.addshopgoodsInfo.platform_ids = this.listQuery.emallId
+			this.addshopgoodsInfo.platform_ids = this.listQuery.emallId[0]
+			this.addshopgoodsInfo.product_list = goods_id
 		},
 		
-		publish_shop_confirm(){
+		publish_shop_confirm(index,row){
+			let goods_id = row.id
+			this.addshopgoodsInfo.platform_ids = this.listQuery.emallId[0]
+			this.addshopgoodsInfo.product_list = goods_id
 			this.$confirm(this.$t('commons.publish_shop_submit'), '提示', {
 				confirmButtonText: this.$t('commons.confirm'),
 				cancelButtonText: this.$t('commons.cancel'),
 				type: 'warning'
 				}).then(()=>{
+					let shop_account = getToken('Platform_shop_account')||""
 				let para = {
 					username:this.username,
 					access_token:this.access_token,
@@ -1199,8 +1208,10 @@
 					lang:this.lang,
 					goods_list:this.addshopgoodsInfo.product_list,
 					platform_ids:this.addshopgoodsInfo.platform_ids,
+					shop_account:this.authEmall.shop_account?this.authEmall.shop_account:shop_account,
+					shop_name:this.authEmall.shop_name,
 				}
-				console.log('add_shop_confirm para:',para);
+				console.log('publish_shop_confirm para:',para);
 				publishGoodsShop(para).then(res => {
 					this.$message({
 						message: 'Completed!',
@@ -1208,11 +1219,11 @@
 						duration: 1000
 					});
 					this.addshopgoodsInfo.dialogVisible=false;
-					console.log('add_shop_confirm return:',res);
+					console.log('publish_shop_confirm return:',res);
 					this.get_goods_list();
 				})
 				.catch(err=>{
-					console.log('add_shop_confirm err:',err)
+					console.log('publish_shop_confirm err:',err)
 				});
 			});
 		},
@@ -1299,7 +1310,7 @@
 				this.get_goods_list();
 			});
 		},
-	  
+  
 		// 每页多少条切换
 		handleSizeChange(pageSize) {
 			this.paginations.pageSize = pageSize;
@@ -1367,7 +1378,7 @@
 		handleShowLog(index,row){
 			console.log("handleShowLog",row);
 		},
-	  
+  
 		goods_up_down(updown, ids) {
 			let params = new URLSearchParams();
 			params.append('ids', ids);
@@ -1384,21 +1395,22 @@
 				}
 				console.log("goods_up_down para:",para,' ids:',ids);
 				goodsUpDown(para).then(response => {
-				this.$message({
-					message: 'Completed',
-					type: 'success',
-					duration: 1000
-					});
-				});
+					this.$message({
+						message: 'Completed',
+						type: 'success',
+						duration: 1000
+					})
+					console.log("goods_up_down response:",response);
+				})
 			}else{
 				this.$message({
 					message: '请选则电商平台',
 					type: 'warn',
 					duration: 2000
-				}); 
+				})
 			}
 		},
-	  
+  
 		goods_new_set(new_status, ids) {
 			let params = new URLSearchParams();
 			params.append('ids', ids);
@@ -1420,8 +1432,9 @@
 					message: 'Completed',
 					type: 'success',
 					duration: 1000
-					});
-				});
+					})
+					console.log("goods_new_set response:",response);
+				})
 			}else{
 				this.$message({
 					message: '请选则电商平台',
@@ -1430,7 +1443,7 @@
 				}); 
 			}
 		},
-	  
+  
 		goods_recomm_set(recommend_status, ids) {
 			let params = new URLSearchParams();
 			params.append('ids', ids);
@@ -1451,7 +1464,8 @@
 						message: 'Completed!',
 						type: 'success',
 						duration: 1000
-					});
+					})
+					console.log("goods_recomm_set response:",response);
 				});
 			}else{
 				this.$message({
@@ -1469,33 +1483,37 @@
 			params.append('deleteStatus', deleteStatus);
 		},
 		*/
-	   
+   
 		delete_myshopgoods(index, row){
+			let shop_account = getToken('Platform_shop_account')
 			let para = {
 				username:this.username,
 				access_token:this.access_token,
 				shop_type:this.shop_type,
 				lang:this.lang,
 				goods_id:row.id,
+				platform_id:this.authEmall.platform_id[0],
+				shop_account:this.authEmall.shop_account?this.authEmall.shop_account:shop_account,
+				shop_name:this.authEmall.shop_name,
 			}
 			this.$confirm('是否要删除', '提示', {
-			  confirmButtonText: '确定',
-			  cancelButtonText: '取消',
-			  type: 'warning'
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+				type: 'warning'
 			}).then(()=>{
-			deleteMyShopGoods(para).then(res => {
-			  	this.$message({
-			  		message: 'Success!',
-			  		type: 'success',
-			  		duration: 1000
-			  	});
-			  	this.list = [] ;
-			  	this.get_goods_list();
-			  	console.log('delete_myshopgoods return:',res);
-			  })
-			  .catch(err=>{
-			  	console.log('delete_myshopgoods err:',err)
-			  });
+				deleteMyShopGoods(para).then(res => {
+					this.$message({
+						message: 'Success!',
+						type: 'success',
+						duration: 1000
+					});
+					this.list = [] ;
+					this.get_goods_list();
+					console.log('delete_myshopgoods return:',res);
+				})
+				.catch(err=>{
+					console.log('delete_myshopgoods err:',err)
+				});
 			})
 		},
 		
@@ -1504,29 +1522,29 @@
 		},
 		
 		query_platform_auth(){
-			 if(this.authEmall.marketplace_id[0]!='' && this.authEmall.shop_account!='' && this.authEmall.shop_name!='' && this.authEmall.merchant_id!=''){
-			 	let para = {
-			 		username:this.username,
-			 		access_token:this.access_token,
-			 		shop_type:this.shop_type,
-			 		lang:this.lang,
-			 		platform_id:this.authEmall.platform_id[0],
+			if(this.authEmall.marketplace_id[0]!='' && this.authEmall.shop_account!='' && this.authEmall.shop_name!='' && this.authEmall.merchant_id!=''){
+				let para = {
+					username:this.username,
+					access_token:this.access_token,
+					shop_type:this.shop_type,
+					lang:this.lang,
+					platform_id:this.authEmall.platform_id[0],
 					shop_account:this.authEmall.shop_account,
 					shop_name:this.authEmall.shop_name,
 					merchant_id:this.authEmall.merchant_id,
-			 	}
+				}
 				queryMyShopInfo(para).then(res => {
-				  	console.log('query_platform_auth return:',res);
+					console.log('query_platform_auth return:',res);
 					let shop_info = res
 					if(shop_info && shop_info['para_info']){
 						this.shop_auth_info = JSON.parse(shop_info['para_info'])
 					}else{
 						this.submit_platform_auth('authEmall')
 					}
-				  })
-				  .catch(err=>{
-				  	console.log('query_platform_auth err:',err)
-				  });			
+				})
+				.catch(err=>{
+					console.log('query_platform_auth err:',err)
+				});			
 			}else{
 				console.log('query_platform_auth :',this.authEmall);
 			}
@@ -1534,12 +1552,12 @@
 		
 		submit_platform_auth(formName){
 			this.$refs[formName].validate((valid) => {
-			   if (valid) {
-				   if(this.authEmall.marketplace_id=='' ||this.authEmall.shop_account=='' ||this.authEmall.shop_name=='' ||this.authEmall.merchant_id=='' ||this.authEmall.MWSAuthToken==''){
+				if (valid) {
+					if(this.authEmall.marketplace_id=='' ||this.authEmall.shop_account=='' ||this.authEmall.shop_name=='' ||this.authEmall.merchant_id=='' ||this.authEmall.MWSAuthToken==''){
 						this.$message({
-						  message: '输入信息不完整!',
-						  type: 'warn',
-						  duration: 1000
+							message: '输入信息不完整!',
+							type: 'warn',
+							duration: 1000
 						});
 						console.log('submit_platform_auth 输入信息有误');
 						return false;
@@ -1563,8 +1581,7 @@
 								shop_account:this.authEmall.shop_account,
 								lang:this.lang,
 								para_info:JSON.stringify(author_info)
-							}
-									   
+							}																   
 							authorizeEmall(para).then(res => {
 								this.$message({
 									message: 'Completed',
@@ -1578,34 +1595,31 @@
 					console.log('submit_platform_auth 输入信息有误');
 					return false;
 				}
-			});
+			})
 		},
 		
-		//设置表格行的样式
+		//设置表格行的样式 {row,rowIndex}
 		tableRowStyle({row,rowIndex}){
 			return 'background-color:#FFF;font-size:12px;borderColor: #F2F2F2';
 		},
-		
-		//设置表头行的样式
+		//设置表头行的样式 {row,column,rowIndex,columnIndex}
 		tableHeaderColor({row,column,rowIndex,columnIndex}){
-			return 'background:#BBBBBB;color:#333;borderColor: #FFFFFF;font-size:14px;' ;
+				return 'background:#BBBBBB;color:#333;borderColor: #FFFFFF;font-size:14px;' ;
 		},
 		
 		tableSelectionChange(val) {
 			this.multipleSelection = val;
 		},
-		
-		
-    }
-  }
+	}
+}
 </script>
 <style>
 	.container{
 			margin: 35px;
 	}
 	.pagination{
-	    padding: 10px 20px;
-	    text-align: right;
+		padding: 10px 20px;
+		text-align: right;
 	}
 	//搜索栏样式
 	.filter-container {
@@ -1614,30 +1628,30 @@
 	
 	//操作栏样式
 	.operate-container {
-	  margin-top: 20px;
+		margin-top: 20px;
 	}
 	
 	.operate-container .btn-add {
-	  float: left;
-	  margin-bottom: 20px;
+		float: left;
+		margin-bottom: 20px;
 	}
 	
 	//表格栏样式
 	.table-container {
-	  margin-top: 20px;
+		margin-top: 20px;
 	}
 	
 	//批量操作栏样式
 	.batch-operate-container {
-	  display: inline-block;
-	  margin-top: 20px;
+		display: inline-block;
+		margin-top: 20px;
 	}
 	
 	//分页栏样式
 	.pagination-container {
-	  display: inline-block;
-	  float: right;
-	  margin-top: 20px;
+		display: inline-block;
+		float: right;
+		margin-top: 20px;
 	}
 	
 </style>
