@@ -38,6 +38,7 @@
 								<el-input v-model="goodsQuery.goodsItemType" size="small"></el-input>
 							</el-form-item>
 							</div>
+							<!--
 							<div style="display: flex;flex-direction: row;justify-content: flex-start;">
 							<el-form-item :label="$t('commons.goods_info_goods_code')" style="margin-right: 30px;">
 								<el-input v-model="goodsQuery.goodsCodeValue" size="small"></el-input>
@@ -53,6 +54,7 @@
 								</el-cascader>
 							</el-form-item>
 							</div>
+							-->
 							<el-form-item :label="$t('commons.goods_info_title')">
 								<el-input v-model="goodsQuery.goodsTitle" size="small"></el-input>
 							</el-form-item>
@@ -133,6 +135,36 @@
 						</el-row>					 
 					</div>
 				</el-col>
+				<div class="table-container" style="margin-bottom: 30px;">
+					<el-table ref="productAttrTable"
+						:data="goods_skuattr_list"
+						style="width: 100%;"
+						:stripe="true"
+						:row-style="tableRowStyle"
+						:header-cell-style="tableHeaderColor"
+						v-loading="listLoading"
+						border>
+						<el-table-column v-for="(itemattr_title,titleattr_index) in goods_skuattr_title" :key="titleattr_index" :label="itemattr_title.title" :prop="itemattr_title.key" align="center" :width="itemattr_title.width">
+							<template slot-scope="scope">
+								<div v-if="itemattr_title.attr!=='spec' && !itemattr_title.select" >
+									<el-input v-model="scope.row[itemattr_title.key]" ></el-input>
+								</div>
+								<div v-if="itemattr_title.attr!=='spec' && itemattr_title.select && itemattr_title.select.length > 0" >
+									<el-select v-model="scope.row[itemattr_title.key]" :placeholder="$t('commons.select')"  style="width: 60%;margin-left: 10px;" >
+										<el-option
+											v-for="(itemattr_select,itemattr_select_index ) in itemattr_title.select"
+											:key="itemattr_select_index"
+											:label="itemattr_select.label"
+											:value="itemattr_select.value"
+											>
+										</el-option>
+									</el-select>
+								</div>
+							</template>
+						</el-table-column>
+				</el-table>
+				</div>
+			
 				<div class="table-container">
 					<el-table ref="productTable"
 						:data="goods_sku_list"
@@ -146,8 +178,19 @@
 						<el-table-column type="selection" width="60" align="center"></el-table-column>
 						<el-table-column v-for="(item_title,title_index) in goods_skulist_title" :key="title_index" :label="item_title.title" :prop="item_title.key" align="center" :width="item_title.width" @click="add_sku_spec(2,item_title)">
 							<template slot-scope="scope">
-								<div v-if="item_title.attr!=='spec'" >
+								<div v-if="item_title.attr!=='spec' && !item_title.select" >
 									<el-input v-model="scope.row[item_title.key]" ></el-input>
+								</div>
+								<div v-if="item_title.attr!=='spec' && item_title.select && item_title.select.length > 0" >
+									<el-select v-model="scope.row[item_title.key]" :placeholder="$t('commons.select')"  style="width: 60%;margin-left: 10px;" >
+										<el-option
+											v-for="(item_select,item_select_index ) in item_title.select"
+											:key="item_select_index"
+											:label="item_select.label"
+											:value="item_select.value"
+											>
+										</el-option>
+									</el-select>
 								</div>
 								<div v-if="item_title.attr=='spec'"  style="margin-left:5px; margin-right: 5px; display: flex;flex-direction: row;justify-content: flex-start;">
 									<img v-if="item_title.type=='2'" style="width:40px;height: 30px" :src="scope.row.value[item_title.spec_index]['value']">
@@ -458,8 +501,10 @@
 				goods_query_info:{},
 				loading:true,
 				goods_sku_list:[],
+				goods_skuattr_list:[],
 				goods_sku_speclist:[],
 				goods_sku_speclist_init:[],
+				goods_skuattr_title:[],
 				goods_skulist_title:[],
 				goods_skulist_title_init: [],
 				
@@ -767,7 +812,8 @@
 					tb_skuno:'',
 					pdd_skuno:'',
 					value:[],
-					hsncode:'43556676',
+					goods_code_value:'',
+					goods_code_type:'',
 					store_nums:'',
 					market_price:'',
 					sell_price:'',
@@ -1059,9 +1105,12 @@
 					this.goods_info['id'] = result[0]['id']
 					this.goods_info['sell_price'] = result[0]['sell_price']
 					this.goods_sku_list = result[0]['sku_list']?result[0]['sku_list']:null
+					this.goods_skuattr_list = result[0]['skuattr_list']?result[0]['skuattr_list']:null
 					this.goods_attr_list = result[0]['features']?result[0]['features']:null
 					this.goods_sku_speclist = result[0]['sku_speclist']?result[0]['sku_speclist']:null
 					this.goods_skulist_title = result[0]['skulist_title']?result[0]['skulist_title']:null
+					this.goods_skuattr_title = result[0]['skuattr_title']?result[0]['skuattr_title']:null
+					
 					this.goodsQuery['goodsBrand'] = result[0]['goodsBrand']
 					this.goodsQuery['goodsFactory'] = result[0]['goodsFactory']
 					this.goodsQuery['goodsBulletPoint'] = result[0]['goodsBulletPoint']
@@ -1107,6 +1156,7 @@
 					goods_info:this.goods_info,
 					goods_category:goods_category,
 					goods_sku_list:this.goods_sku_list,
+					goods_skuattr_list:this.goods_skuattr_list,
 					goods_desc:this.goods_desc,
 					goods_brand:this.goodsQuery['goodsBrand'],
 					goods_factory:this.goodsQuery['goodsFactory'],
